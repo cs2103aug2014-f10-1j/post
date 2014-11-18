@@ -15,6 +15,18 @@ public class StackLogic extends BaseLogic {
 	private Stack<StreamTask> dumpedTasks;
 	private Stack<ArrayList<String>> orderingStack;
 
+	private static final String CMD_DISMISS = "dismiss %1$s";
+	private static final String CMD_RECOVER = "recover %1$s";
+	private static final String CMD_DESC = "desc %1$s %2$s";
+	private static final String CMD_DUE = "due %1$s %2$s";
+	private static final String CMD_START = "start %1$s %2$s";
+	private static final String CMD_RANK = "rank %1$s %2$s";
+	private static final String CMD_MARK = "mark %1$s %2$s";
+	private static final String CMD_TAG = "tag %1$s %2$s";
+	private static final String CMD_UNTAG = "untag %1$s %2$s";
+	private static final String CMD_NAME = "name %1$s %2$s";
+	private static final String CMD_UNSORT = "unsort";
+
 	private StackLogic() {
 		inputStack = new Stack<String>();
 		dumpedTasks = new Stack<StreamTask>();
@@ -29,17 +41,18 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
-	 * @param currentDeadline time to be reverted to
+	 * @param taskIndex
+	 *            index of task that was modified
+	 * @param currentDeadline
+	 *            time to be reverted to
 	 */
 	public void pushInverseDueCommand(int taskIndex, Calendar currentDeadline) {
 		String inverseCommand = null;
 		if (currentDeadline == null) {
-			inverseCommand = String.format(StreamConstants.Commands.DUE,
-					taskIndex, "null");
+			inverseCommand = String.format(CMD_DUE, taskIndex, "null");
 		} else {
-			inverseCommand = String.format(StreamConstants.Commands.DUE,
-					taskIndex, StreamParser.tp.translate(currentDeadline));
+			inverseCommand = String.format(CMD_DUE, taskIndex,
+					StreamParser.tp.translate(currentDeadline));
 		}
 		pushInput(inverseCommand);
 	}
@@ -48,17 +61,18 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
-	 * @param currentStartTime time to be reverted to
+	 * @param taskIndex
+	 *            index of task that was modified
+	 * @param currentStartTime
+	 *            time to be reverted to
 	 */
 	public void pushInverseStartCommand(int taskIndex, Calendar currentStartTime) {
 		String inverseCommand = null;
 		if (currentStartTime == null) {
-			inverseCommand = String.format(StreamConstants.Commands.START,
-					taskIndex, "null");
+			inverseCommand = String.format(CMD_START, taskIndex, "null");
 		} else {
-			inverseCommand = String.format(StreamConstants.Commands.START,
-					taskIndex, StreamParser.tp.translate(currentStartTime));
+			inverseCommand = String.format(CMD_START, taskIndex,
+					StreamParser.tp.translate(currentStartTime));
 		}
 		pushInput(inverseCommand);
 	}
@@ -67,78 +81,86 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was added
+	 * @param taskIndex
+	 *            index of task that was added
 	 */
 	public void pushInverseAddCommand(int index) {
-		pushInput(String.format(StreamConstants.Commands.DISMISS,
-				index));
+		pushInput(String.format(CMD_DISMISS, index));
 	}
 
 	//@author A0093874N
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param deletedTask task that was deleted
-	 * @param order order of tasks to be reverted to
+	 * @param deletedTask
+	 *            task that was deleted
+	 * @param order
+	 *            order of tasks to be reverted to
 	 */
-	public void pushInverseDeleteCommand(StreamTask deletedTask, ArrayList<String> order) {
+	public void pushInverseDeleteCommand(StreamTask deletedTask,
+			ArrayList<String> order) {
 		pushOrder(order);
 		pushDumpedTask(deletedTask);
-		pushInput(String.format(StreamConstants.Commands.RECOVER, 1));
+		pushInput(String.format(CMD_RECOVER, 1));
 	}
 
 	//@author A0096529N
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param originalOrder order of tasks to be reverted to
-	 * @param deletedTasks tasks that were deleted
+	 * @param originalOrder
+	 *            order of tasks to be reverted to
+	 * @param deletedTasks
+	 *            tasks that were deleted
 	 */
-	public void pushInverseClearCommand(ArrayList<String> originalOrder, ArrayList<StreamTask> deletedTasks) {
+	public void pushInverseClearCommand(ArrayList<String> originalOrder,
+			ArrayList<StreamTask> deletedTasks) {
 		pushOrder(originalOrder);
-		for (StreamTask task:deletedTasks) {
+		for (StreamTask task : deletedTasks) {
 			pushDumpedTask(task);
 		}
-		pushInput(String.format(StreamConstants.Commands.RECOVER,
-				deletedTasks.size()));
+		pushInput(String.format(CMD_RECOVER, deletedTasks.size()));
 	}
 
 	//@author A0093874N
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
-	 * @param oldRank rank to be reverted to 
+	 * @param taskIndex
+	 *            index of task that was modified
+	 * @param oldRank
+	 *            rank to be reverted to
 	 */
 	public void pushInverseSetRankingCommand(int index, String oldRank) {
-		pushInput(String.format(StreamConstants.Commands.RANK, index, oldRank));
+		pushInput(String.format(CMD_RANK, index, oldRank));
 	}
 
 	//@author A0093874N
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
-	 * @param oldDescription description to be reverted to
+	 * @param taskIndex
+	 *            index of task that was modified
+	 * @param oldDescription
+	 *            description to be reverted to
 	 */
-	public void pushInverseSetDescriptionCommand(int index, String oldDescription) {
-		pushInput(String.format(StreamConstants.Commands.DESC, index, oldDescription));
+	public void pushInverseSetDescriptionCommand(int index,
+			String oldDescription) {
+		pushInput(String.format(CMD_DESC, index, oldDescription));
 	}
 
 	//@author A0118007R
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param wasDone boolean state to be reverted to
-	 * @param taskIndex index of task that was modified
+	 * @param wasDone
+	 *            boolean state to be reverted to
+	 * @param taskIndex
+	 *            index of task that was modified
 	 */
 	public void pushInverseSetDoneCommand(boolean wasDone, int index) {
-		String inverseCommand = null;
-		if (wasDone) {
-			inverseCommand = String.format(StreamConstants.Commands.MARK_DONE, index);
-		} else {
-			inverseCommand = String.format(StreamConstants.Commands.MARK_NOT_DONE, index);
-		}
+		String inverseCommand = String.format(CMD_MARK, index,
+				StreamParser.mp.translate(StreamParser.mp.parse(wasDone)));
 		pushInput(inverseCommand);
 	}
 
@@ -146,18 +168,20 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
+	 * @param taskIndex
+	 *            index of task that was modified
 	 * @param oldTaskName
 	 */
 	public void pushInverseSetNameCommand(int taskIndex, String oldTaskName) {
-		pushInput(String.format(StreamConstants.Commands.NAME, taskIndex, oldTaskName));
+		pushInput(String.format(CMD_NAME, taskIndex, oldTaskName));
 	}
 
 	//@author A0096529N
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param inverseCommand entire command for reversion of action
+	 * @param inverseCommand
+	 *            entire command for reversion of action
 	 */
 	public void pushInverseModifyCommand(String inverseCommand) {
 		pushInput(inverseCommand.trim());
@@ -167,24 +191,27 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param oldOrdering order of tasks to be reverted to
+	 * @param oldOrdering
+	 *            order of tasks to be reverted to
 	 */
 	public void pushInverseSortCommand(ArrayList<String> oldOrdering) {
 		pushOrder(oldOrdering);
-		pushInput("unsort");
+		pushInput(CMD_UNSORT);
 	}
 
 	//@author A0118007R
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
-	 * @param tagsRemoved tags removed during modification
-	 * to be added back on reversion
+	 * @param taskIndex
+	 *            index of task that was modified
+	 * @param tagsRemoved
+	 *            tags removed during modification to be added back on reversion
 	 */
-	public void pushInverseUntagCommand(int taskIndex, ArrayList<String> tagsRemoved) {
+	public void pushInverseUntagCommand(int taskIndex,
+			ArrayList<String> tagsRemoved) {
 		if (tagsRemoved.size() > 0) {
-			pushInput(String.format(StreamConstants.Commands.TAG, taskIndex,
+			pushInput(String.format(CMD_TAG, taskIndex,
 					StreamUtil.listDownArrayContent(tagsRemoved, " ")));
 		}
 	}
@@ -193,20 +220,23 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Add the inverse command to undo stack
 	 * 
-	 * @param taskIndex index of task that was modified
-	 * @param tagsAdded tags added during modification
-	 * to be removed on reversion
+	 * @param taskIndex
+	 *            index of task that was modified
+	 * @param tagsAdded
+	 *            tags added during modification to be removed on reversion
 	 */
-	public void pushInverseAddTagCommand(int taskIndex, ArrayList<String> tagsAdded) {
+	public void pushInverseAddTagCommand(int taskIndex,
+			ArrayList<String> tagsAdded) {
 		if (tagsAdded.size() > 0) {
-			pushInput(String.format(StreamConstants.Commands.UNTAG, taskIndex,
+			pushInput(String.format(CMD_UNTAG, taskIndex,
 					StreamUtil.listDownArrayContent(tagsAdded, " ")));
 		}
 	}
 
 	//@author A0118007R
 	/**
-	 * Prepares the inverse modify command to be used as undo command for the multi-modify command
+	 * Prepares the inverse modify command to be used as undo command for the
+	 * multi-modify command
 	 * 
 	 * @param taskName
 	 * @param taskIndex
@@ -221,7 +251,7 @@ public class StackLogic extends BaseLogic {
 		Boolean isDone = currTask.isDone();
 		inverseCommand = buildInverseModifyRank(currTask, inverseCommand,
 				isDone);
-		 //end of addition by A0093874N //
+		// end of addition by A0093874N //
 		inverseCommand = buildInverseModifyDescription(currTask, inverseCommand);
 		inverseCommand = buildInverseModifyDeadline(currTask, inverseCommand);
 		inverseCommand = buildInverseModifyTag(currTask, inverseCommand);
@@ -248,9 +278,10 @@ public class StackLogic extends BaseLogic {
 	}
 
 	//@author A0096529N
-	private String buildInverseModifyTag(StreamTask currTask, String inverseCommand) {
+	private String buildInverseModifyTag(StreamTask currTask,
+			String inverseCommand) {
 		inverseCommand += "-settags ";
-		for (String tag:currTask.getTags()) {
+		for (String tag : currTask.getTags()) {
 			inverseCommand += tag + " ";
 		}
 		return inverseCommand;
@@ -283,26 +314,25 @@ public class StackLogic extends BaseLogic {
 
 	//@author A0096529N
 	private void pushDumpedTask(StreamTask deletedTask) {
-		assert(deletedTask != null) : StreamConstants.Assertion.NULL_INVERSE_TASK;
+		assert (deletedTask != null) : StreamConstants.Assertion.NULL_INVERSE_TASK;
 		dumpedTasks.push(deletedTask);
-		logDebug(String.format(StreamConstants.LogMessage.PUSH_INVERSE_TASK, 
+		logDebug(String.format(StreamConstants.LogMessage.PUSH_INVERSE_TASK,
 				deletedTask.getTaskName()));
 	}
-	
+
 	//@author A0096529N
 	public StreamTask recoverTask() {
 		StreamTask dumpedTask = dumpedTasks.pop();
-		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_TASK, 
+		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_TASK,
 				dumpedTask.getTaskName()));
 		return dumpedTask;
 	}
 
 	//@author A0096529N
 	private void pushInput(String inverseCommand) {
-		assert(inverseCommand != null && !inverseCommand.isEmpty()) : 
-			StreamConstants.Assertion.EMPTY_INVERSE_COMMAND;
+		assert (inverseCommand != null && !inverseCommand.isEmpty()) : StreamConstants.Assertion.EMPTY_INVERSE_COMMAND;
 		inputStack.push(inverseCommand);
-		logDebug(String.format(StreamConstants.LogMessage.PUSH_INVERSE_COMMAND, 
+		logDebug(String.format(StreamConstants.LogMessage.PUSH_INVERSE_COMMAND,
 				inverseCommand));
 	}
 
@@ -314,15 +344,15 @@ public class StackLogic extends BaseLogic {
 	 */
 	public String popInverseCommand() {
 		String inverseCommand = inputStack.pop();
-		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_COMMAND, 
+		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_COMMAND,
 				inverseCommand));
 		return inverseCommand;
 	}
 
 	//@author A0096529N
 	/**
-	 * Checks whether there exists an inverse input inside the input stack. 
-	 * If it is empty then there is nothing to undo.
+	 * Checks whether there exists an inverse input inside the input stack. If
+	 * it is empty then there is nothing to undo.
 	 * 
 	 * @return isEmpty - true if the stack is empty.
 	 */
@@ -341,10 +371,9 @@ public class StackLogic extends BaseLogic {
 
 	//@author A0096529N
 	private void pushOrder(ArrayList<String> order) {
-		assert(order != null && !order.isEmpty()) : 
-			StreamConstants.Assertion.EMPTY_INVERSE_ORDER;
+		assert (order != null && !order.isEmpty()) : StreamConstants.Assertion.EMPTY_INVERSE_ORDER;
 		orderingStack.push(order);
-		logDebug(String.format(StreamConstants.LogMessage.PUSH_ORDER, 
+		logDebug(String.format(StreamConstants.LogMessage.PUSH_ORDER,
 				Arrays.toString(order.toArray())));
 	}
 
@@ -352,12 +381,12 @@ public class StackLogic extends BaseLogic {
 	/**
 	 * Pops the order on the top of the ordering stack
 	 * 
-	 * @return taskList List of taskNames in the order
-	 * that was pushed previously
+	 * @return taskList List of taskNames in the order that was pushed
+	 *         previously
 	 */
 	public ArrayList<String> popOrder() {
 		ArrayList<String> order = orderingStack.pop();
-		logDebug(String.format(StreamConstants.LogMessage.POP_ORDER, 
+		logDebug(String.format(StreamConstants.LogMessage.POP_ORDER,
 				Arrays.toString(order.toArray())));
 		return order;
 	}
@@ -368,17 +397,17 @@ public class StackLogic extends BaseLogic {
 	 */
 	@SuppressWarnings("unused")
 	private String getInputDate(Calendar currentDeadline) {
-		return currentDeadline.get(Calendar.MONTH + 1) + "/"
-				+ (currentDeadline.get(Calendar.DATE) + "/"
-				+ currentDeadline.get(Calendar.YEAR));
+		return currentDeadline.get(Calendar.MONTH + 1)
+				+ "/"
+				+ (currentDeadline.get(Calendar.DATE) + "/" + currentDeadline
+						.get(Calendar.YEAR));
 	}
 
 	//@author generated
-	@Override 
+	@Override
 	protected String getLoggerComponentName() {
 		return StreamConstants.ComponentTag.STREAMSTACK;
 	}
-
 
 	// Depreciated methods
 
@@ -389,9 +418,8 @@ public class StackLogic extends BaseLogic {
 	 * @param oldTags
 	 * @param newTags
 	 * @return
-	 * @deprecated replaced with new methodology
-	 * use settags to clear tags then add previous 
-	 * tag state
+	 * @deprecated replaced with new methodology use settags to clear tags then
+	 *             add previous tag state
 	 */
 	public String processTagModification(String inverseCommand,
 			ArrayList<String> oldTags, ArrayList<String> newTags) {
@@ -412,9 +440,8 @@ public class StackLogic extends BaseLogic {
 	 * @param oldTags
 	 * @param newTags
 	 * @return
-	 * @deprecated replaced with new methodology
-	 * use settags to clear tags then add previous 
-	 * tag state
+	 * @deprecated replaced with new methodology use settags to clear tags then
+	 *             add previous tag state
 	 */
 	private String compareTagged(ArrayList<String> oldTags,
 			ArrayList<String> newTags) {
@@ -430,9 +457,8 @@ public class StackLogic extends BaseLogic {
 	 * @param newTags
 	 * @param inverseTag
 	 * @return
-	 * @deprecated replaced with new methodology
-	 * use settags to clear tags then add previous 
-	 * tag state
+	 * @deprecated replaced with new methodology use settags to clear tags then
+	 *             add previous tag state
 	 */
 	private String buildInverseTag(ArrayList<String> oldTags,
 			ArrayList<String> newTags, String inverseTag) {
@@ -450,9 +476,8 @@ public class StackLogic extends BaseLogic {
 	 * @param oldTags
 	 * @param newTags
 	 * @return
-	 * @deprecated replaced with new methodology
-	 * use settags to clear tags then add previous 
-	 * tag state
+	 * @deprecated replaced with new methodology use settags to clear tags then
+	 *             add previous tag state
 	 */
 	private String compareUntagged(ArrayList<String> oldTags,
 			ArrayList<String> newTags) {
@@ -468,9 +493,8 @@ public class StackLogic extends BaseLogic {
 	 * @param newTags
 	 * @param inverseUntag
 	 * @return
-	 * @deprecated replaced with new methodology
-	 * use settags to clear tags then add previous 
-	 * tag state
+	 * @deprecated replaced with new methodology use settags to clear tags then
+	 *             add previous tag state
 	 */
 	private String buildInverseUntag(ArrayList<String> oldTags,
 			ArrayList<String> newTags, String inverseUntag) {

@@ -57,7 +57,7 @@ public class StreamConstants {
 		public static final String TAGS_REMOVED = "Tags removed from \"%1$s\": %2$s";
 		public static final String NO_TAGS_REMOVED = "No tags removed";
 		public static final String SEARCH = "Searching for \"%1$s\", %2$s queries found";
-		public static final String FILTER = "Filtering for tasks \"%1$s\", %2$s queries found";
+		public static final String FILTER = "Filtering for tasks %1$s, %2$s queries found";
 		public static final String LOAD_FAILED = "Load from file failed, %1$s";
 		public static final String SAVE_FAILED = "Save to file failed, %1$s";
 		public static final String MODIFY = "Modified %1$s";
@@ -86,30 +86,6 @@ public class StreamConstants {
 		public static final String UNEXPECTED_ERROR = "Oops! An unexpected error occured, please retry.\nDetails: %1$s";
 		public static final String LOADED_USER_HOME = "Loaded user home dir: %1$s";
 		public static final String LOAD_FAIL_USER_HOME = "Could not load user home dir.";
-	}
-
-	public static class Commands {
-
-		// Reverse commands (for undo)
-		public static final String DISMISS = "dismiss %1$s";
-		public static final String RECOVER = "recover %1$s";
-		public static final String DESC = "desc %1$s %2$s";
-		public static final String DUE = "due %1$s %2$s";
-		public static final String START = "start %1$s %2$s";
-		public static final String RANK = "rank %1$s %2$s";
-		public static final String MARK_DONE = "mark %1$s done";
-		public static final String MARK_NOT_DONE = "mark %1$s ongoing";
-		public static final String DELETE = "delete %1$s";
-		public static final String TAG = "tag %1$s %2$s";
-		public static final String UNTAG = "untag %1$s %2$s";
-		public static final String MODIFY = "modify %1$s desc %2$s tag %3$s due %4$s";
-		public static final String VIEW = "view %1$s";
-		public static final String UNDO = "undo";
-		public static final String CLRSRC = "clrsrc";
-		public static final String NAME = "name %1$s %2$s";
-		public static final String SORT_ALPHA = "sort a a";
-		public static final String SORT_DEADLINE = "sort t d";
-		public static final String ADD_TASK = "add %1$s";
 	}
 
 	public static class Assertion {

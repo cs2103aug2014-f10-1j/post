@@ -16,6 +16,7 @@ import logic.StreamLogic;
 import logic.TaskLogic;
 import model.StreamObject;
 import model.StreamTask;
+import parser.FilterParser.FilterType;
 import parser.StreamCommand;
 import parser.StreamParser;
 import parser.StreamCommand.CommandType;
@@ -835,8 +836,20 @@ public class Stream {
 		assertNotNull(content);
 		ArrayList<Integer> filterResult = streamLogic.filterTasks(content);
 
-		String result = String.format(StreamConstants.LogMessage.FILTER,
-				content, filterResult.size());
+		FilterType type = StreamParser.fp.parse(content);
+		String log = StreamParser.fp.translate(type);
+		switch (type) {
+			case DUEBEF:
+			case DUEAFT:
+			case STARTBEF:
+			case STARTAFT:
+				String time = content.split(" ", 3)[2];
+				log += time;
+			default:
+				// no extra work needed
+		}
+		String result = String.format(StreamConstants.LogMessage.FILTER, log,
+				filterResult.size());
 		showAndLogResult(result);
 
 		return filterResult;
@@ -871,7 +884,6 @@ public class Stream {
 		Calendar deadline = task.getDeadline();
 		Calendar startTime = task.getStartTime();
 		return processDueDate(taskIndex, newDeadline, task, deadline, startTime);
-
 	}
 
 	private String processDueDate(int taskIndex, Calendar newDeadline,

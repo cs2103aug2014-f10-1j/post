@@ -142,7 +142,7 @@ public class StreamUI {
 	/**
 	 * Highlights the task view containing the active task
 	 */
-	public void highlightActiveTaskView() {
+	private void highlightActiveTaskView() {
 		int index = availTasks.indexOf(activeTask);
 		assert (index >= 0) : StreamConstants.Assertion.TASK_TAG_NOTFOUND;
 		int page = index / StreamConstants.UI.MAX_VIEWABLE_TASK + 1;
