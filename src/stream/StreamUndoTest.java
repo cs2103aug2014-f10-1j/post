@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import parser.StreamParser;
-import util.StreamConstants;
 import fileio.StreamIO;
 
 // @author A0093874N
@@ -31,7 +30,7 @@ public class StreamUndoTest {
 
 	private static Stream st;
 	private static final String TEST_SAVE_FILENAME = "streamtest"
-			+ StreamConstants.SAVEFILE_EXTENSION;
+			+ Stream.SAVEFILE_EXTENSION;
 	private File testFile;
 
 	@Before

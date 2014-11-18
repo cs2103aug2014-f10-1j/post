@@ -1,6 +1,7 @@
 package stream;
 
 import java.awt.Font;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -8,6 +9,8 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 
+import logger.StreamLogger;
+import logger.StreamLogger.LogLevel;
 import logic.StackLogic;
 import logic.StreamLogic;
 import logic.TaskLogic;
@@ -21,8 +24,6 @@ import parser.SortParser.SortType;
 import ui.StreamUI;
 import util.StreamConstants;
 import util.StreamExternals;
-import util.StreamLogger;
-import util.StreamLogger.LogLevel;
 import util.StreamUtil;
 import exception.StreamIOException;
 import exception.StreamModificationException;
@@ -51,7 +52,15 @@ public class Stream {
 	private String filename;
 
 	private static final String THANK_YOU = "Thank you for using STREAM!";
-	
+
+	public static final String VERSION = "V0.6";
+	private static final String FILENAME = "stream";
+	static final String SAVEFILE_EXTENSION = ".json";
+	private static final String SAVEFILE_FORMAT = "%1$s" + SAVEFILE_EXTENSION;
+	private static final String LOGFILE_FORMAT = "%1$s.txt";
+	private static final SimpleDateFormat LOGFILE_DATE_FORMAT = new SimpleDateFormat(
+			"yyyyMMdd");
+
 	//@author A0118007R
 	/**
 	 * Stream Constructor to initialize the program.
@@ -113,15 +122,15 @@ public class Stream {
 
 	private void saveLogFile() throws StreamIOException {
 		Calendar now = Calendar.getInstance();
-		String logFileName = String.format(StreamConstants.LOGFILE_FORMAT,
-				StreamUtil.getDateString(now));
+		String logFileName = String.format(LOGFILE_FORMAT,
+				LOGFILE_DATE_FORMAT.format(now.getTime()));
 		StreamIO.saveLogFile(StreamLogger.getLogStack(), logFileName);
 	}
 
 	//@author A0096529N
 	private void initStreamIO(String file) {
-		if (!file.endsWith(StreamConstants.SAVEFILE_EXTENSION)) {
-			filename = String.format(StreamConstants.SAVEFILE_FORMAT, file);
+		if (!file.endsWith(SAVEFILE_EXTENSION)) {
+			filename = String.format(SAVEFILE_FORMAT, file);
 		} else {
 			filename = file;
 		}
@@ -1092,7 +1101,7 @@ public class Stream {
 	}
 
 	public static void main(String[] args) {
-		new Stream(StreamConstants.FILENAME);
+		new Stream(FILENAME);
 	}
 
 	//@author A0118007R-unused

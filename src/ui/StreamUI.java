@@ -17,12 +17,12 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import logger.StreamLogger;
+import logger.StreamLogger.LogLevel;
 import model.StreamTask;
 import stream.Stream;
 import util.StreamConstants;
 import util.StreamExternals;
-import util.StreamLogger;
-import util.StreamLogger.LogLevel;
 
 //@author A0093874N
 
@@ -79,11 +79,11 @@ public class StreamUI {
 	private static final String LOG_DETAILS = "Displaying details for %1$s";
 
 	private static final String TEXT_TITLE = "STREAM "
-			+ StreamConstants.VERSION + ": Simple Task Reader and Manager";
+			+ Stream.VERSION + ": Simple Task Reader and Manager";
 	private static final String TEXT_FOOTER = "Copyright \u00a9 2014 CS2103AUG2014-F10-01J."
 			+ " All rights reserved.";
 	static final String TEXT_WELCOME = "Welcome to STREAM "
-			+ StreamConstants.VERSION + "!";
+			+ Stream.VERSION + "!";
 
 	private static final String TITLE_HELP = "Help for STREAM";
 	private static final String TEXT_HELP = "<html><body width='400'><h2>"

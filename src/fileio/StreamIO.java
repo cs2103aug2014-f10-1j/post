@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import logger.StreamLogger;
+import logger.StreamLogger.LogLevel;
 import logic.TaskLogic;
 import model.StreamTask;
 
@@ -24,8 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import util.StreamConstants;
-import util.StreamLogger;
-import util.StreamLogger.LogLevel;
 import exception.StreamIOException;
 
 //@author A0096529N

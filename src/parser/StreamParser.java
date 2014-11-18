@@ -1,9 +1,9 @@
 package parser;
 
+import logger.StreamLogger;
+import logger.StreamLogger.LogLevel;
 import parser.StreamCommand.CommandType;
 import util.StreamConstants;
-import util.StreamLogger;
-import util.StreamLogger.LogLevel;
 import util.StreamUtil;
 import exception.StreamParserException;
 

@@ -1,6 +1,5 @@
 package util;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -14,6 +13,9 @@ import java.util.List;
  * @version V0.5
  */
 public class StreamUtil {
+
+	private static final String PREFIX_INPUT = "<< ";
+	private static final String PREFIX_OUTPUT = ">> ";
 
 	//@author A0093874N
 
@@ -42,7 +44,7 @@ public class StreamUtil {
 	 * @return <b>String</b> - the decorated log message
 	 */
 	public static String showAsTerminalInput(String logMessage) {
-		return StreamConstants.PREFIX_INPUT + logMessage;
+		return PREFIX_INPUT + logMessage;
 	}
 
 	/**
@@ -51,7 +53,7 @@ public class StreamUtil {
 	 * @return <b>String</b> - the decorated log message
 	 */
 	public static String showAsTerminalResponse(String logMessage) {
-		return StreamConstants.PREFIX_OUTPUT + logMessage;
+		return PREFIX_OUTPUT + logMessage;
 	}
 
 	/**
@@ -76,20 +78,6 @@ public class StreamUtil {
 			}
 		}
 		return true;
-	}
-
-	//@author A0096529N
-
-	public static final SimpleDateFormat cleanDateFormat = new SimpleDateFormat(
-			"yyyyMMdd");
-
-	/**
-	 * Converts a <i>calendar</i> to simple date format yyyyMMdd.
-	 * 
-	 * @return <b>String</b> - the parsed calendar
-	 */
-	public static String getDateString(Calendar calendar) {
-		return cleanDateFormat.format(calendar.getTime());
 	}
 
 	//@author A0118007R

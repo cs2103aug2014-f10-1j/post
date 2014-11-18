@@ -1,4 +1,5 @@
 package stream;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -18,21 +19,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import util.StreamConstants;
 import fileio.StreamIO;
 
 public class StreamSaveTest {
 	private StreamTask task1, task2;
 	private HashMap<String, StreamTask> map;
 	private ArrayList<String> taskList;
-	private static final String TEST_SAVE_FILENAME = "streamtest" + StreamConstants.SAVEFILE_EXTENSION;
+	private static final String TEST_SAVE_FILENAME = "streamtest"
+			+ Stream.SAVEFILE_EXTENSION;
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
 			"yyyyMMddHHmmss", Locale.ENGLISH);
 	private File testFile;
 	private Stream stream;
 
-	// @author A0096529N
+	//@author A0096529N
 	@Before
 	public void setUp() throws Exception {
 		StreamIO.setFilename(TEST_SAVE_FILENAME);
@@ -75,13 +76,13 @@ public class StreamSaveTest {
 		taskList.add(task2.getTaskName());
 	}
 
-	// @author A0096529N
-	@After 
+	//@author A0096529N
+	@After
 	public void tearDown() throws Exception {
 		testFile.delete();
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	@Test
 	public void testSave() throws IOException {
 		stream.save();
@@ -96,7 +97,7 @@ public class StreamSaveTest {
 		assertEquals("Saved state", expectedContent, fileToString(testFile));
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	private String fileToString(File file) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

@@ -25,7 +25,7 @@ public class StreamLoadTest {
 	private StreamTask task1, task2;
 	private HashMap<String, StreamTask> map;
 	private ArrayList<String> taskList;
-	private static final String TEST_SAVE_FILENAME = "streamtest" + StreamConstants.SAVEFILE_EXTENSION;
+	private static final String TEST_SAVE_FILENAME = "streamtest" + Stream.SAVEFILE_EXTENSION;
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss",
 			Locale.ENGLISH);

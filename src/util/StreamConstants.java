@@ -14,13 +14,6 @@ import java.awt.Rectangle;
  */
 public class StreamConstants {
 
-	public static final String VERSION = "V0.5";
-	public static final String FILENAME = "stream";
-	public static final String SAVEFILE_EXTENSION = ".json";
-	public static final String SAVEFILE_FORMAT = "%1$s" + SAVEFILE_EXTENSION;
-	public static final String LOGFILE_FORMAT = "%1$s.txt";
-	public static final String PREFIX_INPUT = "<< ";
-	public static final String PREFIX_OUTPUT = ">> ";
 	public static final String[] MODIFICATION_ATTRIBUTES = { "-name", "-desc",
 			"-start", "-from", "-due", "-by", "-tag", "-untag", "-settags",
 			"-rank", "-mark", "-to" };

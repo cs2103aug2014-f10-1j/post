@@ -1,7 +1,7 @@
 package logic;
 
-import util.StreamLogger;
-import util.StreamLogger.LogLevel;
+import logger.StreamLogger;
+import logger.StreamLogger.LogLevel;
 
 //@author A0096529N
 /**
