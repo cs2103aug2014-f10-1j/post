@@ -109,8 +109,6 @@ public class StreamParserTest {
 			
 		}catch (StreamParserException e) {
 			final String expectedMessage = StreamParser.ERROR_UNKNOWN_COMMAND;
-			System.out.println(expectedMessage);
-			System.out.println(e.getMessage());
 			assertEquals(expectedMessage, e.getMessage());
 		}
 			

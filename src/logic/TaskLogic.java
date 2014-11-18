@@ -6,8 +6,8 @@ import java.util.Calendar;
 import java.util.Collections;
 
 import parser.StreamParser;
-import parser.StreamParser.MarkType;
-import parser.StreamParser.RankType;
+import parser.MarkParser.MarkType;
+import parser.RankParser.RankType;
 import model.StreamTask;
 import util.StreamConstants;
 import util.StreamUtil;
@@ -127,13 +127,13 @@ public class TaskLogic extends BaseLogic {
 
 	private void rank(StreamTask task, String contents) {
 		String inputRank = contents.trim();
-		RankType parsedRankType = StreamParser.parseRanking(inputRank);
+		RankType parsedRankType = StreamParser.rp.parse(inputRank);
 		switch (parsedRankType) {
 			case HI:
 			case MED:
 			case LO:
 				String translatedRank = StreamParser
-						.translateRanking(parsedRankType);
+						.rp.translate(parsedRankType);
 				task.setRank(translatedRank);
 			default:
 		}
@@ -229,7 +229,7 @@ public class TaskLogic extends BaseLogic {
 
 	private void mark(StreamTask task, String contents) {
 		String status = contents.trim();
-		MarkType parsedMarkType = StreamParser.parseMarking(status);
+		MarkType parsedMarkType = StreamParser.mp.parse(status);
 		switch (parsedMarkType) {
 			case DONE:
 				task.markAsDone();

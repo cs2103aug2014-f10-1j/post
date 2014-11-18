@@ -13,10 +13,11 @@ import logic.StreamLogic;
 import logic.TaskLogic;
 import model.StreamObject;
 import model.StreamTask;
+import parser.StreamCommand;
 import parser.StreamParser;
-import parser.StreamParser.CommandType;
-import parser.StreamParser.MarkType;
-import parser.StreamParser.SortType;
+import parser.StreamCommand.CommandType;
+import parser.MarkParser.MarkType;
+import parser.SortParser.SortType;
 import ui.StreamUI;
 import util.StreamConstants;
 import util.StreamExternals;
@@ -167,11 +168,11 @@ public class Stream {
 	}
 
 	//@author A0118007R
-	private void executeInput(CommandType command, Integer index, String content)
+	private void executeInput(CommandType command, Integer index, Object content)
 			throws StreamModificationException, StreamIOException {
 		switch (command) {
 			case ADD:
-				executeAdd(content);
+				executeAdd((String) content);
 				refreshUI();
 				break;
 
@@ -181,52 +182,52 @@ public class Stream {
 				break;
 
 			case DESC:
-				executeDescribe(index, content);
+				executeDescribe(index, (String) content);
 				refreshUI();
 				break;
 
 			case DUE:
-				executeDue(index, content);
+				executeDue(index, (Calendar) content);
 				refreshUI();
 				break;
 
 			case START:
-				executeStartTime(index, content);
+				executeStartTime(index, (Calendar) content);
 				refreshUI();
 				break;
 
 			case MODIFY:
-				executeModify(index, content);
+				executeModify(index, (String) content);
 				refreshUI();
 				break;
 
 			case NAME:
-				executeName(index, content);
+				executeName(index, (String) content);
 				refreshUI();
 				break;
 
 			case RANK:
-				executeRank(index, content);
+				executeRank(index, (String) content);
 				refreshUI();
 				break;
 
 			case MARK:
-				executeMark(index, content.trim());
+				executeMark(index, (MarkType) content);
 				refreshUI();
 				break;
 
 			case TAG:
-				executeTag(index, content);
+				executeTag(index, (String) content);
 				refreshUI();
 				break;
 
 			case UNTAG:
-				executeUntag(index, content);
+				executeUntag(index, (String) content);
 				refreshUI();
 				break;
 
 			case FILTER:
-				ArrayList<Integer> filterResult = executeFilter(content);
+				ArrayList<Integer> filterResult = executeFilter((String) content);
 				refreshUI(filterResult, true, true);
 				break;
 
@@ -235,12 +236,12 @@ public class Stream {
 				break;
 
 			case SEARCH:
-				ArrayList<Integer> searchResult = executeSearch(content);
+				ArrayList<Integer> searchResult = executeSearch((String) content);
 				refreshUI(searchResult, true, true);
 				break;
 
 			case SORT:
-				executeSort(content);
+				executeSort((String) content);
 				refreshUI();
 				break;
 
@@ -502,8 +503,6 @@ public class Stream {
 	private void executeRank(Integer taskIndex, String taskRank)
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
-		taskRank = StreamParser.translateRanking(StreamParser
-				.parseRanking(taskRank));
 		StreamTask currentTask = streamLogic.getTask(taskName);
 		String oldRank = currentTask.getRank();
 		currentTask.setRank(taskRank);
@@ -665,21 +664,20 @@ public class Stream {
 	 *            - the category to be used for marking
 	 * @throws StreamModificationException
 	 */
-	private void executeMark(Integer taskIndex, String markType)
+	private void executeMark(Integer taskIndex, MarkType markType)
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
-		MarkType parsedMarkType = StreamParser.parseMarking(markType);
 		StreamTask task = streamLogic.getTask(taskName);
 		String result = null;
-		result = processMarking(taskIndex, markType, parsedMarkType, task);
+		result = processMarking(taskIndex, markType, task);
 		stui.setActiveTask(task);
 		showAndLogResult(result);
 	}
 
-	private String processMarking(Integer taskIndex, String markType,
-			MarkType parsedMarkType, StreamTask task) {
+	private String processMarking(Integer taskIndex, MarkType markType,
+			StreamTask task) {
 		String result;
-		switch (parsedMarkType) {
+		switch (markType) {
 			case DONE:
 				result = markAsDone(task, taskIndex);
 				break;
@@ -698,7 +696,7 @@ public class Stream {
 	}
 
 	//@author A0118007R
-	private void executeDue(Integer taskIndex, String content)
+	private void executeDue(Integer taskIndex, Calendar content)
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		String result = null;
@@ -708,21 +706,13 @@ public class Stream {
 		showAndLogResult(result);
 	}
 
-	private String processDue(String content, int taskIndex, String taskName)
+	private String processDue(Calendar content, int taskIndex, String taskName)
 			throws StreamModificationException {
-		String result;
-		if (content.trim().equals("null")) {
-			result = setDueDate(taskName, taskIndex, null);
-		} else {
-			String due = content;
-			due = StreamUtil.parseWithChronic(due);
-			Calendar calendar = StreamUtil.parseCalendar(due);
-			result = setDueDate(taskName, taskIndex, calendar);
-		}
+		String result = setDueDate(taskName, taskIndex, content);
 		return result;
 	}
 
-	private void executeStartTime(Integer taskIndex, String content)
+	private void executeStartTime(Integer taskIndex, Calendar content)
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		String result = processStartTime(content, taskIndex, taskName);
@@ -731,17 +721,9 @@ public class Stream {
 		showAndLogResult(result);
 	}
 
-	private String processStartTime(String content, int taskIndex,
+	private String processStartTime(Calendar content, int taskIndex,
 			String taskName) throws StreamModificationException {
-		String result;
-		if (content.trim().equals("null")) {
-			result = setStartDate(taskName, taskIndex, null);
-		} else {
-			String start = content;
-			start = StreamUtil.parseWithChronic(start);
-			Calendar calendar = StreamUtil.parseCalendar(start);
-			result = setStartDate(taskName, taskIndex, calendar);
-		}
+		String result = setStartDate(taskName, taskIndex, content);
 		return result;
 	}
 
@@ -762,11 +744,11 @@ public class Stream {
 			sortBy = content == null ? "" : content;
 			order = "";
 		}
-		SortType type = StreamParser.parseSorting(sortBy);
+		SortType type = StreamParser.sp.parse(sortBy);
 		try {
-			descending = StreamParser.getSortingOrder(order);
-		} catch (StreamParserException e) {
-			// ignore exception
+			descending = StreamParser.sp.getOrder(order);
+		} catch (Exception e) {
+			// ok to ignore
 		}
 
 		result = processSorting(sortBy, descending, type);
@@ -1063,10 +1045,10 @@ public class Stream {
 
 	private void executeUserInput(String input) throws StreamParserException,
 			StreamModificationException, StreamIOException {
-		parser.interpretCommand(input, streamLogic.getNumberOfTasks());
-		CommandType command = parser.getCommandType();
-		Integer index = parser.getCommandIndex();
-		String content = parser.getCommandContent();
+		StreamCommand cmd = parser.interpretCommand(input, streamLogic.getNumberOfTasks());
+		CommandType command = cmd.getKey();
+		Integer index = cmd.getIndex();
+		Object content = cmd.getContent();
 		executeInput(command, index, content);
 	}
 

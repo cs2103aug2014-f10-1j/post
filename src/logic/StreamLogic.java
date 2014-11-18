@@ -11,8 +11,8 @@ import java.util.List;
 import com.mdimension.jchronic.Chronic;
 
 import parser.StreamParser;
-import parser.StreamParser.FilterType;
-import parser.StreamParser.RankType;
+import parser.FilterParser.FilterType;
+import parser.RankParser.RankType;
 import model.StreamObject;
 import model.StreamTask;
 import util.StreamConstants;
@@ -327,7 +327,7 @@ public class StreamLogic extends BaseLogic {
 	}
 
 	private int valueRank(String rank) {
-		switch (StreamParser.parseRanking(rank)) {
+		switch (StreamParser.rp.parse(rank)) {
 			case HI:
 				return 2;
 			case MED:
@@ -615,7 +615,7 @@ public class StreamLogic extends BaseLogic {
 	 */
 	public ArrayList<Integer> filterTasks(String criteria) {
 		ArrayList<Integer> tasks = new ArrayList<Integer>();
-		FilterType type = StreamParser.parseFilterType(criteria);
+		FilterType type = StreamParser.fp.parse(criteria);
 		String[] contents;
 		Calendar dueDate;
 		for (int i = 1; i <= streamObject.size(); i++) {
@@ -632,17 +632,17 @@ public class StreamLogic extends BaseLogic {
 					}
 					break;
 				case HIRANK:
-					if (StreamParser.parseRanking(task.getRank()) == RankType.HI) {
+					if (StreamParser.rp.parse(task.getRank()) == RankType.HI) {
 						tasks.add(i);
 					}
 					break;
 				case MEDRANK:
-					if (StreamParser.parseRanking(task.getRank()) == RankType.MED) {
+					if (StreamParser.rp.parse(task.getRank()) == RankType.MED) {
 						tasks.add(i);
 					}
 					break;
 				case LORANK:
-					if (StreamParser.parseRanking(task.getRank()) == RankType.LO) {
+					if (StreamParser.rp.parse(task.getRank()) == RankType.LO) {
 						tasks.add(i);
 					}
 					break;
