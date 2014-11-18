@@ -23,7 +23,6 @@ import util.StreamConstants;
 import util.StreamExternals;
 import util.StreamLogger;
 import util.StreamLogger.LogLevel;
-import util.StreamUtil;
 
 //@author A0093874N
 
@@ -75,6 +74,27 @@ public class StreamUI {
 	private ArrayList<Integer> availIndices;
 	private StreamTask activeTask;
 
+	private static final String LOG_PAGE_MOVED = "Task viewer moved to page %1$s/%2$s";
+	private static final String LOG_REFRESH = "Task viewer refreshed with %1$s new tasks";
+	private static final String LOG_DETAILS = "Displaying details for %1$s";
+
+	private static final String TEXT_TITLE = "STREAM "
+			+ StreamConstants.VERSION + ": Simple Task Reader and Manager";
+	private static final String TEXT_FOOTER = "Copyright \u00a9 2014 CS2103AUG2014-F10-01J."
+			+ " All rights reserved.";
+	static final String TEXT_WELCOME = "Welcome to STREAM "
+			+ StreamConstants.VERSION + "!";
+
+	private static final String TITLE_HELP = "Help for STREAM";
+	private static final String TEXT_HELP = "<html><body width='400'><h2>"
+			+ TEXT_WELCOME
+			+ "</h2><p>Here are some keywords that you can use:</p>"
+			+ "<p>add, delete, name, rank, start, due, tag, mark, modify,"
+			+ "view, search, sort, filter, clrsrc, page, undo, exit</p><p>"
+			+ "Our smart helper will tell you what each command does and assist you "
+			+ "in syntax suggestion.</p><p>Visit our page at https://github.com/cs2103aug2014-f10-1j/main "
+			+ "for more comprehensive user guide!";
+
 	public StreamUI(Stream str) {
 
 		initParams(str);
@@ -93,7 +113,7 @@ public class StreamUI {
 		addPageNumber();
 		addFooter();
 		setFocusTraversal();
-		log(StreamConstants.Message.WELCOME, false);
+		log(TEXT_WELCOME, false);
 		presentToUser();
 	}
 
@@ -126,7 +146,7 @@ public class StreamUI {
 		int index = availTasks.indexOf(activeTask);
 		assert (index >= 0) : StreamConstants.Assertion.TASK_TAG_NOTFOUND;
 		int page = index / StreamConstants.UI.MAX_VIEWABLE_TASK + 1;
-		repopulateTaskView(page);
+		goToPage(page);
 		fadeBorder(shownTasks[index % StreamConstants.UI.MAX_VIEWABLE_TASK]);
 		isTaskHighlighted = true;
 	}
@@ -195,23 +215,25 @@ public class StreamUI {
 	private void addAutocomplete() {
 		HashMap<String, String> helpTexts = new HashMap<String, String>();
 		helpTexts.put("add",
-				"add (task name) (properties): Add a new task here");
+				"add (task name) (properties): Adds a new task here");
 		helpTexts
 				.put("due",
-						"due (index) (time): Set the deadline for a task based on index number");
+						"due (index) (time): Sets the deadline for a task based on index number");
+		helpTexts
+				.put("end",
+						"end (index) (time): Sets the end time for a task based on index number");
 		helpTexts
 				.put("start",
-						"start (index) (time): Set the start time for a task based on index number");
+						"start (index) (time): Sets the start time for a task based on index number");
 		helpTexts
 				.put("search",
 						"search (keyphrase): Searches tasks by its name, description, or tags");
-		helpTexts.put("delete", "delete (index): Delete based on index number");
-		helpTexts.put("del", "del (index): Delete based on index number");
-
+		helpTexts
+				.put("delete", "delete (index): Deletes based on index number");
+		helpTexts.put("del", "del (index): Deletes based on index number");
 		helpTexts
 				.put("desc",
 						"desc (index) (description): Sets a description to a task based on index number");
-
 		helpTexts
 				.put("describe",
 						"describe (index) (description): Sets a description to a task based on index number");
@@ -219,18 +241,19 @@ public class StreamUI {
 				"filter (criteria): Filters tasks by dates or ranks");
 		helpTexts.put("mark",
 				"mark (index) (mark type): Marks task as done or ongoing");
-		helpTexts.put("modify",
-				"Modifies multiple parameters of a task in one go");
+		helpTexts
+				.put("modify",
+						"modify (index) (properties): Modifies multiple parameters of a task in one go");
 		helpTexts.put("view", "view (index): Views the details of a task");
 		helpTexts
 				.put("tag",
-						"tag (index) (tag1) ... (tagN): Add tags to a task based on index number.");
+						"tag (index) (tag1) ... (tagN): Adds tags to a task based on index number");
 		helpTexts
 				.put("name",
-						"name (index) (new name): Changes a task's name based on index number.");
+						"name (index) (new name): Changes a task's name based on index number");
 		helpTexts
 				.put("untag",
-						"tag (index) (tag1) ... (tagN): Remove tags of a task based on index number.");
+						"tag (index) (tag1) ... (tagN): Removes tags of a task based on index number");
 		helpTexts
 				.put("sort",
 						"sort (criteria): Sorts tasks by alphabetical or chronological order");
@@ -239,13 +262,13 @@ public class StreamUI {
 				.put("clrsrc", "CLeaR SeaRCh - Clears search or filter result");
 		helpTexts
 				.put("rank",
-						"rank (index) (rank type): Change the rank of a certain task based on index number");
+						"rank (index) (rank type): Changes the rank of a task based on index number");
 		helpTexts.put("first ", "Go to the first page");
 		helpTexts.put("last", "Go to the last page");
 		helpTexts.put("next", "Go to the next page");
 		helpTexts.put("prev", "Go to the previous page");
 		helpTexts.put("page", "page (page): Go to a specific page");
-		helpTexts.put("undo", "Undo the last action");
+		helpTexts.put("undo", "Undoes the last action");
 		helpTexts.put("help", "Opens the help dialog box");
 		helpTexts.put("exit", "Exits the program");
 		for (String h : helpTexts.keySet()) {
@@ -270,7 +293,7 @@ public class StreamUI {
 		shortcut.put('p', "page ");
 		shortcut.put('h', "help");
 		shortcut.put('e', "exit");
-		shortcut.put('c', "");
+		shortcut.put('c', ""); // placeholder shortcut to reset
 		for (Character c : shortcut.keySet()) {
 			empowerKeyboardShortcuts(c, shortcut.get(c));
 		}
@@ -304,7 +327,7 @@ public class StreamUI {
 	 * Constructs the main frame for Stream's User Interface.
 	 */
 	private void addMainFrame() {
-		mainFrame = new JFrame(StreamConstants.Message.TEXT_TITLE);
+		mainFrame = new JFrame(TEXT_TITLE);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(StreamConstants.UI.WIDTH_MAINFRAME,
 				StreamConstants.UI.HEIGHT_MAINFRAME);
@@ -398,7 +421,7 @@ public class StreamUI {
 	 * Constructs the footer portion.
 	 */
 	private void addFooter() {
-		JLabel footer = new JLabel(StreamConstants.Message.TEXT_FOOTER);
+		JLabel footer = new JLabel(TEXT_FOOTER);
 		footer.setFont(StreamConstants.UI.FONT_FOOTER);
 		footer.setHorizontalAlignment(SwingConstants.RIGHT);
 		footer.setBounds(StreamConstants.UI.BOUNDS_FOOTER);
@@ -431,11 +454,9 @@ public class StreamUI {
 	 */
 	private void empowerKeyboardShortcuts(char key, String cmd) {
 		feedback.getInputMap().put(KeyStroke.getKeyStroke(key), cmd);
-		feedback.getActionMap().put(cmd,
-				new KeyboardShortcut(console, cmd));
+		feedback.getActionMap().put(cmd, new KeyboardShortcut(console, cmd));
 		logger.getInputMap().put(KeyStroke.getKeyStroke(key), cmd);
-		logger.getActionMap().put(cmd,
-				new KeyboardShortcut(console, cmd));
+		logger.getActionMap().put(cmd, new KeyboardShortcut(console, cmd));
 	}
 
 	/**
@@ -461,7 +482,7 @@ public class StreamUI {
 	 * @param page
 	 *            - the page number to be shown
 	 */
-	public void repopulateTaskView(int page) {
+	public void goToPage(int page) {
 		if (page > totalPage) {
 			page = totalPage;
 		} else if (page < 1) {
@@ -479,10 +500,9 @@ public class StreamUI {
 				taskPanel.hideView();
 			}
 		}
-		pageNumber.setText(String.format(StreamConstants.Message.TEXT_PAGE_NUM,
-				pageShown, totalPage));
+		pageNumber.setText(Displayer.displayPageNumber(pageShown, totalPage));
 		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
-				"Task viewer moved to page " + pageShown + "/" + totalPage);
+				String.format(LOG_PAGE_MOVED, pageShown, totalPage));
 	}
 
 	/**
@@ -515,23 +535,23 @@ public class StreamUI {
 			 * resetting or clearing search result automatically resets the view
 			 * back to first page
 			 */
-			repopulateTaskView(1);
+			goToPage(1);
 			isSearch = isSearching;
 		} else {
 			if ((int) Math.ceil(1.0 * tasks.size()
 					/ StreamConstants.UI.MAX_VIEWABLE_TASK) < pageShown) {
 				// last task in the last page deleted: move back one page
 				assert (pageShown != 1) : StreamConstants.Assertion.NO_PREV_PAGE;
-				repopulateTaskView(pageShown - 1);
+				goToPage(pageShown - 1);
 			} else {
-				repopulateTaskView(pageShown);
+				goToPage(pageShown);
 			}
 		}
 		if (activeTask != null && !isTaskHighlighted) {
 			highlightActiveTaskView();
 		}
 		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
-				"Task viewer refreshed with " + indices.size() + " new tasks");
+				String.format(LOG_REFRESH, indices.size()));
 	}
 
 	/**
@@ -558,18 +578,9 @@ public class StreamUI {
 	 *            from
 	 */
 	public void displayDetails(StreamTask task) {
-		JOptionPane.showMessageDialog(mainFrame, String.format(
-				StreamConstants.Message.DETAILS_CONTENT,
-				task.getTaskName(),
-				StreamUtil.displayStatus(task),
-				StreamUtil.displayTime(task.getStartTime(),
-						task.getDeadline()),
-				StreamUtil.displayDescription(task.getDescription()),
-				StreamUtil.displayTags(task.getTags()), task.getRank()), String
-				.format(StreamConstants.Message.DETAILS_HEADER,
-						task.getTaskName()), JOptionPane.INFORMATION_MESSAGE);
-		loggerDoc.log(StreamLogger.LogLevel.DEBUG, "Displaying details for"
-				+ task.getTaskName());
+		Displayer.displayDetails(mainFrame, task);
+		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
+				String.format(LOG_DETAILS, task.getTaskName()));
 	}
 
 	/**
@@ -586,7 +597,7 @@ public class StreamUI {
 	 * Navigates to the first page.
 	 */
 	public void goToFirstPage() {
-		repopulateTaskView(1);
+		goToPage(1);
 	}
 
 	/**
@@ -594,7 +605,7 @@ public class StreamUI {
 	 */
 	public void goToPrevPage() {
 		if (pageShown != 1) {
-			repopulateTaskView(pageShown - 1);
+			goToPage(pageShown - 1);
 		}
 	}
 
@@ -603,7 +614,7 @@ public class StreamUI {
 	 */
 	public void goToNextPage() {
 		if (pageShown != totalPage) {
-			repopulateTaskView(pageShown + 1);
+			goToPage(pageShown + 1);
 		}
 	}
 
@@ -611,7 +622,7 @@ public class StreamUI {
 	 * Navigates to the last page.
 	 */
 	public void goToLastPage() {
-		repopulateTaskView(totalPage);
+		goToPage(totalPage);
 	}
 
 	/**
@@ -619,7 +630,7 @@ public class StreamUI {
 	 */
 	public void openHelpBox() {
 		JOptionPane.showMessageDialog(mainFrame,
-				StreamConstants.Message.UI_HELP);
+				TEXT_HELP, TITLE_HELP, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	//@author A0093874N-unused

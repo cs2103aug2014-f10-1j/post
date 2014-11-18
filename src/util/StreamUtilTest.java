@@ -5,14 +5,13 @@ package util;
 
 import static org.junit.Assert.*;
 
-import model.StreamTask;
-
 import org.junit.Test;
 
 @SuppressWarnings("deprecation")
 public class StreamUtilTest {
 	
 	//Tests for display description
+	/*
 	@Test //null input value
 	public void displayDescriptionTest1() {
 		String description = StreamUtil.displayDescription(null);
@@ -40,7 +39,7 @@ public class StreamUtilTest {
 		String status = StreamUtil.displayStatus(myTask);
 		assertEquals(status, "ongoing");
 	}
-	
+	*/
 	//Tests parseWithChronic
 	/*
 	@Test

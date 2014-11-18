@@ -53,7 +53,7 @@ public class ConsoleUI extends JTextField implements KeyListener,
 	private static final String DEFAULT_HELP_TEXT = "Press space to fill";
 	private static final String UNKNOWN_COMMAND = "Warning: unknown command";
 	private static final String COMMAND_PROMPT = "Enter your command here";
-	private static final String HELP_TEXT_EMPTY = StreamConstants.Message.WELCOME
+	private static final String HELP_TEXT_EMPTY = StreamUI.TEXT_WELCOME
 			+ " Type \"help\" and press enter to get some assistance!";
 
 	private static final int GUESS_NOT_FOUND = -1;

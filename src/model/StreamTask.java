@@ -3,8 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import util.StreamConstants;
-
 //@author A0118007R
 /**
  * This class is the StreamTask class - the task object acting as the heart of
@@ -283,8 +281,8 @@ public class StreamTask {
 		} else {
 			strDeadline = deadline.get(Calendar.DATE)
 					+ " "
-					+ StreamConstants.Calendar.MONTHS[(deadline
-							.get(Calendar.MONTH))] + " "
+				/*	+ StreamConstants.Calendar.MONTHS[(deadline
+							.get(Calendar.MONTH))] + " "*/
 					+ deadline.get(Calendar.YEAR);
 		}
 		System.out.println("Deadline = " + strDeadline);

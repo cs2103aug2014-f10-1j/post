@@ -9,7 +9,6 @@ import javax.swing.SwingConstants;
 import model.StreamTask;
 import util.StreamConstants;
 import util.StreamExternals;
-import util.StreamUtil;
 
 //@author A0093874N
 
@@ -171,10 +170,9 @@ public class TaskViewUI extends JPanel {
 	}
 
 	private void updateBasicParams(Integer ind, String name, String desc) {
-		index.setText(String.format(StreamConstants.Message.TEXT_INDEX,
-				ind.toString()));
+		index.setText(Displayer.displayIndex(ind));
 		taskName.setText(name);
-		descLabel.setText(StreamUtil.displayDescription(desc));
+		descLabel.setText(Displayer.displayDescription(desc));
 		setVisible(true);
 	}
 

@@ -19,19 +19,11 @@ public class StreamConstants {
 	public static final String SAVEFILE_EXTENSION = ".json";
 	public static final String SAVEFILE_FORMAT = "%1$s" + SAVEFILE_EXTENSION;
 	public static final String LOGFILE_FORMAT = "%1$s.txt";
-	public static final String DATE_DELIMITER = "/";
-	public static final String TIME_DELIMITER = ":";
 	public static final String PREFIX_INPUT = "<< ";
 	public static final String PREFIX_OUTPUT = ">> ";
 	public static final String[] MODIFICATION_ATTRIBUTES = { "-name", "-desc",
 			"-start", "-from", "-due", "-by", "-tag", "-untag", "-settags",
 			"-rank", "-mark", "-to" };
-
-	public static class Calendar {
-		public static final String[] MONTHS = { "January", "February", "March",
-				"April", "May", "June", "July", "August", "September",
-				"October", "November", "December" };
-	}
 
 	public static class ComponentTag {
 		public static final String STREAM = "stream";
@@ -143,29 +135,6 @@ public class StreamConstants {
 		public static final String EMPTY_INVERSE_COMMAND = "Empty inverse command";
 		public static final String EMPTY_INVERSE_ORDER = "Empty inverse order";
 		public static final String NULL_INVERSE_TASK = "Null inverse task";
-	}
-
-	public static class Message {
-		public static final String WELCOME = "Welcome to Stream " + VERSION
-				+ "!";
-		public static final String THANK_YOU = "Thank you for using this internal release of Stream[BETA]!";
-
-		public static final String TEXT_TITLE = "STREAM " + VERSION
-				+ ": Simple Task Reader and Manager";
-		public static final String TEXT_FOOTER = "Copyright \u00a9 2014 CS2103AUG2014-F10-01J. All rights reserved.";
-		public static final String TEXT_INDEX = "#%1$s";
-		public static final String TEXT_PAGE_NUM = "Page %1$s/%2$s";
-
-		public static final String DETAILS_HEADER = "Details for %1$s";
-		public static final String DETAILS_CONTENT = "<html><body width='400'><p>Task name: %1$s</p><p>Status: %2$s</p><p>Timing: %3$s</p><p>Description: %4$s</p><p>Tags: %5$s</p><p>Rank: %6$s</p>";
-		public static final Object UI_HELP = "<html><body width='400'><h2>"
-				+ WELCOME
-				+ "</h2><p>Here are some keywords that you can use:</p>"
-				+ "<p>add, delete, name, rank, start, due, tag, mark, modify,"
-				+ "view, search, sort, filter, clrsrc, page, undo, exit</p><p>"
-				+ "Our smart helper will tell you what each command does and assist you "
-				+ "in syntax suggestion.</p><p>Visit our page at https://github.com/cs2103aug2014-f10-1j/main "
-				+ "for more comprehensive user guide!";
 	}
 
 	public static class ExceptionMessage {

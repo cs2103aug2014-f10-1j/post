@@ -52,13 +52,13 @@ public class MarkParser implements BaseParser {
 		assert (obj instanceof MarkType) : "ERROR";
 		switch ((MarkType) obj) {
 			case DONE:
-				return "Done";
+				return "done";
 			case NOT:
-				return "Ongoing";
+				return "ongoing";
 			case OVERDUE:
-				return "Overdue";
+				return "overdue";
 			case INACTIVE:
-				return "Inactive";
+				return "inactive";
 			default:
 				return null;
 		}

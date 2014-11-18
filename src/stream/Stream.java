@@ -50,6 +50,8 @@ public class Stream {
 
 	private String filename;
 
+	private static final String THANK_YOU = "Thank you for using STREAM!";
+	
 	//@author A0118007R
 	/**
 	 * Stream Constructor to initialize the program.
@@ -290,7 +292,7 @@ public class Stream {
 				break;
 
 			case PAGE:
-				stui.repopulateTaskView(index);
+				stui.goToPage(index);
 				break;
 
 			case HELP:
@@ -782,7 +784,8 @@ public class Stream {
 	}
 
 	private void executeExit() {
-		showAndLogResult(StreamConstants.Message.THANK_YOU);
+		showAndLogResult(THANK_YOU);
+		System.out.println(THANK_YOU);
 		save();
 		try {
 			saveLogFile();

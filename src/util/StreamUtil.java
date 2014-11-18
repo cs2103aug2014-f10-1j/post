@@ -6,9 +6,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import parser.StreamParser;
-import model.StreamTask;
-
 /**
  * A class to contain helper methods (methods that help some of Stream's
  * processes but don't really have anything to do with the nature of Stream's
@@ -39,75 +36,6 @@ public class StreamUtil {
 		return result.substring(connector.length());
 	}
 
-	/**
-	 * Displays task description to user.
-	 * 
-	 * @param desc
-	 *            - the task description, <b>null</b> if not specified
-	 * @return <b>String</b> - the task description
-	 */
-	public static String displayDescription(String desc) {
-		if (desc == null) {
-			return "no description provided";
-		} else {
-			return desc;
-		}
-	}
-
-	/**
-	 * Displays tags to user nicely.
-	 * 
-	 * @param tags
-	 *            - array of tags
-	 * @return <b>String</b> - the listed down tags
-	 */
-	public static String displayTags(ArrayList<String> tags) {
-		if (tags.size() == 0) {
-			return "no tags added";
-		} else {
-			return listDownArrayContent(tags, ", ");
-		}
-	}
-
-	/**
-	 * Displays the status of a task to user.
-	 * 
-	 * @param task
-	 * @return <b>String</b> - the task status
-	 */
-	public static String displayStatus(StreamTask task) {
-		if (task.isDone()) {
-			return "done";
-		} else if (task.isOverdue()) {
-			return "overdue";
-		} else if (task.isInactive()) {
-			return "inactive";
-		} else {
-			return "ongoing";
-		}
-	}
-
-	/**
-	 * Checks two calendars <i>startTime</i> and <i>endTime</i>, formats them
-	 * when applicable, and present to user accordingly depending on the
-	 * existence of each.
-	 * 
-	 * @return <b>String</b> - the properly formatted and presentable time
-	 */
-	public static String displayTime(Calendar startTime, Calendar endTime) {
-		if (startTime == null && endTime == null) {
-			return "no timing specified";
-		} else if (startTime == null) {
-			return "by " + StreamParser.tp.translate(endTime);
-		} else if (endTime == null) {
-			// is there a task like this?
-			return "from " + StreamParser.tp.translate(startTime);
-		} else {
-			return "from " + StreamParser.tp.translate(startTime) + " to "
-					+ StreamParser.tp.translate(endTime);
-		}
-	}
-	
 	/**
 	 * Decorates a <i>logMessage</i> to make it look like terminal input.
 	 * 
