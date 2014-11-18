@@ -1,15 +1,15 @@
 package util;
 
 //@author A0118007R
+// many tests are obsolete now
 
 import static org.junit.Assert.*;
-
-import java.util.Calendar;
 
 import model.StreamTask;
 
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class StreamUtilTest {
 	
 	//Tests for display description
@@ -42,6 +42,7 @@ public class StreamUtilTest {
 	}
 	
 	//Tests parseWithChronic
+	/*
 	@Test
 	public void parseWithChronicTest1() {
 		String date = "now";
@@ -51,7 +52,7 @@ public class StreamUtilTest {
 		String nowCalendar = StreamUtil.getCalendarWriteUp(now);
 		String calendarWriteUp = StreamUtil.getCalendarWriteUp(parsedCalendar);
 		assertEquals(nowCalendar, calendarWriteUp);
-	}
+	}*/
 	
 	//Tests getMonthIndex
 	@Test

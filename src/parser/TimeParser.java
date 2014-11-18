@@ -53,7 +53,7 @@ public class TimeParser implements BaseParser {
 		}
 	}
 
-	public static String addZeroToTime(Integer time) {
+	public String addZeroToTime(Integer time) {
 		String convertedTime = time.toString();
 		if (time < 10) {
 			convertedTime = "0" + convertedTime;
@@ -61,7 +61,7 @@ public class TimeParser implements BaseParser {
 		return convertedTime;
 	}
 
-	public static String getMonthAbbrev(int mon) {
+	public String getMonthAbbrev(int mon) {
 		return MONTHS[mon].substring(0, 3).toUpperCase();
 	}
 

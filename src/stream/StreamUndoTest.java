@@ -12,8 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import parser.StreamParser;
 import util.StreamConstants;
-import util.StreamUtil;
 import fileio.StreamIO;
 
 // @author A0093874N
@@ -149,7 +149,7 @@ public class StreamUndoTest {
 		assertEquals(
 				"has date 11/11",
 				"11 November 2014 12:00:00",
-				StreamUtil.getCalendarWriteUp(st.streamLogic.getTask(
+				StreamParser.tp.translate(st.streamLogic.getTask(
 						taskNameForTest).getDeadline()));
 		assertEquals("has description", "multiple inputs", st.streamLogic
 				.getTask(taskNameForTest).getDescription());

@@ -6,10 +6,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import parser.StreamParser;
 import model.StreamTask;
-
-import com.mdimension.jchronic.Chronic;
-import com.mdimension.jchronic.utils.Span;
 
 /**
  * A class to contain helper methods (methods that help some of Stream's
@@ -90,19 +88,26 @@ public class StreamUtil {
 	}
 
 	/**
-	 * A utility function to add 0 to <i>time</i> less than 10, e.g from 9 to
-	 * 09.
+	 * Checks two calendars <i>startTime</i> and <i>endTime</i>, formats them
+	 * when applicable, and present to user accordingly depending on the
+	 * existence of each.
 	 * 
-	 * @return <b>String</b> - the time appended with 0 when applicable
+	 * @return <b>String</b> - the properly formatted and presentable time
 	 */
-	public static String addZeroToTime(Integer time) {
-		String convertedTime = time.toString();
-		if (time < 10) {
-			convertedTime = "0" + convertedTime;
+	public static String displayTime(Calendar startTime, Calendar endTime) {
+		if (startTime == null && endTime == null) {
+			return "no timing specified";
+		} else if (startTime == null) {
+			return "by " + StreamParser.tp.translate(endTime);
+		} else if (endTime == null) {
+			// is there a task like this?
+			return "from " + StreamParser.tp.translate(startTime);
+		} else {
+			return "from " + StreamParser.tp.translate(startTime) + " to "
+					+ StreamParser.tp.translate(endTime);
 		}
-		return convertedTime;
 	}
-
+	
 	/**
 	 * Decorates a <i>logMessage</i> to make it look like terminal input.
 	 * 
@@ -145,92 +150,6 @@ public class StreamUtil {
 		return true;
 	}
 
-	/**
-	 * Checks two calendars <i>startTime</i> and <i>endTime</i>, formats them
-	 * when applicable, and present to user accordingly depending on the
-	 * existence of each.
-	 * 
-	 * @return <b>String</b> - the properly formatted and presentable time
-	 */
-	public static String getWrittenTime(Calendar startTime, Calendar endTime) {
-		if (startTime == null && endTime == null) {
-			return "no timing specified";
-		} else if (startTime == null) {
-			return "by " + getCalendarWriteUp(endTime);
-		} else if (endTime == null) {
-			// is there a task like this?
-			return "from " + getCalendarWriteUp(startTime);
-		} else {
-			return "from " + getCalendarWriteUp(startTime) + " to "
-					+ getCalendarWriteUp(endTime);
-		}
-	}
-
-	/**
-	 * Converts a <i>calendar</i> to format dd MONTHNAME yyyy hh:mm:ss.
-	 * 
-	 * @return <b>String</b> - the converted calendar
-	 */
-	public static String getCalendarWriteUp(Calendar calendar) {
-		return addZeroToTime(calendar.get(Calendar.DAY_OF_MONTH)) + " "
-				+ StreamConstants.Calendar.MONTHS[calendar.get(Calendar.MONTH)]
-				+ " " + calendar.get(Calendar.YEAR) + " "
-				+ addZeroToTime(calendar.get(Calendar.HOUR_OF_DAY))
-				+ StreamConstants.TIME_DELIMITER
-				+ addZeroToTime(calendar.get(Calendar.MINUTE))
-				+ StreamConstants.TIME_DELIMITER
-				+ addZeroToTime(calendar.get(Calendar.SECOND));
-	}
-
-	/**
-	 * Converts a dd MONTHNAME yyyy hh:mm:ss calendar to dd MONTHNAME yyyy hh mm
-	 * ss.
-	 * 
-	 * @param str
-	 *            - a converted calendar
-	 * @return <b>String</b> - another converted calendar
-	 */
-	public static String stripCalendarChars(String str) {
-		str = str.replaceAll(StreamConstants.TIME_DELIMITER, " ");
-		return str;
-	}
-
-	/**
-	 * Gets the abbreviated month name, e.g JAN, FEB, ...
-	 * 
-	 * @param mon
-	 *            - the month index
-	 * @return <b>String</b> - the abbreviated month name
-	 */
-	public static String getMonthAbbrev(int mon) {
-		return StreamConstants.Calendar.MONTHS[mon].substring(0, 3)
-				.toUpperCase();
-	}
-
-	/**
-	 * Checks whether a particular <b>String</b> is parseable by JChronic to
-	 * form a <b>Calendar<b>
-	 * 
-	 * @param date
-	 *            - the <b>String</b> to be parsed
-	 * @return <b>boolean</b> - indicates whether parsing can be done or not
-	 */
-	public static boolean isParseableDate(String date) {
-		if (date.trim().equals("null")) {
-			/*
-			 * special case: we allow "null" since this is to indicate null
-			 * timing
-			 */
-			return true;
-		}
-		try {
-			Chronic.parse(date).getBeginCalendar();
-			return true;
-		} catch (NullPointerException e) {
-			return false;
-		}
-	}
-
 	//@author A0096529N
 
 	public static final SimpleDateFormat cleanDateFormat = new SimpleDateFormat(
@@ -246,92 +165,6 @@ public class StreamUtil {
 	}
 
 	//@author A0118007R
-
-	/**
-	 * With the help of JChronic, parses a <b>String</b> <i>due</i> and tries to
-	 * get a proper calendar from it when possible, or simply return <i>due</i>
-	 * itself if fails.
-	 * 
-	 * @param due
-	 *            - the <b> String to be parsed
-	 * @return <b>String</b> - the parse result, regardless of successful or not
-	 */
-	public static String parseWithChronic(String due) {
-		Span x;
-		try {
-			x = Chronic.parse(due);
-			Calendar begin = x.getBeginCalendar();
-			String calendarWriteUp = StreamUtil.getCalendarWriteUp(begin);
-			due = StreamUtil.stripCalendarChars(calendarWriteUp);
-		} catch (NullPointerException e) {
-			System.out.println("\"" + due + "\" cannot be parsed");
-			// TODO change to logging... show to user?
-		}
-		return due;
-	}
-
-	/**
-	 * Parses <i>contents</i> back to <b>Calendar</b> format.
-	 * 
-	 * @param contents
-	 *            - the <b>String</b> to be parsed
-	 * @return <b>Calendar</b>
-	 */
-	public static Calendar parseCalendar(String contents) {
-		String[] dueDate = contents.split(" ");
-		int[] dueDateParameters = new int[dueDate.length];
-		for (int i = 0; i < dueDate.length; i++) {
-			if (i != 1) {
-				dueDateParameters[i] = Integer.parseInt(dueDate[i].trim());
-			}
-		}
-		int date = dueDateParameters[0];
-		int month = getMonthIndex(dueDate[1]);
-		int year = dueDateParameters[2];
-		int hour = dueDateParameters[3];
-		int minute = dueDateParameters[4];
-		int second = dueDateParameters[5];
-		Calendar calendar = new GregorianCalendar(year, month - 1, date, hour,
-				minute, second);
-		return calendar;
-	}
-
-	/**
-	 * Gets the month index of <i>month</i>, i.e January is 1, February is 2,
-	 * ...
-	 * 
-	 * @return <b>int</b> - the month index of <i>month</i>
-	 */
-	public static int getMonthIndex(String month) {
-		switch (month) {
-			case "January":
-				return 1;
-			case "February":
-				return 2;
-			case "March":
-				return 3;
-			case "April":
-				return 4;
-			case "May":
-				return 5;
-			case "June":
-				return 6;
-			case "July":
-				return 7;
-			case "August":
-				return 8;
-			case "September":
-				return 9;
-			case "October":
-				return 10;
-			case "November":
-				return 11;
-			case "December":
-				return 12;
-			default:
-				return 0;
-		}
-	}
 
 	/**
 	 * Checks whether <i>param</i> is a valid modifier attribute for Stream
@@ -483,7 +316,8 @@ public class StreamUtil {
 	 * @deprecated not needed
 	 */
 	public static String getCalendarWriteUpForUndo(Calendar calendar) {
-		return addZeroToTime(calendar.get(Calendar.MONTH) + 1)
+		return null;
+		/*return addZeroToTime(calendar.get(Calendar.MONTH) + 1)
 				+ StreamConstants.DATE_DELIMITER
 				+ addZeroToTime(calendar.get(Calendar.DAY_OF_MONTH))
 				+ StreamConstants.DATE_DELIMITER + calendar.get(Calendar.YEAR)
@@ -491,6 +325,96 @@ public class StreamUtil {
 				+ StreamConstants.TIME_DELIMITER
 				+ addZeroToTime(calendar.get(Calendar.MINUTE))
 				+ StreamConstants.TIME_DELIMITER
-				+ addZeroToTime(calendar.get(Calendar.SECOND));
+				+ addZeroToTime(calendar.get(Calendar.SECOND));*/
 	}
+	
+	/**
+	 * With the help of JChronic, parses a <b>String</b> <i>due</i> and tries to
+	 * get a proper calendar from it when possible, or simply return <i>due</i>
+	 * itself if fails.
+	 * 
+	 * @param due
+	 *            - the <b> String to be parsed
+	 * @return <b>String</b> - the parse result, regardless of successful or not
+	 * @deprecated use TimeParser now
+	 */
+	public static String parseWithChronic(String due) {
+		//Span x;
+		try {
+			//x = Chronic.parse(due);
+			//Calendar begin = x.getBeginCalendar();
+			//String calendarWriteUp = StreamUtil.getCalendarWriteUp(begin);
+			//due = StreamUtil.stripCalendarChars(calendarWriteUp);
+		} catch (NullPointerException e) {
+			System.out.println("\"" + due + "\" cannot be parsed");
+			// TODO change to logging... show to user?
+		}
+		return due;
+	}
+
+	/**
+	 * Parses <i>contents</i> back to <b>Calendar</b> format.
+	 * 
+	 * @param contents
+	 *            - the <b>String</b> to be parsed
+	 * @return <b>Calendar</b>
+	 * @deprecated use TimeParser now
+	 */
+	public static Calendar parseCalendar(String contents) {
+		String[] dueDate = contents.split(" ");
+		int[] dueDateParameters = new int[dueDate.length];
+		for (int i = 0; i < dueDate.length; i++) {
+			if (i != 1) {
+				dueDateParameters[i] = Integer.parseInt(dueDate[i].trim());
+			}
+		}
+		int date = dueDateParameters[0];
+		int month = getMonthIndex(dueDate[1]);
+		int year = dueDateParameters[2];
+		int hour = dueDateParameters[3];
+		int minute = dueDateParameters[4];
+		int second = dueDateParameters[5];
+		Calendar calendar = new GregorianCalendar(year, month - 1, date, hour,
+				minute, second);
+		return calendar;
+	}
+
+	/**
+	 * Gets the month index of <i>month</i>, i.e January is 1, February is 2,
+	 * ...
+	 * 
+	 * @return <b>int</b> - the month index of <i>month</i>
+	 * @deprecated use TimeParser now
+	 */
+	public static int getMonthIndex(String month) {
+		switch (month) {
+			case "January":
+				return 1;
+			case "February":
+				return 2;
+			case "March":
+				return 3;
+			case "April":
+				return 4;
+			case "May":
+				return 5;
+			case "June":
+				return 6;
+			case "July":
+				return 7;
+			case "August":
+				return 8;
+			case "September":
+				return 9;
+			case "October":
+				return 10;
+			case "November":
+				return 11;
+			case "December":
+				return 12;
+			default:
+				return 0;
+		}
+	}
+
 }

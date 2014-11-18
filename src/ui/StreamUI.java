@@ -59,9 +59,9 @@ public class StreamUI {
 
 	private JFrame mainFrame;
 	private JPanel contentPanel;
-	private StreamUIConsole console;
-	private StreamUIFeedback feedback;
-	private StreamUILogger logger;
+	private ConsoleUI console;
+	private FeedbackUI feedback;
+	private LoggerUI logger;
 	private JLabel pageNumber;
 	private static final StreamLogger loggerDoc = StreamLogger
 			.init(StreamConstants.ComponentTag.STREAMUI);
@@ -70,7 +70,7 @@ public class StreamUI {
 	private boolean isTaskHighlighted;
 	private int pageShown;
 	private int totalPage;
-	private StreamTaskView[] shownTasks;
+	private TaskViewUI[] shownTasks;
 	private ArrayList<StreamTask> availTasks;
 	private ArrayList<Integer> availIndices;
 	private StreamTask activeTask;
@@ -86,7 +86,7 @@ public class StreamUI {
 		addFeedbackBox();
 		addConsole();
 		addAutocomplete();
-		empowerConsole(new StreamUIConsoleEnterAction(stream, console));
+		empowerConsole(new ConsoleEnterAction(stream, console));
 		addLogger();
 		addKeyboardShortcuts();
 		addNavigShortcuts();
@@ -140,7 +140,7 @@ public class StreamUI {
 	 * @param taskView
 	 *            to execute the fade effect on
 	 */
-	private void fadeBorder(final StreamTaskView taskView) {
+	private void fadeBorder(final TaskViewUI taskView) {
 		new Thread() {
 			@Override
 			public void run() {
@@ -297,7 +297,7 @@ public class StreamUI {
 		Vector<Component> order = new Vector<Component>(2);
 		order.add(console);
 		order.add(logger);
-		mainFrame.setFocusTraversalPolicy(new StreamUIFocusTraversal(order));
+		mainFrame.setFocusTraversalPolicy(new FocusTraversal(order));
 	}
 
 	/**
@@ -326,9 +326,9 @@ public class StreamUI {
 	 * Constructs the task view panel.
 	 */
 	private void setUpView() {
-		shownTasks = new StreamTaskView[StreamConstants.UI.MAX_VIEWABLE_TASK];
+		shownTasks = new TaskViewUI[StreamConstants.UI.MAX_VIEWABLE_TASK];
 		for (int i = 0; i < StreamConstants.UI.MAX_VIEWABLE_TASK; i++) {
-			StreamTaskView taskPanel = new StreamTaskView();
+			TaskViewUI taskPanel = new TaskViewUI();
 			taskPanel
 					.setBounds(
 							StreamConstants.UI.MARGIN_SIDE,
@@ -360,14 +360,14 @@ public class StreamUI {
 	 * Constructs the console for user input.
 	 */
 	private void addConsole() {
-		console = new StreamUIConsole(feedback);
+		console = new ConsoleUI(feedback);
 		console.setFont(StreamConstants.UI.FONT_CONSOLE);
 		console.setBounds(StreamConstants.UI.BOUNDS_CONSOLE);
 		contentPanel.add(console);
 	}
 
 	private void addFeedbackBox() {
-		feedback = new StreamUIFeedback();
+		feedback = new FeedbackUI();
 		feedback.setFont(StreamConstants.UI.FONT_CONSOLE);
 		feedback.setBounds(StreamConstants.UI.BOUNDS_FEEDBACK);
 		contentPanel.add(feedback);
@@ -377,7 +377,7 @@ public class StreamUI {
 	 * Constructs the logger panel to display terminal response.
 	 */
 	private void addLogger() {
-		logger = new StreamUILogger();
+		logger = new LoggerUI();
 		logger.setFont(StreamConstants.UI.FONT_LOGGER);
 		logger.setBounds(StreamConstants.UI.BOUNDS_LOGGER);
 		contentPanel.add(logger);
@@ -432,10 +432,10 @@ public class StreamUI {
 	private void empowerKeyboardShortcuts(char key, String cmd) {
 		feedback.getInputMap().put(KeyStroke.getKeyStroke(key), cmd);
 		feedback.getActionMap().put(cmd,
-				new StreamUIKeyboardShortcut(console, cmd));
+				new KeyboardShortcut(console, cmd));
 		logger.getInputMap().put(KeyStroke.getKeyStroke(key), cmd);
 		logger.getActionMap().put(cmd,
-				new StreamUIKeyboardShortcut(console, cmd));
+				new KeyboardShortcut(console, cmd));
 	}
 
 	/**
@@ -449,10 +449,10 @@ public class StreamUI {
 	private void empowerNavigationShortcuts(String dir, String cmd) {
 		feedback.getInputMap().put(KeyStroke.getKeyStroke(dir), cmd);
 		feedback.getActionMap().put(cmd,
-				new StreamUINavigationShortcut(stream, logger, cmd));
+				new NavigationShortcut(stream, logger, cmd));
 		logger.getInputMap().put(KeyStroke.getKeyStroke(dir), cmd);
 		logger.getActionMap().put(cmd,
-				new StreamUINavigationShortcut(stream, logger, cmd));
+				new NavigationShortcut(stream, logger, cmd));
 	}
 
 	/**
@@ -470,7 +470,7 @@ public class StreamUI {
 		pageShown = page;
 		int startPoint = (pageShown - 1) * StreamConstants.UI.MAX_VIEWABLE_TASK;
 		for (int i = 0; i < StreamConstants.UI.MAX_VIEWABLE_TASK; i++) {
-			StreamTaskView taskPanel = shownTasks[i];
+			TaskViewUI taskPanel = shownTasks[i];
 			try {
 				int index = availIndices.get(startPoint + i);
 				StreamTask task = availTasks.get(startPoint + i);
@@ -562,7 +562,7 @@ public class StreamUI {
 				StreamConstants.Message.DETAILS_CONTENT,
 				task.getTaskName(),
 				StreamUtil.displayStatus(task),
-				StreamUtil.getWrittenTime(task.getStartTime(),
+				StreamUtil.displayTime(task.getStartTime(),
 						task.getDeadline()),
 				StreamUtil.displayDescription(task.getDescription()),
 				StreamUtil.displayTags(task.getTags()), task.getRank()), String

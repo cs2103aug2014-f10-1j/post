@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Stack;
 
+import parser.StreamParser;
 import util.StreamConstants;
 import util.StreamUtil;
 import model.StreamTask;
@@ -38,7 +39,7 @@ public class StackLogic extends BaseLogic {
 					taskIndex, "null");
 		} else {
 			inverseCommand = String.format(StreamConstants.Commands.DUE,
-					taskIndex, StreamUtil.getCalendarWriteUp(currentDeadline));
+					taskIndex, StreamParser.tp.translate(currentDeadline));
 		}
 		pushInput(inverseCommand);
 	}
@@ -57,7 +58,7 @@ public class StackLogic extends BaseLogic {
 					taskIndex, "null");
 		} else {
 			inverseCommand = String.format(StreamConstants.Commands.START,
-					taskIndex, StreamUtil.getCalendarWriteUp(currentStartTime));
+					taskIndex, StreamParser.tp.translate(currentStartTime));
 		}
 		pushInput(inverseCommand);
 	}
@@ -260,7 +261,7 @@ public class StackLogic extends BaseLogic {
 			String inverseCommand) {
 		Calendar oldDue = currTask.getDeadline();
 		if (oldDue != null) {
-			String dueString = StreamUtil.getCalendarWriteUp(oldDue);
+			String dueString = StreamParser.tp.translate(oldDue);
 			inverseCommand = inverseCommand + "-due " + dueString + " ";
 		} else {
 			inverseCommand = inverseCommand + "-due null ";

@@ -89,7 +89,7 @@ public class TaskLogic extends BaseLogic {
 					task.getTaskName());
 		} else {
 			task.setDeadline(calendar);
-			parsedCalendar = StreamUtil.getCalendarWriteUp(calendar);
+			parsedCalendar = StreamParser.tp.translate(calendar);
 			result = String.format(StreamConstants.LogMessage.DUE,
 					task.getTaskName(), parsedCalendar);
 		}
@@ -116,7 +116,7 @@ public class TaskLogic extends BaseLogic {
 					task.getTaskName());
 		} else {
 			task.setStartTime(calendar);
-			parsedCalendar = StreamUtil.getCalendarWriteUp(calendar);
+			parsedCalendar = StreamParser.tp.translate(calendar);
 			result = String.format(StreamConstants.LogMessage.START,
 					task.getTaskName(), parsedCalendar);
 		}
@@ -125,7 +125,7 @@ public class TaskLogic extends BaseLogic {
 		return result;
 	}
 
-	private void rank(StreamTask task, String contents) {
+	public void setRank(StreamTask task, String contents) {
 		String inputRank = contents.trim();
 		RankType parsedRankType = StreamParser.rp.parse(inputRank);
 		switch (parsedRankType) {
@@ -175,7 +175,7 @@ public class TaskLogic extends BaseLogic {
 				setTags(task, contents);
 				break;
 			case "-rank":
-				rank(task, contents);
+				setRank(task, contents);
 				break;
 			case "-mark":
 				mark(task, contents);
@@ -197,9 +197,8 @@ public class TaskLogic extends BaseLogic {
 		if (contents.equals("null")) {
 			task.setDeadline(null);
 		} else {
-			contents = StreamUtil.parseWithChronic(contents);
 			try {
-				Calendar due = StreamUtil.parseCalendar(contents);
+				Calendar due = StreamParser.tp.parse(contents);
 				Calendar startTime = task.getStartTime();
 				if (StreamUtil.isValidDeadline(due, startTime)) {
 					task.setDeadline(due);				
@@ -214,9 +213,8 @@ public class TaskLogic extends BaseLogic {
 		if (contents.equals("null")) {
 			task.setStartTime(null);
 		} else {
-			contents = StreamUtil.parseWithChronic(contents);
 			try {
-				Calendar start = StreamUtil.parseCalendar(contents);
+				Calendar start = StreamParser.tp.parse(contents);
 				Calendar deadline = task.getDeadline();
 				if (StreamUtil.isValidStartTime(deadline, start)) {
 					task.setStartTime(start);				
