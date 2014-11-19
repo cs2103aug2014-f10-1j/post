@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import com.mdimension.jchronic.Chronic;
 
+//@author A0093874N
+
 public class TimeParser implements BaseParser {
 
 	public static final String[] MONTHS = { "January", "February", "March",

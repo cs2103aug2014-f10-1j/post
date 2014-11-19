@@ -2,6 +2,8 @@ package parser;
 
 import model.StreamTask;
 
+//@author A0093874N
+
 public class MarkParser implements BaseParser {
 
 	public enum MarkType {

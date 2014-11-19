@@ -3,6 +3,8 @@ package parser;
 import parser.MarkParser.MarkType;
 import parser.RankParser.RankType;
 
+//@author A0093874N
+
 public class FilterParser implements BaseParser {
 
 	private MarkParser mp = new MarkParser();

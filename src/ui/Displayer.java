@@ -12,6 +12,12 @@ import util.StreamExternals;
 import util.StreamUtil;
 import model.StreamTask;
 
+//@author A0093874N
+
+/**
+ * A class to extract data from <b>StreamTask</b>s and convert them to
+ * presentable format (texts or icons).
+ */
 public class Displayer {
 
 	private static final String TEXT_PAGE = "Page %1$s/%2$s";

@@ -1,5 +1,7 @@
 package parser;
 
+//@author A0093874N
+
 public class RankParser implements BaseParser {
 
 	public enum RankType {

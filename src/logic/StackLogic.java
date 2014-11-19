@@ -10,6 +10,8 @@ import util.StreamConstants;
 import util.StreamUtil;
 import model.StreamTask;
 
+//@author A0096529N
+
 public class StackLogic extends BaseLogic {
 	private Stack<String> inputStack;
 	private Stack<StreamTask> dumpedTasks;
