@@ -136,6 +136,13 @@ public class StreamTask {
 	public void setDeadline(Calendar deadline) {
 		this.deadline = deadline;
 	}
+	
+	/**
+	 * Only used during loading
+	 */
+	public void addTag(String tag) {
+		this.tags.add(tag);
+	}
 
 	/**
 	 * Gets the tags of a task as an ArrayList of strings

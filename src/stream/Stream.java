@@ -151,7 +151,6 @@ public class Stream {
 			streamObject.setTaskList(taskList);
 			streamObject.setTaskMap(taskMap);
 		} catch (StreamIOException e) {
-			e.printStackTrace();
 			log(String.format(StreamConstants.LogMessage.LOAD_FAILED,
 					e.getMessage()));
 		}
@@ -170,7 +169,6 @@ public class Stream {
 			StreamIO.save(allTasks, taskList);
 			result = "File saved to " + StreamIO.getSaveLocation();
 		} catch (StreamIOException e) {
-			e.printStackTrace();
 			result = String.format(StreamConstants.LogMessage.LOAD_FAILED,
 					e.getMessage());
 			log(result);
@@ -802,7 +800,6 @@ public class Stream {
 			saveLogFile();
 		} catch (StreamIOException e) {
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		}
 		System.exit(0);
 	}

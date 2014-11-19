@@ -169,7 +169,7 @@ public class StreamIOTest {
 				+ "\"taskDescription\":\"Internet of Things\"}]";
 		try {
 			assertEquals(testMessage, expectedJsonString,
-					StreamIO.mapToJson(map).toString());
+					StreamIO.saver.convertTaskMap(map).toString());
 		} catch (StreamIOException e) {
 			fail(String.format(FAIL_EXCEPTION_MESSAGE, testMessage,
 					"StreamIOException", e.getMessage()));
@@ -201,7 +201,7 @@ public class StreamIOTest {
 	private void testOneTaskToJson(String testMessage, String expected,
 			StreamTask task) {
 		try {
-			assertEquals(testMessage, expected, StreamIO.taskToJson(task)
+			assertEquals(testMessage, expected, StreamIO.saver.convertTask(task)
 					.toString());
 		} catch (StreamIOException e) {
 			fail(String.format(FAIL_EXCEPTION_MESSAGE, testMessage,
@@ -239,12 +239,12 @@ public class StreamIOTest {
 
 	private void testOneFormatDate(String testMessage, String expected,
 			Date date) {
-		assertEquals(testMessage, expected, StreamIO.formatDate(date));
+		assertEquals(testMessage, expected, SaveIO.formatDate(date));
 	}
 
 	private void testOneFormatCalendar(String testMessage, String expected,
 			Calendar calendar) {
-		assertEquals(testMessage, expected, StreamIO.formatDate(calendar));
+		assertEquals(testMessage, expected, SaveIO.formatDate(calendar));
 	}
 
 	private String fileToString(File file) throws IOException {
