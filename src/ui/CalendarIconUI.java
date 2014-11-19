@@ -8,6 +8,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
 import parser.StreamParser;
+import parser.TimeParser;
 import util.StreamConstants;
 
 //@author A0093874N
@@ -31,14 +32,14 @@ import util.StreamConstants;
 public class CalendarIconUI extends JLayeredPane {
 
 	private static final long serialVersionUID = 1L;
-	ImageIcon nullCalIcon;
-	ImageIcon calIcon;
-	JLabel imageUsed;
-	JLabel month;
-	JLabel date;
-	JLabel time;
+	private ImageIcon nullCalIcon;
+	private ImageIcon calIcon;
+	private JLabel imageUsed;
+	private JLabel month;
+	private JLabel date;
+	private JLabel time;
 
-	public CalendarIconUI(ImageIcon cal, ImageIcon nullCal) {
+	CalendarIconUI(ImageIcon cal, ImageIcon nullCal) {
 		setParams(cal, nullCal);
 		setBackgroundImage();
 		setMonthView();
@@ -97,7 +98,8 @@ public class CalendarIconUI extends JLayeredPane {
 	}
 
 	private void updateTimeView(int hr, int min) {
-		time.setText(hr + ":" + StreamParser.tp.addZeroToTime(min));
+		time.setText(hr + TimeParser.TIME_DELIMITER
+				+ StreamParser.tp.addZeroToTime(min));
 		time.setVisible(true);
 	}
 
@@ -105,7 +107,7 @@ public class CalendarIconUI extends JLayeredPane {
 	 * Changes the calendar to a simple null display. Invoked if the task has no
 	 * calendar assigned to it.
 	 */
-	public void hideView() {
+	void hideView() {
 		imageUsed.setIcon(nullCalIcon);
 		month.setVisible(false);
 		date.setVisible(false);
@@ -119,7 +121,7 @@ public class CalendarIconUI extends JLayeredPane {
 	 * @param cal
 	 *            - the calendar from which the information is obtained from
 	 */
-	public void updateView(Calendar cal) {
+	void updateView(Calendar cal) {
 		imageUsed.setIcon(calIcon);
 		updateMonthView(cal.get(Calendar.MONTH));
 		updateDateView(cal.get(Calendar.DAY_OF_MONTH));

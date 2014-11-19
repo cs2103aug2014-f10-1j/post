@@ -81,7 +81,7 @@ public class ConsoleUI extends JTextField implements KeyListener,
 	 * @param helpText
 	 *            - the accompanying help text
 	 */
-	public void addPossibility(String possibility, String helpText) {
+	void addPossibility(String possibility, String helpText) {
 		this.possibilities.add(possibility);
 		this.helpTextMap.put(possibility, helpText);
 	}

@@ -1,7 +1,5 @@
 package ui;
 
-import java.util.Calendar;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -125,62 +123,11 @@ public class TaskViewUI extends JPanel {
 		add(statusImage);
 	}
 
-	private void updateStartTime(Calendar startTime) {
-		if (startTime == null) {
-			startCal.hideView();
-		} else {
-			startCal.updateView(startTime);
-		}
-	}
-
-	private void updateEndTime(Calendar endTime) {
-		if (endTime == null) {
-			endCal.hideView();
-		} else {
-			endCal.updateView(endTime);
-		}
-	}
-
-	private void updateRank(String rank) {
-		switch (rank) {
-			case "high":
-				rankImage.setIcon(StreamExternals.ICON_HI_RANK);
-				break;
-			case "medium":
-				rankImage.setIcon(StreamExternals.ICON_MED_RANK);
-				break;
-			case "low":
-				rankImage.setIcon(StreamExternals.ICON_LOW_RANK);
-				break;
-			default:
-
-		}
-	}
-
-	private void updateDoneStatus(StreamTask task) {
-		if (task.isDone()) {
-			statusImage.setIcon(StreamExternals.ICON_DONE);
-		} else if (task.isOverdue()) {
-			statusImage.setIcon(StreamExternals.ICON_OVERDUE);
-		} else if (task.isInactive()) {
-			statusImage.setIcon(StreamExternals.ICON_INACTIVE);
-		} else {
-			statusImage.setIcon(StreamExternals.ICON_NOT_DONE);
-		}
-	}
-
-	private void updateBasicParams(Integer ind, String name, String desc) {
-		index.setText(Displayer.displayIndex(ind));
-		taskName.setText(name);
-		descLabel.setText(Displayer.displayDescription(desc));
-		setVisible(true);
-	}
-
 	/**
 	 * Hides the task from the user view. Invoked if the view object has no task
 	 * assigned to it.
 	 */
-	public void hideView() {
+	void hideView() {
 		setVisible(false);
 	}
 
@@ -194,11 +141,14 @@ public class TaskViewUI extends JPanel {
 	 *            - the <b>StreamTask</b> from which the information is obtained
 	 *            from
 	 */
-	public void updateView(Integer ind, StreamTask task) {
-		updateStartTime(task.getStartTime());
-		updateEndTime(task.getDeadline());
-		updateRank(task.getRank());
-		updateDoneStatus(task);
-		updateBasicParams(ind, task.getTaskName(), task.getDescription());
+	void updateView(Integer ind, StreamTask task) {
+		Displayer.updateCalendarIcon(startCal, task, true);
+		Displayer.updateCalendarIcon(endCal, task, false);
+		rankImage.setIcon(Displayer.selectRankIcon(task));
+		statusImage.setIcon(Displayer.selectStatusIcon(task));
+		index.setText(Displayer.displayIndex(ind));
+		taskName.setText(Displayer.displayName(task));
+		descLabel.setText(Displayer.displayDescription(task));
+		setVisible(true);
 	}
 }

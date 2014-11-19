@@ -259,6 +259,7 @@ public class Stream {
 
 			case VIEW:
 				executeView(index);
+				refreshUI();
 				break;
 
 			case CLEAR:

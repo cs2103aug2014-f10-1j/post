@@ -3,10 +3,12 @@ package ui;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import parser.StreamParser;
+import util.StreamExternals;
 import util.StreamUtil;
 import model.StreamTask;
 
@@ -21,12 +23,20 @@ public class Displayer {
 	private static final String TEXT_NO_TAG = "no tags added";
 	private static final String TITLE_DETAILS = "Details for %1$s";
 
-	public static String displayPageNumber(Integer pageShown, Integer totalPage) {
+	static String displayPageNumber(Integer pageShown, Integer totalPage) {
 		return String.format(TEXT_PAGE, pageShown, totalPage);
 	}
 
-	public static String displayIndex(Integer ind) {
+	static String displayIndex(Integer ind) {
 		return String.format(TEXT_INDEX, ind);
+	}
+
+	static String displayName(StreamTask task) {
+		return task.getTaskName();
+	}
+
+	static String displayRank(StreamTask task) {
+		return task.getRank();
 	}
 
 	/**
@@ -36,7 +46,8 @@ public class Displayer {
 	 *            - the task description, <b>null</b> if not specified
 	 * @return <b>String</b> - the task description
 	 */
-	public static String displayDescription(String desc) {
+	static String displayDescription(StreamTask task) {
+		String desc = task.getDescription();
 		if (desc == null) {
 			return TEXT_NO_DESC;
 		} else {
@@ -51,7 +62,8 @@ public class Displayer {
 	 *            - array of tags
 	 * @return <b>String</b> - the listed down tags
 	 */
-	public static String displayTags(ArrayList<String> tags) {
+	static String displayTags(StreamTask task) {
+		ArrayList<String> tags = task.getTags();
 		if (tags.isEmpty()) {
 			return TEXT_NO_TAG;
 		} else {
@@ -65,7 +77,7 @@ public class Displayer {
 	 * @param task
 	 * @return <b>String</b> - the task status
 	 */
-	public static String displayStatus(StreamTask task) {
+	static String displayStatus(StreamTask task) {
 		return StreamParser.mp.translate(StreamParser.mp.parse(task));
 	}
 
@@ -76,7 +88,9 @@ public class Displayer {
 	 * 
 	 * @return <b>String</b> - the properly formatted and presentable time
 	 */
-	public static String displayTime(Calendar startTime, Calendar endTime) {
+	static String displayTime(StreamTask task) {
+		Calendar startTime = task.getStartTime();
+		Calendar endTime = task.getDeadline();
 		if (startTime == null && endTime == null) {
 			return "no timing specified";
 		} else if (startTime == null) {
@@ -89,14 +103,55 @@ public class Displayer {
 		}
 	}
 
-	public static void displayDetails(JFrame frame, StreamTask task) {
-		JOptionPane.showMessageDialog(frame, String.format(TEXT_CONTENT,
-				task.getTaskName(), displayStatus(task),
-				displayTime(task.getStartTime(), task.getDeadline()),
-				displayDescription(task.getDescription()),
-				displayTags(task.getTags()), task.getRank()), String.format(
-				TITLE_DETAILS, task.getTaskName()),
-				JOptionPane.INFORMATION_MESSAGE);
+	static String displayDetails(JFrame frame, StreamTask task) {
+		JOptionPane.showMessageDialog(frame,
+				String.format(TEXT_CONTENT, displayName(task),
+						displayStatus(task), displayTime(task),
+						displayDescription(task), displayTags(task),
+						displayRank(task)), String.format(TITLE_DETAILS,
+						displayName(task)), JOptionPane.INFORMATION_MESSAGE);
+		return displayName(task);
+	}
+
+	static ImageIcon selectStatusIcon(StreamTask task) {
+		if (task.isDone()) {
+			return StreamExternals.ICON_DONE;
+		} else if (task.isOverdue()) {
+			return StreamExternals.ICON_OVERDUE;
+		} else if (task.isInactive()) {
+			return StreamExternals.ICON_INACTIVE;
+		} else {
+			return StreamExternals.ICON_NOT_DONE;
+		}
+	}
+
+	static ImageIcon selectRankIcon(StreamTask task) {
+		switch (displayRank(task)) {
+			case "high":
+				return StreamExternals.ICON_HI_RANK;
+			case "medium":
+				return StreamExternals.ICON_MED_RANK;
+			case "low":
+				return StreamExternals.ICON_LOW_RANK;
+			default:
+				// WON'T HAPPEN
+				return StreamExternals.ICON_LOW_RANK;
+		}
+	}
+
+	static void updateCalendarIcon(CalendarIconUI calIcon, StreamTask task,
+			Boolean isStartTime) {
+		Calendar cal;
+		if (isStartTime) {
+			cal = task.getStartTime();
+		} else {
+			cal = task.getDeadline();
+		}
+		if (cal == null) {
+			calIcon.hideView();
+		} else {
+			calIcon.updateView(cal);
+		}
 	}
 
 }

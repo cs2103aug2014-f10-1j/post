@@ -159,6 +159,7 @@ public class TaskLogic extends BaseLogic {
 			case "-due":
 			case "-by":
 			case "-to":
+			case "-end":
 				deadline(task, contents);
 				break;
 			case "-start":
