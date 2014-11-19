@@ -7,7 +7,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-@SuppressWarnings("deprecation")
 public class StreamUtilTest {
 	
 	//Tests for display description
@@ -51,7 +50,7 @@ public class StreamUtilTest {
 		String nowCalendar = StreamUtil.getCalendarWriteUp(now);
 		String calendarWriteUp = StreamUtil.getCalendarWriteUp(parsedCalendar);
 		assertEquals(nowCalendar, calendarWriteUp);
-	}*/
+	}
 	
 	//Tests getMonthIndex
 	@Test
@@ -70,7 +69,7 @@ public class StreamUtilTest {
 	public void getMonthIndexTest3() {
 		String month = "5";
 		assertEquals(0, StreamUtil.getMonthIndex(month));
-	}
+	}*/
 	
 	//Tests isValidAttribute
 	@Test

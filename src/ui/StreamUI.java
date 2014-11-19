@@ -78,12 +78,12 @@ public class StreamUI {
 	private static final String LOG_REFRESH = "Task viewer refreshed with %1$s new tasks";
 	private static final String LOG_DETAILS = "Displaying details for %1$s";
 
-	private static final String TEXT_TITLE = "STREAM "
-			+ Stream.VERSION + ": Simple Task Reader and Manager";
+	private static final String TEXT_TITLE = "STREAM " + Stream.VERSION
+			+ ": Simple Task Reader and Manager";
 	private static final String TEXT_FOOTER = "Copyright \u00a9 2014 CS2103AUG2014-F10-01J."
 			+ " All rights reserved.";
-	static final String TEXT_WELCOME = "Welcome to STREAM "
-			+ Stream.VERSION + "!";
+	static final String TEXT_WELCOME = "Welcome to STREAM " + Stream.VERSION
+			+ "!";
 
 	private static final String TITLE_HELP = "Help for STREAM";
 	private static final String TEXT_HELP = "<html><body width='400'><h2>"
@@ -578,9 +578,9 @@ public class StreamUI {
 	 *            from
 	 */
 	public void displayDetails(StreamTask task) {
-		Displayer.displayDetails(mainFrame, task);
+		String taskName = Displayer.displayDetails(mainFrame, task);
 		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
-				String.format(LOG_DETAILS, task.getTaskName()));
+				String.format(LOG_DETAILS, taskName));
 	}
 
 	/**
@@ -629,191 +629,8 @@ public class StreamUI {
 	 * Opens the help dialog panel.
 	 */
 	public void openHelpBox() {
-		JOptionPane.showMessageDialog(mainFrame,
-				TEXT_HELP, TITLE_HELP, JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	//@author A0093874N-unused
-
-	/**
-	 * Constructs the usable buttons of Stream's User Interface.
-	 * 
-	 * @deprecated
-	 */
-	@SuppressWarnings("unused")
-	private void addNavigationButtons() {
-		addFirstPageButton();
-		addPrevPageButton();
-		addNextPageButton();
-		addLastPageButton();
-		/*
-		 * buttons.add(firstPageButton); buttons.add(prevPageButton);
-		 * buttons.add(nextPageButton); buttons.add(lastPageButton);
-		 */
-	}
-
-	/**
-	 * Constructs the navigate-to-first-page button.
-	 * 
-	 * @deprecated
-	 */
-	private void addFirstPageButton() {
-		// firstPageButton = new JButton(StreamConstants.UI.BTN_FIRST);
-		/*
-		 * firstPageButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput("first"); } });
-		 */
-		// addComponent(firstPageButton, 25, 500, 160, 32);
-	}
-
-	/**
-	 * Constructs the navigate-to-previous-page button.
-	 * 
-	 * @deprecated
-	 */
-	private void addPrevPageButton() {
-		// prevPageButton = new JButton(StreamConstants.UI.BTN_PREV);
-		/*
-		 * prevPageButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput("prev"); } });
-		 */
-		// addComponent(prevPageButton, 205, 500, 160, 32);
-	}
-
-	/**
-	 * Constructs the navigate-to-next-page button.
-	 * 
-	 * @deprecated
-	 */
-	private void addNextPageButton() {
-		// nextPageButton = new JButton(StreamConstants.UI.BTN_NEXT);
-		/*
-		 * nextPageButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput("next"); } });
-		 */
-		// addComponent(nextPageButton, 385, 500, 160, 32);
-	}
-
-	/**
-	 * Constructs the navigate-to-last-page button.
-	 * 
-	 * @deprecated
-	 */
-	private void addLastPageButton() {
-		// lastPageButton = new JButton(StreamConstants.UI.BTN_LAST);
-		/*
-		 * lastPageButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput("last"); } });
-		 */
-		// addComponent(lastPageButton, 565, 500, 160, 32);
-	}
-
-	/**
-	 * Constructs the undo button.
-	 * 
-	 * @deprecated
-	 */
-	@SuppressWarnings("unused")
-	private void addUndoButton() {
-		// undoButton = new JButton(StreamConstants.UI.BTN_UNDO);
-		/*
-		 * undoButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput(StreamConstants.Commands.UNDO); } });
-		 */
-	}
-
-	/**
-	 * Constructs the clear-search-result button.
-	 * 
-	 * @deprecated
-	 */
-	@SuppressWarnings("unused")
-	private void addClearSearchButton() {
-		// clearSearchButton = new JButton(StreamConstants.UI.BTN_CLEAR);
-		/*
-		 * clearSearchButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput(StreamConstants.Commands.CLRSRC); } });
-		 */
-	}
-
-	/**
-	 * Determines which navigator buttons are clickable based on the current
-	 * page shown and total pages available.
-	 * 
-	 * @deprecated
-	 */
-	@SuppressWarnings("unused")
-	private void determineClickableNavigators() {
-		/*
-		 * firstPageButton.setEnabled(true); prevPageButton.setEnabled(true);
-		 * nextPageButton.setEnabled(true); lastPageButton.setEnabled(true); if
-		 * (pageShown == 1) { firstPageButton.setEnabled(false);
-		 * prevPageButton.setEnabled(false); } if (pageShown == totalPage) {
-		 * nextPageButton.setEnabled(false); lastPageButton.setEnabled(false); }
-		 */
-	}
-
-	//@author A0096529N-unused
-
-	/**
-	 * @deprecated
-	 */
-	@SuppressWarnings("unused")
-	private void addMenu() {
-		// newTaskTextField = new JTextField();
-		// newTaskTextField.setFont(StreamConstants.UI.FONT_CONSOLE);
-		// addTaskButton = new JButton(StreamConstants.UI.BTN_ADD_TASK);
-		/*
-		 * addTaskButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) { String params
-		 * = newTaskTextField.getText(); newTaskTextField.setText("");
-		 * stream.filterAndProcessInput(String.format(
-		 * StreamConstants.Commands.ADD_TASK, params)); } });
-		 */
-		addSortDeadlineButton();
-		addSortAlphaButton();
-	}
-
-	/**
-	 * @deprecated
-	 */
-	private void addSortAlphaButton() {
-		// sortAlphaButton = new JButton(StreamConstants.UI.BTN_SORT_ALPHA);
-		/*
-		 * sortAlphaButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput(StreamConstants.Commands.SORT_ALPHA); }
-		 * });
-		 */
-	}
-
-	/**
-	 * @deprecated
-	 */
-	private void addSortDeadlineButton() {
-		// sortDeadlineButton = new
-		// JButton(StreamConstants.UI.BTN_SORT_DEADLINE);
-		/*
-		 * sortDeadlineButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) {
-		 * stream.filterAndProcessInput(StreamConstants.Commands.SORT_DEADLINE);
-		 * } });
-		 */
+		JOptionPane.showMessageDialog(mainFrame, TEXT_HELP, TITLE_HELP,
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 }
