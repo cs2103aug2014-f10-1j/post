@@ -28,7 +28,7 @@ public class StreamParser extends Loggable {
 	static final String ERROR_INVALID_SORT = "Please enter a valid sorting type!";
 	static final String ERROR_INVALID_MARK = "Please enter a valid marking type!";
 	static final String ERROR_INVALID_RANK = "Please enter a valid ranking type!";
-	public static final String ERROR_EMPTY_INPUT = "Please enter a command!";
+	static final String ERROR_EMPTY_INPUT = "Please enter a command!";
 	static final String ERROR_INDEX_OUT_OF_BOUNDS = "The index you entered is out of range!";
 	static final String ERROR_DATE_NOT_PARSEABLE = "Date cannot be understood!";
 	static final String ERROR_UNKNOWN_COMMAND = "Unknown command type!";

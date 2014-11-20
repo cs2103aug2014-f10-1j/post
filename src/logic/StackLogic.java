@@ -7,11 +7,12 @@ import java.util.Stack;
 import parser.StreamParser;
 import util.StreamConstants;
 import util.StreamUtil;
+import logger.Loggable;
 import model.StreamTask;
 
 //@author A0096529N
 
-public class StackLogic extends BaseLogic {
+public class StackLogic extends Loggable {
 	
 	private Stack<String> inputStack;
 	private Stack<StreamTask> dumpedTasks;
@@ -369,8 +370,8 @@ public class StackLogic extends BaseLogic {
 
 	//@author generated
 	@Override
-	protected String getLoggerComponentName() {
-		return StreamConstants.ComponentTag.STREAMSTACK;
+	public String getComponentName() {
+		return "STACKLOGIC";
 	}
 
 }

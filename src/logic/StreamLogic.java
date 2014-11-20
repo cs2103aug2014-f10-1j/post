@@ -12,6 +12,7 @@ import parser.SortParser.SortType;
 import parser.StreamParser;
 import parser.FilterParser.FilterType;
 import parser.RankParser.RankType;
+import logger.Loggable;
 import model.StreamObject;
 import model.StreamTask;
 import util.StreamConstants;
@@ -25,7 +26,7 @@ import exception.StreamModificationException;
  */
 
 // @author A0118007R
-public class StreamLogic extends BaseLogic {
+public class StreamLogic extends Loggable {
 
 	private StreamObject streamObject;
 	private TaskLogic taskLogic = TaskLogic.init();
@@ -514,8 +515,8 @@ public class StreamLogic extends BaseLogic {
 
 	// @author generated
 	@Override
-	protected String getLoggerComponentName() {
-		return StreamConstants.ComponentTag.STREAMLOGIC;
+	public String getComponentName() {
+		return "STREAMLOGIC";
 	}
 
 	public String sort(SortType type, Boolean isDescending) {

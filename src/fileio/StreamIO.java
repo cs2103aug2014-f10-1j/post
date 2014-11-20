@@ -65,8 +65,9 @@ public class StreamIO {
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyyMMddHHmmss", Locale.ENGLISH);
 	static String STREAM_FILENAME = "default.json";
+	// TODO convert this to Loggable implementation...
 	private static final StreamLogger logger = StreamLogger
-			.init(StreamConstants.ComponentTag.STREAMIO);
+			.init("STREAMIO");
 
 	static SaveIO saver = new SaveIO();
 	static LoadIO loader = new LoadIO();
