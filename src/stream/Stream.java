@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 
+import logger.Loggable;
 import logger.StreamLogger;
-import logger.StreamLogger.LogLevel;
 import logic.StackLogic;
 import logic.StreamLogic;
 import logic.TaskLogic;
@@ -38,7 +38,7 @@ import fileio.StreamIO;
  * 
  * @version V0.5
  */
-public class Stream {
+public class Stream extends Loggable {
 
 	StreamObject streamObject = StreamObject.getInstance();
 	StreamUI stui;
@@ -47,8 +47,6 @@ public class Stream {
 	StreamLogic streamLogic = StreamLogic.init(streamObject);
 
 	private StreamParser parser;
-	private StreamLogger logger = StreamLogger
-			.init(StreamConstants.ComponentTag.STREAM);
 
 	private String filename;
 
@@ -112,8 +110,8 @@ public class Stream {
 					.getResourceAsStream("/fonts/Awesome Java.ttf"));
 			consoleFont = Font.createFont(Font.TRUETYPE_FONT, getClass()
 					.getResourceAsStream("/fonts/Ubuntu.ttf"));
-		} catch (Exception e) {
-
+		} catch (Exception shouldnthappen) {
+			
 		}
 		StreamExternals.init(headerText, doneIcon, notDoneIcon, overdueIcon,
 				inactiveIcon, hiRankIcon, medRankIcon, lowRankIcon,
@@ -151,7 +149,7 @@ public class Stream {
 			streamObject.setTaskList(taskList);
 			streamObject.setTaskMap(taskMap);
 		} catch (StreamIOException e) {
-			log(String.format(StreamConstants.LogMessage.LOAD_FAILED,
+			logDebug(String.format(StreamConstants.LogMessage.LOAD_FAILED,
 					e.getMessage()));
 		}
 	}
@@ -171,15 +169,18 @@ public class Stream {
 		} catch (StreamIOException e) {
 			result = String.format(StreamConstants.LogMessage.LOAD_FAILED,
 					e.getMessage());
-			log(result);
+			logDebug(result);
 		}
 
 		return result;
 	}
 
 	//@author A0118007R
-	private void executeInput(CommandType command, Integer index, Object content)
+	private void executeInput(StreamCommand cmd)
 			throws StreamModificationException, StreamIOException {
+		CommandType command = cmd.getKey();
+		Integer index = cmd.getIndex();
+		Object content = cmd.getContent();
 		switch (command) {
 			case ADD:
 				executeAdd((String) content);
@@ -654,7 +655,7 @@ public class Stream {
 		} else {
 			String undoneInput = stackLogic.popInverseCommand();
 			showAndLogResult(StreamConstants.LogMessage.UNDO_SUCCESS);
-			log(StreamUtil.showAsTerminalInput(undoneInput));
+			logDebug(StreamUtil.showAsTerminalInput(undoneInput));
 			processInput(undoneInput);
 
 			/*
@@ -1000,78 +1001,41 @@ public class Stream {
 		showAndLogError(errorMessage, errorMessage);
 	}
 
-	/*
-	 * These two can be used if the log message to be documented and to be
-	 * displayed are different (especially for exception/error messages)
-	 */
-
 	//@author A0093874N
 	private void showAndLogResult(String logMessageForDoc,
 			String logMessageForUser) {
 		stui.log(logMessageForUser, false);
-		log(StreamUtil.showAsTerminalResponse(logMessageForDoc));
+		logDebug(StreamUtil.showAsTerminalResponse(logMessageForDoc));
 	}
 
 	private void showAndLogError(String errorMessageForDoc,
 			String errorMessageForUser) {
 		stui.log(errorMessageForUser, true);
-		log(StreamUtil.showAsTerminalResponse(errorMessageForDoc));
-	}
-
-	//@author A0096529N
-	private void log(String message) {
-		logger.log(LogLevel.DEBUG, message);
+		logError(StreamUtil.showAsTerminalResponse(errorMessageForDoc));
 	}
 
 	//@author A0093874N
 	private void processInput(String input) {
 		try {
-			executeUserInput(input);
+			StreamCommand cmd = parser.parseCommand(input,
+					streamLogic.getNumberOfTasks());
+			executeInput(cmd);
 		} catch (AssertionError e) {
-			processAssertionError(e);
+			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS,
+					"AssertionError", e.getMessage()),
+					String.format(StreamConstants.LogMessage.UNEXPECTED_ERROR,
+							e.getMessage()));
 		} catch (StreamParserException e) {
-			log(String.format(StreamConstants.LogMessage.ERRORS, e.getClass()
-					.getSimpleName(), e.getMessage()));
-			processAndShowParserExceptionMessage(e);
+			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
+					.getClass().getSimpleName(), e.getMessage()),
+					String.format(StreamConstants.LogMessage.PARSER_ERROR,
+							e.getMessage()));
 		} catch (Exception e) {
-			log(String.format(StreamConstants.LogMessage.ERRORS, e.getClass()
-					.getSimpleName(), e.getMessage()));
-			processAndShowExceptionMessage(e);
+			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
+					.getClass().getSimpleName(), e.getMessage()),
+					String.format(StreamConstants.LogMessage.UNEXPECTED_ERROR,
+							e.getMessage()));
 		}
-	}
-
-	private void processAndShowExceptionMessage(Exception e) {
-		showAndLogError(String.format(
-				StreamConstants.LogMessage.UNEXPECTED_ERROR, e.getClass()
-						.getSimpleName() + " " + e.getMessage()));
-	}
-
-	private void processAndShowParserExceptionMessage(StreamParserException e) {
-		if (e.getMessage().equals("Empty Input")) {
-			showAndLogError(String.format(
-					StreamConstants.LogMessage.EMPTY_INPUT_ERROR, e.getClass()
-							.getSimpleName() + " " + e.getMessage()));
-		} else {
-			showAndLogError(String.format(
-					StreamConstants.LogMessage.PARSER_ERROR, e.getClass()
-							.getSimpleName() + " " + e.getMessage()));
-		}
-	}
-
-	private void processAssertionError(AssertionError e) {
-		log(String.format(StreamConstants.LogMessage.ERRORS, "AssertionError",
-				e.getMessage()));
-		showAndLogError(String.format(
-				StreamConstants.LogMessage.UNEXPECTED_ERROR, e.getMessage()));
-	}
-
-	private void executeUserInput(String input) throws StreamParserException,
-			StreamModificationException, StreamIOException {
-		StreamCommand cmd = parser.interpretCommand(input, streamLogic.getNumberOfTasks());
-		CommandType command = cmd.getKey();
-		Integer index = cmd.getIndex();
-		Object content = cmd.getContent();
-		executeInput(command, index, content);
 	}
 
 	/*
@@ -1079,20 +1043,19 @@ public class Stream {
 	 * only can be triggered by the machine as part of undo.
 	 */
 	private Boolean isRestrictedInput(String input) {
-		if (input.length() >= 6) {
-			return checkRestrictedInput(input);
-		} else {
+		try {
+			String keyword = input.split(" ")[0];
+			switch (keyword) {
+				case "unsort":
+				case "dismiss":
+				case "recover":
+					return true;
+				default:
+					return false;
+			}
+		} catch (IndexOutOfBoundsException e) {
+			// shouldn't happen but let's play safe
 			return false;
-		}
-	}
-
-	private Boolean checkRestrictedInput(String input) {
-		if (input.substring(0, 6).equals("unsort")) {
-			return true;
-		} else {
-			return input.length() >= 7
-					&& (input.substring(0, 7).equals("recover") || input
-							.substring(0, 7).equals("dismiss"));
 		}
 	}
 
@@ -1100,8 +1063,7 @@ public class Stream {
 		assert (input != null) : String.format(
 				StreamConstants.LogMessage.ERRORS, "AssertionError",
 				StreamConstants.Assertion.NULL_INPUT);
-
-		log(StreamUtil.showAsTerminalInput(input));
+		logDebug(StreamUtil.showAsTerminalInput(input));
 		if (isRestrictedInput(input)) {
 			showAndLogError(StreamConstants.LogMessage.CMD_UNKNOWN);
 		} else {
@@ -1112,6 +1074,11 @@ public class Stream {
 
 	public static void main(String[] args) {
 		new Stream(FILENAME);
+	}
+
+	@Override
+	public String getComponentName() {
+		return "STREAM";
 	}
 
 }

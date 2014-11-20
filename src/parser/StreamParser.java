@@ -1,7 +1,6 @@
 package parser;
 
-import logger.StreamLogger;
-import logger.StreamLogger.LogLevel;
+import logger.Loggable;
 import parser.StreamCommand.CommandType;
 import util.StreamConstants;
 import util.StreamUtil;
@@ -14,7 +13,7 @@ import exception.StreamParserException;
  * 
  * @version V0.5
  */
-public class StreamParser {
+public class StreamParser extends Loggable {
 
 	public static MarkParser mp = new MarkParser();
 	public static RankParser rp = new RankParser();
@@ -22,9 +21,6 @@ public class StreamParser {
 	public static SortParser sp = new SortParser();
 	public static TimeParser tp = new TimeParser();
 	
-	private static final StreamLogger logger = StreamLogger
-			.init(StreamConstants.ComponentTag.STREAMPARSER);
-
 	static final String ERROR_INCOMPLETE_INPUT = "Please provide more information!";
 	static final String ERROR_INCOMPLETE_INDEX = "Please provide the index or page number!";
 	static final String ERROR_INVALID_INDEX = "Please enter a valid index number!";
@@ -59,9 +55,9 @@ public class StreamParser {
 		return new StreamParser();
 	}
 
-	public StreamCommand interpretCommand(String input, int numOfTasks)
+	public StreamCommand parseCommand(String input, int numOfTasks)
 			throws StreamParserException {
-		if (input.isEmpty()) {
+		if (input.trim().isEmpty()) {
 			throw new StreamParserException(ERROR_EMPTY_INPUT);
 		}
 		String[] contents = input.trim().split(" ", 2);
@@ -209,8 +205,7 @@ public class StreamParser {
 				break;
 
 			default:
-				logger.log(LogLevel.DEBUG,
-						String.format(LOG_COMMAND_UNKNOWN, key));
+				logDebug(String.format(LOG_COMMAND_UNKNOWN, key));
 				throw new StreamParserException(ERROR_UNKNOWN_COMMAND);
 
 		}
@@ -343,22 +338,26 @@ public class StreamParser {
 		String commandKey = contents[PARAM_POS_KEYWORD].toUpperCase();
 		if (contentsWithIndex.length >= 3
 				&& StreamUtil.isInteger(contentsWithIndex[PARAM_POS_INDEX])) {
-			logger.log(LogLevel.DEBUG, String.format(
+			logDebug(String.format(
 					LOG_COMMAND_WITH_INDEX_AND_ARGS, commandKey,
 					contentsWithIndex[PARAM_POS_INDEX],
 					contentsWithIndex[PARAM_POS_ARGS]));
 		} else if (contents.length == 2) {
 			if (StreamUtil.isInteger(contents[1])) {
-				logger.log(LogLevel.DEBUG, String.format(
+				logDebug(String.format(
 						LOG_COMMAND_WITH_INDEX, commandKey,
 						contents[PARAM_POS_CONTENTS]));
 			} else {
-				logger.log(LogLevel.DEBUG, String.format(LOG_COMMAND_WITH_ARGS,
+				logDebug(String.format(LOG_COMMAND_WITH_ARGS,
 						commandKey, contents[PARAM_POS_CONTENTS]));
 			}
 		} else {
-			logger.log(LogLevel.DEBUG,
-					String.format(LOG_COMMAND_NO_ARGS, commandKey));
+			logDebug(String.format(LOG_COMMAND_NO_ARGS, commandKey));
 		}
+	}
+
+	@Override
+	public String getComponentName() {
+		return "STREAMPARSER";
 	}
 }

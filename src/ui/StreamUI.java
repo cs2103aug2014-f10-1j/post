@@ -17,8 +17,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import logger.StreamLogger;
-import logger.StreamLogger.LogLevel;
+import logger.Loggable;
 import model.StreamTask;
 import stream.Stream;
 import util.StreamConstants;
@@ -52,7 +51,7 @@ import util.StreamExternals;
  * 
  * @version V0.5
  */
-public class StreamUI {
+public class StreamUI extends Loggable {
 
 	private Stream stream;
 
@@ -62,8 +61,6 @@ public class StreamUI {
 	private FeedbackUI feedback;
 	private LoggerUI logger;
 	private JLabel pageNumber;
-	private static final StreamLogger loggerDoc = StreamLogger
-			.init(StreamConstants.ComponentTag.STREAMUI);
 
 	private boolean isSearch;
 	private boolean isTaskHighlighted;
@@ -182,9 +179,7 @@ public class StreamUI {
 					}
 					taskView.setBorder(null);
 				} catch (Exception e) {
-					loggerDoc
-							.log(LogLevel.ERROR,
-									String.format(
+					logError(String.format(
 											StreamConstants.ExceptionMessage.ERR_UI_FADE_THREAD,
 											e.getClass().getSimpleName(),
 											e.getMessage()));
@@ -202,8 +197,7 @@ public class StreamUI {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException
 				| IllegalAccessException | UnsupportedLookAndFeelException e) {
-			loggerDoc.log(LogLevel.ERROR,
-					StreamConstants.LogMessage.UI_LOOKANDFEEL_FAIL);
+			logError(StreamConstants.LogMessage.UI_LOOKANDFEEL_FAIL);
 		}
 	}
 
@@ -501,8 +495,7 @@ public class StreamUI {
 			}
 		}
 		pageNumber.setText(Displayer.displayPageNumber(pageShown, totalPage));
-		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
-				String.format(LOG_PAGE_MOVED, pageShown, totalPage));
+		logDebug(String.format(LOG_PAGE_MOVED, pageShown, totalPage));
 	}
 
 	/**
@@ -550,8 +543,7 @@ public class StreamUI {
 		if (activeTask != null && !isTaskHighlighted) {
 			highlightActiveTaskView();
 		}
-		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
-				String.format(LOG_REFRESH, indices.size()));
+		logDebug(String.format(LOG_REFRESH, indices.size()));
 	}
 
 	/**
@@ -579,8 +571,7 @@ public class StreamUI {
 	 */
 	public void displayDetails(StreamTask task) {
 		String taskName = Displayer.displayDetails(mainFrame, task);
-		loggerDoc.log(StreamLogger.LogLevel.DEBUG,
-				String.format(LOG_DETAILS, taskName));
+		logDebug(String.format(LOG_DETAILS, taskName));
 	}
 
 	/**
@@ -631,6 +622,11 @@ public class StreamUI {
 	public void openHelpBox() {
 		JOptionPane.showMessageDialog(mainFrame, TEXT_HELP, TITLE_HELP,
 				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	@Override
+	public String getComponentName() {
+		return "STREAMUI";
 	}
 
 }
