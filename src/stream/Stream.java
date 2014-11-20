@@ -767,14 +767,8 @@ public class Stream extends Loggable {
 			// ok to ignore
 		}
 
-		result = processSorting(sortBy, descending, type);
+		result = streamLogic.sort(type, descending);
 		showAndLogResult(result);
-	}
-
-	private String processSorting(String sortBy, boolean descending,
-			SortType type) {
-		String result = streamLogic.sort(type, descending);
-		return result;
 	}
 
 	private void executeExit() {
@@ -805,7 +799,8 @@ public class Stream extends Loggable {
 	 */
 	private ArrayList<Integer> executeSearch(String content) {
 		assertNotNull(content);
-		ArrayList<Integer> searchResult = streamLogic.findTasks(content);
+		ArrayList<Integer> searchResult = streamLogic.searchLogic
+				.findTasks(content);
 
 		String result = String.format(StreamConstants.LogMessage.SEARCH,
 				content, searchResult.size());
@@ -817,7 +812,8 @@ public class Stream extends Loggable {
 	//@author A0093874N
 	private ArrayList<Integer> executeFilter(String content) {
 		assertNotNull(content);
-		ArrayList<Integer> filterResult = streamLogic.filterTasks(content);
+		ArrayList<Integer> filterResult = streamLogic.searchLogic
+				.filterTasks(content);
 
 		FilterType type = StreamParser.fp.parse(content);
 		String log = StreamParser.fp.translate(type);

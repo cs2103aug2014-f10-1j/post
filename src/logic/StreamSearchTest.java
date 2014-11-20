@@ -43,15 +43,15 @@ public class StreamSearchTest {
 
 	@Test 
 	public void testSearch1() {
-		testOneSearch("Search for nothing", streamLogic.getStreamTaskList(streamLogic.findTasks("nothing")));
+		testOneSearch("Search for nothing", streamLogic.getStreamTaskList(streamLogic.searchLogic.findTasks("nothing")));
 	}
 	@Test 
 	public void testSearch2() {
-		testOneSearch("Search for x", streamLogic.getStreamTaskList(streamLogic.findTasks("x")), task1, task2);
+		testOneSearch("Search for x", streamLogic.getStreamTaskList(streamLogic.searchLogic.findTasks("x")), task1, task2);
 	}
 	@Test 
 	public void testSearch3() {
-		testOneSearch("Search for panda", streamLogic.getStreamTaskList(streamLogic.findTasks("im looking for a panda")), task2);
+		testOneSearch("Search for panda", streamLogic.getStreamTaskList(streamLogic.searchLogic.findTasks("im looking for a panda")), task2);
 	}
 
 	private void testOneSearch(String testMessage, List<StreamTask> actualTasks, StreamTask...tasks) {
