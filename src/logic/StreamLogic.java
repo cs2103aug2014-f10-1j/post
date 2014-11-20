@@ -21,8 +21,9 @@ import exception.StreamModificationException;
 public class StreamLogic extends Loggable {
 
 	private StreamObject streamObject;
-	public ModificationLogic taskLogic = ModificationLogic.init();
-
+	
+	public ModificationLogic modLogic = ModificationLogic.init();
+	public UndoLogic undoLogic = UndoLogic.init();
 	public DeleteLogic delLogic;
 	public SearcherLogic searchLogic;
 	public OrderLogic orderLogic;
@@ -237,7 +238,7 @@ public class StreamLogic extends Loggable {
 		String contents = "";
 		for (int i = 1; i < modifyParams.size(); i++) {
 			String s = modifyParams.get(i);
-			if (taskLogic.isValidAttribute(s)) {
+			if (modLogic.isValidAttribute(s)) {
 				// first content is guaranteed to be a valid parameter
 				modifyTask(task, attribute, contents.trim());
 				attribute = s;
@@ -268,7 +269,7 @@ public class StreamLogic extends Loggable {
 			// modify name need access to streamObject, special case
 			updateTaskName(task.getTaskName(), contents);
 		} else {
-			taskLogic.modifyTask(task, attribute, contents);
+			modLogic.modifyTask(task, attribute, contents);
 		}
 	}
 

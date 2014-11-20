@@ -11,9 +11,7 @@ import javax.swing.ImageIcon;
 
 import logger.Loggable;
 import logger.StreamLogger;
-import logic.StackLogic;
 import logic.StreamLogic;
-import logic.ModificationLogic;
 import model.StreamObject;
 import model.StreamTask;
 import parser.FilterParser.FilterType;
@@ -42,8 +40,6 @@ public class Stream extends Loggable {
 
 	StreamObject streamObject = StreamObject.getInstance();
 	StreamUI stui;
-	ModificationLogic taskLogic = ModificationLogic.init();
-	StackLogic stackLogic = StackLogic.init();
 	StreamLogic streamLogic = StreamLogic.init(streamObject);
 
 	private StreamParser parser;
@@ -340,7 +336,7 @@ public class Stream extends Loggable {
 
 		for (int i = 0; i < contents.length; i++) {
 			String word = contents[i];
-			if (taskLogic.isValidAttribute(word)) {
+			if (streamLogic.modLogic.isValidAttribute(word)) {
 				appendEverything(contents, modifyParams, i);
 				break;
 			} else {
@@ -401,7 +397,7 @@ public class Stream extends Loggable {
 		streamLogic.orderLogic.push(order);
 		
 		streamLogic.delLogic.push(deletedTask);
-		stackLogic.pushInverseDeleteCommand(deletedTask, order);
+		streamLogic.undoLogic.pushInverseDeleteCommand(deletedTask, order);
 		String result = String.format(StreamConstants.LogMessage.DELETE,
 				taskName);
 		showAndLogResult(result);
@@ -441,7 +437,7 @@ public class Stream extends Loggable {
 		streamLogic.deleteTask(taskName);
 		assertNoTask(taskName);
 
-		stackLogic.pushPlaceholderInput();
+		streamLogic.undoLogic.pushPlaceholderInput();
 		String result = String.format(StreamConstants.LogMessage.DELETE,
 				taskName);
 		showAndLogResult(result);
@@ -457,7 +453,7 @@ public class Stream extends Loggable {
 		for (StreamTask task : streamLogic.getStreamTaskList()) {
 			streamLogic.delLogic.push(task);
 		}
-		stackLogic.pushInverseClearCommand(streamLogic.getTaskList(),
+		streamLogic.undoLogic.pushInverseClearCommand(streamLogic.getTaskList(),
 				streamLogic.getStreamTaskList());
 		streamLogic.clear();
 		assert (streamLogic.getNumberOfTasks() == 0) : StreamConstants.Assertion.NOT_CLEARED;
@@ -499,10 +495,10 @@ public class Stream extends Loggable {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask currentTask = streamLogic.getTask(taskName);
 		String oldDescription = currentTask.getDescription();
-		String result = taskLogic.setDescription(currentTask, description);
+		String result = streamLogic.modLogic.setDescription(currentTask, description);
 		stui.setActiveTask(currentTask);
 
-		stackLogic.pushInverseSetDescriptionCommand(taskIndex, oldDescription);
+		streamLogic.undoLogic.pushInverseSetDescriptionCommand(taskIndex, oldDescription);
 		showAndLogResult(result);
 	}
 
@@ -521,10 +517,10 @@ public class Stream extends Loggable {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask currentTask = streamLogic.getTask(taskName);
 		String oldRank = currentTask.getRank();
-		String result = taskLogic.setRank(currentTask, taskRank);
+		String result = streamLogic.modLogic.setRank(currentTask, taskRank);
 		stui.setActiveTask(currentTask);
 
-		stackLogic.pushInverseSetRankingCommand(taskIndex, oldRank);
+		streamLogic.undoLogic.pushInverseSetRankingCommand(taskIndex, oldRank);
 		showAndLogResult(result);
 	}
 
@@ -545,7 +541,7 @@ public class Stream extends Loggable {
 		StreamTask task = streamLogic.getTask(newTaskName);
 		stui.setActiveTask(task);
 
-		stackLogic.pushInverseSetNameCommand(taskIndex, oldTaskName);
+		streamLogic.undoLogic.pushInverseSetNameCommand(taskIndex, oldTaskName);
 
 		String result = String.format(StreamConstants.LogMessage.NAME,
 				oldTaskName, newTaskName);
@@ -567,11 +563,11 @@ public class Stream extends Loggable {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask currTask = streamLogic.getTask(taskName);
 
-		String inverseCommand = stackLogic.prepareInverseModifyCommand(
+		String inverseCommand = streamLogic.undoLogic.prepareInverseModifyCommand(
 				taskName, taskIndex, currTask);
 
 		streamLogic.modifyTaskWithParams(taskName, Arrays.asList(contents));
-		stackLogic.pushInverseModifyCommand(inverseCommand);
+		streamLogic.undoLogic.pushInverseModifyCommand(inverseCommand);
 		stui.setActiveTask(currTask);
 
 		String result = String.format(StreamConstants.LogMessage.MODIFY,
@@ -594,8 +590,8 @@ public class Stream extends Loggable {
 		String[] tags = content.split(" ");
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask task = streamLogic.getTask(taskName);
-		ArrayList<String> processedTags = taskLogic.removeTags(task, tags);
-		stackLogic.pushInverseUntagCommand(taskIndex, processedTags);
+		ArrayList<String> processedTags = streamLogic.modLogic.removeTags(task, tags);
+		streamLogic.undoLogic.pushInverseUntagCommand(taskIndex, processedTags);
 		stui.setActiveTask(task);
 		logRemovedTags(taskName, processedTags);
 	}
@@ -614,8 +610,8 @@ public class Stream extends Loggable {
 		String[] tags = content.split(" ");
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask task = streamLogic.getTask(taskName);
-		ArrayList<String> processedTags = taskLogic.addTags(task, tags);
-		stackLogic.pushInverseAddTagCommand(taskIndex, processedTags);
+		ArrayList<String> processedTags = streamLogic.modLogic.addTags(task, tags);
+		streamLogic.undoLogic.pushInverseAddTagCommand(taskIndex, processedTags);
 		stui.setActiveTask(task);
 		logAddedTags(taskName, processedTags);
 	}
@@ -628,7 +624,7 @@ public class Stream extends Loggable {
 	private void executeUnsort() {
 		ArrayList<String> order = streamLogic.orderLogic.pop();
 		streamLogic.orderLogic.setOrdering(order);
-		stackLogic.pushPlaceholderInput();
+		streamLogic.undoLogic.pushPlaceholderInput();
 		showAndLogResult(StreamConstants.LogMessage.UNSORT);
 	}
 
@@ -636,7 +632,7 @@ public class Stream extends Loggable {
 	 * Recovers deleted task from the archive.
 	 */
 	private void executeRecover(Integer noOfTasksToRecover) {
-		stackLogic.pushPlaceholderInput();
+		streamLogic.undoLogic.pushPlaceholderInput();
 
 		for (int i = 0; i < noOfTasksToRecover; i++) {
 			StreamTask task = streamLogic.delLogic.pop();
@@ -653,10 +649,10 @@ public class Stream extends Loggable {
 	 * Execute the undo operation for the last user action
 	 */
 	private void executeUndo() {
-		if (!stackLogic.hasInverseInput()) {
+		if (!streamLogic.undoLogic.hasInverseInput()) {
 			showAndLogResult(StreamConstants.LogMessage.UNDO_FAIL);
 		} else {
-			String undoneInput = stackLogic.popInverseCommand();
+			String undoneInput = streamLogic.undoLogic.pop();
 			showAndLogResult(StreamConstants.LogMessage.UNDO_SUCCESS);
 			logDebug(StreamUtil.showAsTerminalInput(undoneInput));
 			processInput(undoneInput);
@@ -666,7 +662,7 @@ public class Stream extends Loggable {
 			 * to the inputStack. If not popped, the undo process will be
 			 * trapped between just two processes.
 			 */
-			stackLogic.popInverseCommand();
+			streamLogic.undoLogic.pop();
 		}
 	}
 
@@ -685,8 +681,8 @@ public class Stream extends Loggable {
 		StreamTask task = streamLogic.getTask(taskName);
 
 		boolean wasDone = task.isDone();
-		String result = taskLogic.mark(task, markType);
-		stackLogic.pushInverseSetDoneCommand(wasDone, taskIndex);
+		String result = streamLogic.modLogic.mark(task, markType);
+		streamLogic.undoLogic.pushInverseSetDoneCommand(wasDone, taskIndex);
 
 		stui.setActiveTask(task);
 		showAndLogResult(result);
@@ -709,9 +705,9 @@ public class Stream extends Loggable {
 	//@author A0119401U
 	private String processDueDate(int taskIndex, Calendar newDeadline,
 			StreamTask task, Calendar deadline, Calendar startTime) {
-		if (taskLogic.isValidDeadline(newDeadline, startTime)) {
-			stackLogic.pushInverseDueCommand(taskIndex, deadline);
-			return taskLogic.setDeadline(task, newDeadline);
+		if (streamLogic.modLogic.isValidDeadline(newDeadline, startTime)) {
+			streamLogic.undoLogic.pushInverseDueCommand(taskIndex, deadline);
+			return streamLogic.modLogic.setDeadline(task, newDeadline);
 		} else {
 			return StreamConstants.ExceptionMessage.ERR_DEADLINE_BEFORE_STARTTIME;
 		}
@@ -733,9 +729,9 @@ public class Stream extends Loggable {
 
 	private String processStartTime(int taskIndex, Calendar newStartTime,
 			StreamTask currentTask, Calendar currentStartTime, Calendar deadline) {
-		if (taskLogic.isValidStartTime(deadline, newStartTime)) {
-			stackLogic.pushInverseStartCommand(taskIndex, currentStartTime);
-			return taskLogic.setStartTime(currentTask, newStartTime);
+		if (streamLogic.modLogic.isValidStartTime(deadline, newStartTime)) {
+			streamLogic.undoLogic.pushInverseStartCommand(taskIndex, currentStartTime);
+			return streamLogic.modLogic.setStartTime(currentTask, newStartTime);
 		} else {
 			return StreamConstants.ExceptionMessage.ERR_STARTTIME_AFTER_DEADLINE;
 		}
@@ -745,7 +741,7 @@ public class Stream extends Loggable {
 	// updated by A0119401U
 	private void executeSort(String content) {
 		ArrayList<String> oldOrdering = streamLogic.getTaskList();
-		stackLogic.pushInverseSortCommand(oldOrdering);
+		streamLogic.undoLogic.pushInverseSortCommand(oldOrdering);
 		streamLogic.orderLogic.push(oldOrdering);
 
 		String result = null;
@@ -839,7 +835,7 @@ public class Stream extends Loggable {
 
 		streamLogic.addTask(taskName);
 		assert (streamLogic.hasTask(taskName)) : StreamConstants.Assertion.NOT_ADDED;
-		stackLogic.pushInverseAddCommand(streamLogic.getNumberOfTasks());
+		streamLogic.undoLogic.pushInverseAddCommand(streamLogic.getNumberOfTasks());
 		processParameterAddition(taskName, modifyParams);
 	}
 

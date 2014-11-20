@@ -14,7 +14,7 @@ import parser.StreamParser;
 import util.StreamConstants;
 import util.StreamUtil;
 
-public class OrderLogic extends Loggable implements BasicStackLogic {
+public class OrderLogic extends Loggable implements StackLogic {
 
 	private Stack<ArrayList<String>> orderStack;
 	private StreamObject streamObject;

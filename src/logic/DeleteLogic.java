@@ -6,7 +6,7 @@ import util.StreamConstants;
 import logger.Loggable;
 import model.StreamTask;
 
-public class DeleteLogic extends Loggable implements BasicStackLogic {
+public class DeleteLogic extends Loggable implements StackLogic {
 
 	private Stack<StreamTask> deletedTasks = new Stack<StreamTask>();
 	
