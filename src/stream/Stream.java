@@ -394,10 +394,11 @@ public class Stream extends Loggable {
 		ArrayList<String> order = streamLogic.getTaskList();
 
 		assertNotNull(taskName);
-		
+
 		streamLogic.deleteTask(taskName);
 		assertNoTask(taskName);
 
+		streamLogic.orderLogic.push(order);
 		stackLogic.pushInverseDeleteCommand(deletedTask, order);
 		String result = String.format(StreamConstants.LogMessage.DELETE,
 				taskName);
@@ -450,6 +451,7 @@ public class Stream extends Loggable {
 	 * @throws StreamModificationException
 	 */
 	private void executeClear() throws StreamModificationException {
+		streamLogic.orderLogic.push(streamLogic.getTaskList());
 		stackLogic.pushInverseClearCommand(streamLogic.getTaskList(),
 				streamLogic.getStreamTaskList());
 		streamLogic.clear();
@@ -624,7 +626,8 @@ public class Stream extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private void executeUnsort() {
-		streamLogic.setOrdering(stackLogic.popOrder());
+		ArrayList<String> order = streamLogic.orderLogic.pop();
+		streamLogic.orderLogic.setOrdering(order);
 		stackLogic.pushPlaceholderInput();
 		showAndLogResult(StreamConstants.LogMessage.UNSORT);
 	}
@@ -639,7 +642,7 @@ public class Stream extends Loggable {
 			StreamTask task = stackLogic.recoverTask();
 			streamLogic.recoverTask(task);
 		}
-		streamLogic.setOrdering(stackLogic.popOrder());
+		streamLogic.orderLogic.setOrdering(streamLogic.orderLogic.pop());
 
 		String result = String.format(StreamConstants.LogMessage.RECOVER,
 				noOfTasksToRecover);
@@ -744,6 +747,7 @@ public class Stream extends Loggable {
 	private void executeSort(String content) {
 		ArrayList<String> oldOrdering = streamLogic.getTaskList();
 		stackLogic.pushInverseSortCommand(oldOrdering);
+		streamLogic.orderLogic.push(oldOrdering);
 
 		String result = null;
 		String sortBy = null;
@@ -769,27 +773,7 @@ public class Stream extends Loggable {
 
 	private String processSorting(String sortBy, boolean descending,
 			SortType type) {
-		String result;
-		switch (type) {
-			case ALPHA:
-				result = streamLogic.sortAlpha(descending);
-				break;
-			case END:
-				result = streamLogic.sortDeadline(descending);
-				break;
-			case START:
-				result = streamLogic.sortStartTime(descending);
-				break;
-			case TIME:
-				result = streamLogic.sortTime(descending);
-				break;
-			case IMPORTANCE:
-				result = streamLogic.sortImportance(descending);
-				break;
-			default:
-				result = "Unknown sort category \"" + sortBy + "\"";
-				break;
-		}
+		String result = streamLogic.sort(type, descending);
 		return result;
 	}
 
@@ -962,8 +946,8 @@ public class Stream extends Loggable {
 	//@author A0093874N
 	private void refreshUI(boolean isReset, boolean isSearching) {
 		stui.resetAvailableTasks(streamLogic.getIndices(),
-				streamLogic.getStreamTaskList(streamLogic.getIndices()), isReset,
-				isSearching);
+				streamLogic.getStreamTaskList(streamLogic.getIndices()),
+				isReset, isSearching);
 	}
 
 	private void refreshUI(ArrayList<Integer> index, boolean isReset,

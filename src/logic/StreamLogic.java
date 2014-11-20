@@ -3,13 +3,12 @@ package logic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import com.mdimension.jchronic.Chronic;
 
+import parser.SortParser.SortType;
 import parser.StreamParser;
 import parser.FilterParser.FilterType;
 import parser.RankParser.RankType;
@@ -25,11 +24,21 @@ import exception.StreamModificationException;
  * @version V0.5
  */
 
-//@author A0118007R
+// @author A0118007R
 public class StreamLogic extends BaseLogic {
 
 	private StreamObject streamObject;
 	private TaskLogic taskLogic = TaskLogic.init();
+
+	@SuppressWarnings("unused")
+	private CRDLogic crdLogic = new CRDLogic();
+	@SuppressWarnings("unused")
+	private ModificationLogic modLogic = new ModificationLogic();
+	@SuppressWarnings("unused")
+	private UndoLogic undoLogic = new UndoLogic();
+	@SuppressWarnings("unused")
+	private SearcherLogic searchLogic = new SearcherLogic();
+	public OrderLogic orderLogic;
 
 	private StreamLogic() {
 
@@ -44,10 +53,11 @@ public class StreamLogic extends BaseLogic {
 	public static StreamLogic init(StreamObject streamObject) {
 		StreamLogic logic = new StreamLogic();
 		logic.streamObject = streamObject;
+		logic.orderLogic = new OrderLogic(streamObject);
 		return logic;
 	}
 
-	//@author A0093874N
+	// @author A0093874N
 	/**
 	 * Returns the indices of all tasks.
 	 * 
@@ -63,283 +73,6 @@ public class StreamLogic extends BaseLogic {
 	}
 
 	/**
-	 * Sets the ordering of a task list.
-	 * 
-	 * @param anotherTaskList
-	 */
-	public void setOrdering(ArrayList<String> anotherTaskList) {
-		assert (StreamUtil.listEqual(streamObject.getTaskList(),
-				anotherTaskList)) : StreamConstants.Assertion.NOT_EQUAL;
-		streamObject.setTaskList(anotherTaskList);
-		logDebug(String.format(StreamConstants.LogMessage.REORDER_TASKS,
-				Arrays.toString(anotherTaskList.toArray())));
-	}
-
-	//@author A0096529N
-	/**
-	 * Sets the ordering with tasks.
-	 * 
-	 * @param anotherTaskList
-	 */
-	public void setOrderingWithTasks(List<StreamTask> anotherTaskList) {
-
-		ArrayList<String> orderList = new ArrayList<String>();
-		for (StreamTask task : anotherTaskList) {
-			orderList.add(task.getTaskName());
-		}
-		setOrdering(orderList);
-	}
-
-	/**
-	 * Sorts by task name, lexicographically.
-	 * 
-	 * @param descending
-	 *            true to reverse the order
-	 * @return result of the sort
-	 */
-	public String sortAlpha(final boolean descending) {
-		sort(new Comparator<StreamTask>() {
-			@Override
-			public int compare(StreamTask o1, StreamTask o2) {
-				return descending ? compareName(o1, o2) : compareName(o2, o1);
-			}
-		});
-		return "Sort by alphabetical order, "
-				+ (descending ? "descending." : "ascending.");
-	}
-
-	/**
-	 * Sorts by start time, earliest first
-	 * 
-	 * @param descending
-	 *            true to reverse the order
-	 * @return result of the sort
-	 */
-	public String sortStartTime(final boolean descending) {
-		sort(new Comparator<StreamTask>() {
-			@Override
-			public int compare(StreamTask o1, StreamTask o2) {
-				return descending ? compareStartTime(o1, o2, true)
-						: compareStartTime(o2, o1, false);
-			}
-		});
-		return "Sort by start time "
-				+ (descending ? "descending." : "ascending.");
-	}
-
-	/**
-	 * Sorts by deadline, earliest first
-	 * 
-	 * @param descending
-	 *            true to reverse the order
-	 * @return result of the sort
-	 */
-	public String sortDeadline(final boolean descending) {
-		sort(new Comparator<StreamTask>() {
-			@Override
-			public int compare(StreamTask o1, StreamTask o2) {
-				return descending ? compareDeadline(o1, o2, true)
-						: compareDeadline(o2, o1, false);
-			}
-		});
-		return "Sort by deadline "
-				+ (descending ? "descending." : "ascending.");
-	}
-
-	/**
-	 * Sorts based on importance.
-	 * 
-	 * <p>
-	 * Sort algorithm
-	 * </p>
-	 * <ul>
-	 * <li>Level 1: not done first</li>
-	 * <li>Level 2: overdue first (only applicable to not-done tasks)</li>
-	 * <li>Level 3: rank highest first</li>
-	 * <li>Level 4: deadline earliest first</li>
-	 * <li>Level 5: starttime earliest first</li>
-	 * <li>Level 6: task name alphanumeric</li>
-	 * </ul>
-	 * 
-	 * @param descending
-	 *            true to reverse the order
-	 * @return result of the sort
-	 */
-	public String sortImportance(final boolean descending) {
-		sort(new Comparator<StreamTask>() {
-			@Override
-			public int compare(StreamTask o1, StreamTask o2) {
-				int comparison = descending ? compareDone(o1, o2)
-						: compareDone(o2, o1);
-				if (comparison == 0 && !o1.isDone()
-						&& o1.isOverdue() != o2.isOverdue()) {
-					if (descending) {
-						comparison = o2.isOverdue() ? 1 : -1;
-					} else {
-						comparison = o1.isOverdue() ? 1 : -1;
-					}
-				}
-				if (comparison == 0) {
-					comparison = descending ? compareRank(o1, o2)
-							: compareRank(o2, o1);
-				}
-				if (comparison == 0) {
-					comparison = descending ? compareDeadline(o2, o1, false)
-							: compareDeadline(o1, o2, false);
-				}
-				if (comparison == 0) {
-					comparison = descending ? compareStartTime(o2, o1, false)
-							: compareStartTime(o1, o2, false);
-				}
-				if (comparison == 0) {
-					return descending ? compareName(o1, o2) : compareName(o2,
-							o1);
-				}
-				return comparison;
-			}
-		});
-		return "Sort by importance "
-				+ (descending ? "descending." : "ascending.");
-	}
-
-	//@author A0119401U
-	/**
-	 * Sorts the tasks based on the time given. First we sort by start time, and
-	 * then sort by deadline.
-	 * 
-	 * @param descending
-	 * @return 
-	 */
-	// Sort the task based on the time given, if start time is known, then
-	// sort based on start time, if not, then sort based on deadline
-	public String sortTime(final boolean descending) {
-		sort(new Comparator<StreamTask>() {
-			@Override
-			public int compare(StreamTask o1, StreamTask o2) {
-				if (o1.getStartTime() == null && o1.getDeadline() == null
-						&& o2.getStartTime() == null
-						&& o2.getDeadline() == null) {
-					return 0;
-				} else if (o1.getStartTime() == null
-						&& o1.getDeadline() == null) {
-					return 1;
-				} else if (o2.getStartTime() == null
-						&& o2.getDeadline() == null) {
-					return -1;
-				} else if (o1.getStartTime() == null
-						&& o2.getStartTime() == null) {
-					return descending ? o2.getDeadline().compareTo(
-							o1.getDeadline()) : o1.getDeadline().compareTo(
-							o2.getDeadline());
-				} else if (o1.getStartTime() == null) {
-					return descending ? o2.getStartTime().compareTo(
-							o1.getDeadline()) : o1.getDeadline().compareTo(
-							o2.getStartTime());
-				} else if (o2.getStartTime() == null) {
-					return descending ? o2.getDeadline().compareTo(
-							o1.getStartTime()) : o1.getStartTime().compareTo(
-							o2.getDeadline());
-				} else {
-					return descending ? o2.getStartTime().compareTo(
-							o1.getStartTime()) : o1.getStartTime().compareTo(
-							o2.getStartTime());
-				}
-			}
-		});
-		return "Sort by time " + (descending ? "descending." : "ascending.");
-	}
-
-	//@author A0096529N
-	/**
-	 * Sorts tasks based on given comparator.
-	 * 
-	 * @param comparator
-	 *            for sorting tasks
-	 */
-	private void sort(Comparator<StreamTask> comparator) {
-		assert (comparator != null);
-		List<StreamTask> tempList = getStreamTaskList();
-		Collections.sort(tempList, comparator);
-		setOrderingWithTasks(tempList);
-	}
-
-	/**
-	 * Compare the ranks of two tasks.
-	 * <p>
-	 * Values:
-	 * </p>
-	 * <ul>
-	 * <li>HI: 2</li>
-	 * <li>MED: 1</li>
-	 * <li>LO: 0</li>
-	 * <li>NULL: -1</li>
-	 * </ul>
-	 * 
-	 * @param task1
-	 *            the first task to compare
-	 * @param task2
-	 *            the second task to be compared to
-	 * @return 0 if tasks' ranks are equal, or the rank of task2 - rank of
-	 *         task1.
-	 */
-	private int compareRank(StreamTask task1, StreamTask task2) {
-		return valueRank(task2.getRank()) - valueRank(task1.getRank());
-	}
-
-	private int compareDone(StreamTask task1, StreamTask task2) {
-		if (task1.isDone() == task2.isDone()) {
-			return 0;
-		} else if (task1.isDone() && !task2.isDone()) {
-			return 1;
-		} else {
-			return -1;
-		}
-	}
-
-	private int compareDeadline(StreamTask task1, StreamTask task2,
-			boolean reverse) {
-		if (task1.getDeadline() == null && task2.getDeadline() == null) {
-			return 0;
-		} else if (task1.getDeadline() == null) {
-			return reverse ? 1 : -1;
-		} else if (task2.getDeadline() == null) {
-			return reverse ? -1 : 1;
-		} else {
-			return task2.getDeadline().compareTo(task1.getDeadline());
-		}
-	}
-
-	private int compareName(StreamTask task1, StreamTask task2) {
-		return task2.getTaskName().compareTo(task1.getTaskName());
-	}
-
-	private int compareStartTime(StreamTask task1, StreamTask task2,
-			boolean reverse) {
-		if (task1.getStartTime() == null && task2.getStartTime() == null) {
-			return 0;
-		} else if (task1.getStartTime() == null) {
-			return reverse ? 1 : -1;
-		} else if (task2.getStartTime() == null) {
-			return reverse ? -1 : 1;
-		} else {
-			return task2.getStartTime().compareTo(task1.getStartTime());
-		}
-	}
-
-	private int valueRank(String rank) {
-		switch (StreamParser.rp.parse(rank)) {
-			case HI:
-				return 2;
-			case MED:
-				return 1;
-			case LO:
-				return 0;
-			default:
-				return -1;
-		}
-	}
-
-	/**
 	 * Clears the storage of all tasks.
 	 */
 	public void clear() {
@@ -347,7 +80,7 @@ public class StreamLogic extends BaseLogic {
 		logDebug(StreamConstants.LogMessage.CLEARED_TASKS);
 	}
 
-	//@author A0093874N
+	// @author A0093874N
 	/**
 	 * Adds a new task to StreamObject
 	 * 
@@ -402,7 +135,7 @@ public class StreamLogic extends BaseLogic {
 		return streamObject.containsKey(taskName);
 	}
 
-	//@author A0118007R
+	// @author A0118007R
 	/**
 	 * Gets a specific task
 	 * 
@@ -450,7 +183,7 @@ public class StreamLogic extends BaseLogic {
 		}
 	}
 
-	//@author A0096529N
+	// @author A0096529N
 	/**
 	 * Change task name of the task
 	 * 
@@ -493,7 +226,7 @@ public class StreamLogic extends BaseLogic {
 				newTaskName);
 	}
 
-	//@author A0118007R
+	// @author A0118007R
 	/**
 	 * Modifies the various specified parameters of a task.
 	 * 
@@ -528,7 +261,7 @@ public class StreamLogic extends BaseLogic {
 		modifyTask(task, attribute, contents);
 	}
 
-	//@author A0096529N
+	// @author A0096529N
 	/**
 	 * Modify an attribute of a task
 	 * 
@@ -605,7 +338,7 @@ public class StreamLogic extends BaseLogic {
 		return tasks;
 	}
 
-	//@author A0093874N
+	// @author A0093874N
 	/**
 	 * Filter tasks by various categories
 	 * 
@@ -726,7 +459,7 @@ public class StreamLogic extends BaseLogic {
 		return streamObject.size();
 	}
 
-	//@author A0096529N
+	// @author A0096529N
 	/**
 	 * Retrieves the task name by index
 	 * 
@@ -767,7 +500,7 @@ public class StreamLogic extends BaseLogic {
 		return taskList;
 	}
 
-	//@author A0093874N
+	// @author A0093874N
 
 	public ArrayList<StreamTask> getStreamTaskList(ArrayList<Integer> indices) {
 		ArrayList<StreamTask> tasks = new ArrayList<StreamTask>();
@@ -779,10 +512,36 @@ public class StreamLogic extends BaseLogic {
 		return tasks;
 	}
 
-	//@author generated
+	// @author generated
 	@Override
 	protected String getLoggerComponentName() {
 		return StreamConstants.ComponentTag.STREAMLOGIC;
 	}
 
+	public String sort(SortType type, Boolean isDescending) {
+		List<StreamTask> initialList = getStreamTaskList();
+		String result = null;
+		switch (type) {
+			case ALPHA:
+				result = orderLogic.sortAlpha(initialList, isDescending);
+				break;
+			case END:
+				result = orderLogic.sortDeadline(initialList, isDescending);
+				break;
+			case START:
+				result = orderLogic.sortStartTime(initialList, isDescending);
+				break;
+			case TIME:
+				result = orderLogic.sortTime(initialList, isDescending);
+				break;
+			case IMPORTANCE:
+				result = orderLogic.sortImportance(initialList, isDescending);
+				break;
+			default:
+				// WILL NOT HAPPEN
+				result = "Unknown sort category";
+				break;
+		}
+		return result;
+	}
 }

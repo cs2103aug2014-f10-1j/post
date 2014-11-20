@@ -1,7 +1,6 @@
 package logic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Stack;
 
@@ -13,9 +12,9 @@ import model.StreamTask;
 //@author A0096529N
 
 public class StackLogic extends BaseLogic {
+	
 	private Stack<String> inputStack;
 	private Stack<StreamTask> dumpedTasks;
-	private Stack<ArrayList<String>> orderingStack;
 
 	private static final String CMD_DISMISS = "dismiss %1$s";
 	private static final String CMD_RECOVER = "recover %1$s";
@@ -32,7 +31,6 @@ public class StackLogic extends BaseLogic {
 	private StackLogic() {
 		inputStack = new Stack<String>();
 		dumpedTasks = new Stack<StreamTask>();
-		orderingStack = new Stack<ArrayList<String>>();
 	}
 
 	public static StackLogic init() {
@@ -101,7 +99,7 @@ public class StackLogic extends BaseLogic {
 	 */
 	public void pushInverseDeleteCommand(StreamTask deletedTask,
 			ArrayList<String> order) {
-		pushOrder(order);
+		
 		pushDumpedTask(deletedTask);
 		pushInput(String.format(CMD_RECOVER, 1));
 	}
@@ -117,7 +115,6 @@ public class StackLogic extends BaseLogic {
 	 */
 	public void pushInverseClearCommand(ArrayList<String> originalOrder,
 			ArrayList<StreamTask> deletedTasks) {
-		pushOrder(originalOrder);
 		for (StreamTask task : deletedTasks) {
 			pushDumpedTask(task);
 		}
@@ -197,7 +194,6 @@ public class StackLogic extends BaseLogic {
 	 *            order of tasks to be reverted to
 	 */
 	public void pushInverseSortCommand(ArrayList<String> oldOrdering) {
-		pushOrder(oldOrdering);
 		pushInput(CMD_UNSORT);
 	}
 
@@ -369,28 +365,6 @@ public class StackLogic extends BaseLogic {
 	 */
 	public void pushPlaceholderInput() {
 		pushInput("placeholderforundo");
-	}
-
-	//@author A0096529N
-	private void pushOrder(ArrayList<String> order) {
-		assert (order != null && !order.isEmpty()) : StreamConstants.Assertion.EMPTY_INVERSE_ORDER;
-		orderingStack.push(order);
-		logDebug(String.format(StreamConstants.LogMessage.PUSH_ORDER,
-				Arrays.toString(order.toArray())));
-	}
-
-	//@author A0096529N
-	/**
-	 * Pops the order on the top of the ordering stack
-	 * 
-	 * @return taskList List of taskNames in the order that was pushed
-	 *         previously
-	 */
-	public ArrayList<String> popOrder() {
-		ArrayList<String> order = orderingStack.pop();
-		logDebug(String.format(StreamConstants.LogMessage.POP_ORDER,
-				Arrays.toString(order.toArray())));
-		return order;
 	}
 
 	//@author generated
