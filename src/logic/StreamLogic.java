@@ -23,6 +23,7 @@ public class StreamLogic extends Loggable {
 	private StreamObject streamObject;
 	public ModificationLogic taskLogic = ModificationLogic.init();
 
+	public DeleteLogic delLogic;
 	public SearcherLogic searchLogic;
 	public OrderLogic orderLogic;
 
@@ -30,6 +31,7 @@ public class StreamLogic extends Loggable {
 		this.streamObject = stobj;
 		this.orderLogic = new OrderLogic(stobj);
 		this.searchLogic = new SearcherLogic(stobj);
+		this.delLogic = new DeleteLogic();
 	}
 
 	/**

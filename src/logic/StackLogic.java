@@ -15,7 +15,6 @@ import model.StreamTask;
 public class StackLogic extends Loggable {
 	
 	private Stack<String> inputStack;
-	private Stack<StreamTask> dumpedTasks;
 
 	private static final String CMD_DISMISS = "dismiss %1$s";
 	private static final String CMD_RECOVER = "recover %1$s";
@@ -31,7 +30,6 @@ public class StackLogic extends Loggable {
 
 	private StackLogic() {
 		inputStack = new Stack<String>();
-		dumpedTasks = new Stack<StreamTask>();
 	}
 
 	public static StackLogic init() {
@@ -100,8 +98,6 @@ public class StackLogic extends Loggable {
 	 */
 	public void pushInverseDeleteCommand(StreamTask deletedTask,
 			ArrayList<String> order) {
-		
-		pushDumpedTask(deletedTask);
 		pushInput(String.format(CMD_RECOVER, 1));
 	}
 
@@ -116,9 +112,6 @@ public class StackLogic extends Loggable {
 	 */
 	public void pushInverseClearCommand(ArrayList<String> originalOrder,
 			ArrayList<StreamTask> deletedTasks) {
-		for (StreamTask task : deletedTasks) {
-			pushDumpedTask(task);
-		}
 		pushInput(String.format(CMD_RECOVER, deletedTasks.size()));
 	}
 
@@ -309,22 +302,6 @@ public class StackLogic extends Loggable {
 			inverseCommand = inverseCommand + "-desc null ";
 		}
 		return inverseCommand;
-	}
-
-	//@author A0096529N
-	private void pushDumpedTask(StreamTask deletedTask) {
-		assert (deletedTask != null) : StreamConstants.Assertion.NULL_INVERSE_TASK;
-		dumpedTasks.push(deletedTask);
-		logDebug(String.format(StreamConstants.LogMessage.PUSH_INVERSE_TASK,
-				deletedTask.getTaskName()));
-	}
-
-	//@author A0096529N
-	public StreamTask recoverTask() {
-		StreamTask dumpedTask = dumpedTasks.pop();
-		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_TASK,
-				dumpedTask.getTaskName()));
-		return dumpedTask;
 	}
 
 	//@author A0096529N

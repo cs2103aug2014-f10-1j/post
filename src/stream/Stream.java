@@ -111,7 +111,7 @@ public class Stream extends Loggable {
 			consoleFont = Font.createFont(Font.TRUETYPE_FONT, getClass()
 					.getResourceAsStream("/fonts/Ubuntu.ttf"));
 		} catch (Exception shouldnthappen) {
-			
+
 		}
 		StreamExternals.init(headerText, doneIcon, notDoneIcon, overdueIcon,
 				inactiveIcon, hiRankIcon, medRankIcon, lowRankIcon,
@@ -399,6 +399,8 @@ public class Stream extends Loggable {
 		assertNoTask(taskName);
 
 		streamLogic.orderLogic.push(order);
+		
+		streamLogic.delLogic.push(deletedTask);
 		stackLogic.pushInverseDeleteCommand(deletedTask, order);
 		String result = String.format(StreamConstants.LogMessage.DELETE,
 				taskName);
@@ -452,6 +454,9 @@ public class Stream extends Loggable {
 	 */
 	private void executeClear() throws StreamModificationException {
 		streamLogic.orderLogic.push(streamLogic.getTaskList());
+		for (StreamTask task : streamLogic.getStreamTaskList()) {
+			streamLogic.delLogic.push(task);
+		}
 		stackLogic.pushInverseClearCommand(streamLogic.getTaskList(),
 				streamLogic.getStreamTaskList());
 		streamLogic.clear();
@@ -634,7 +639,7 @@ public class Stream extends Loggable {
 		stackLogic.pushPlaceholderInput();
 
 		for (int i = 0; i < noOfTasksToRecover; i++) {
-			StreamTask task = stackLogic.recoverTask();
+			StreamTask task = streamLogic.delLogic.pop();
 			streamLogic.recoverTask(task);
 		}
 		streamLogic.orderLogic.setOrdering(streamLogic.orderLogic.pop());
