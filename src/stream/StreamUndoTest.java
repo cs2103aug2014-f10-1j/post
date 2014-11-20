@@ -71,12 +71,12 @@ public class StreamUndoTest {
 	@Test
 	public void undoAddTest() throws Exception {
 		in("add do CS2103");
-		assertTrue("do CS2103 is included", st.streamLogic.hasTask("do CS2103"));
+		assertTrue("do CS2103 is included", st.streamLogic.crdLogic.hasTask("do CS2103"));
 		in("add ");
 		assertEquals("no new added task", 1, st.streamLogic.getNumberOfTasks());
 		in("undo");
 		assertFalse("do CS2103 is not included",
-				st.streamLogic.hasTask("do CS2103"));
+				st.streamLogic.crdLogic.hasTask("do CS2103"));
 	}
 
 	@Test
@@ -87,20 +87,20 @@ public class StreamUndoTest {
 		in("delete -1");
 		in("delete ");
 		assertFalse("do CS2103 is not included",
-				st.streamLogic.hasTask("do CS2103"));
+				st.streamLogic.crdLogic.hasTask("do CS2103"));
 		in("undo");
-		assertTrue("do CS2103 is included", st.streamLogic.hasTask("do CS2103"));
+		assertTrue("do CS2103 is included", st.streamLogic.crdLogic.hasTask("do CS2103"));
 	}
 
 	@Test
 	public void undoRenameTest() throws Exception {
 		in("add do CS2103");
 		in("name 1 do CS2104");
-		assertTrue("do CS2104 is included", st.streamLogic.hasTask("do CS2104"));
+		assertTrue("do CS2104 is included", st.streamLogic.crdLogic.hasTask("do CS2104"));
 		in("name 1 ");
-		assertTrue("name doesn't change", st.streamLogic.hasTask("do CS2104"));
+		assertTrue("name doesn't change", st.streamLogic.crdLogic.hasTask("do CS2104"));
 		in("undo");
-		assertTrue("do CS2103 is included", st.streamLogic.hasTask("do CS2103"));
+		assertTrue("do CS2103 is included", st.streamLogic.crdLogic.hasTask("do CS2103"));
 	}
 
 	@Test
@@ -124,20 +124,20 @@ public class StreamUndoTest {
 		in("modify 1 -name " + newTaskName
 				+ " -tag fordemo v0.2 -desc multiple inputs");
 		assertEquals("new name is \"" + newTaskName + "\"", false,
-				st.streamLogic.hasTask(taskNameForTest));
+				st.streamLogic.crdLogic.hasTask(taskNameForTest));
 		assertEquals("has description", "multiple inputs", st.streamLogic
-				.getTask(newTaskName).getDescription());
-		assertFalse("has tags", st.streamLogic.getTask(newTaskName).getTags()
+				.crdLogic.getTask(newTaskName).getDescription());
+		assertFalse("has tags", st.streamLogic.crdLogic.getTask(newTaskName).getTags()
 				.isEmpty());
 		in("undo");
 		assertEquals("old name is \"" + taskNameForTest + "\"", true,
-				st.streamLogic.hasTask(taskNameForTest));
-		assertNull("no description", st.streamLogic.getTask(taskNameForTest)
+				st.streamLogic.crdLogic.hasTask(taskNameForTest));
+		assertNull("no description", st.streamLogic.crdLogic.getTask(taskNameForTest)
 				.getDescription());
-		assertTrue("no tags", st.streamLogic.getTask(taskNameForTest).getTags()
+		assertTrue("no tags", st.streamLogic.crdLogic.getTask(taskNameForTest).getTags()
 				.isEmpty());
 		in("undo");
-		assertFalse("no task added", st.streamLogic.hasTask(taskNameForTest));
+		assertFalse("no task added", st.streamLogic.crdLogic.hasTask(taskNameForTest));
 	}
 
 	@Test
@@ -148,14 +148,14 @@ public class StreamUndoTest {
 		assertEquals(
 				"has date 11/11",
 				"11 November 2014 12:00:00",
-				StreamParser.tp.translate(st.streamLogic.getTask(
+				StreamParser.tp.translate(st.streamLogic.crdLogic.getTask(
 						taskNameForTest).getDeadline()));
 		assertEquals("has description", "multiple inputs", st.streamLogic
-				.getTask(taskNameForTest).getDescription());
+				.crdLogic.getTask(taskNameForTest).getDescription());
 		in("modify 1 -due null -desc null");
-		assertNull("has date 11/11", st.streamLogic.getTask(taskNameForTest)
+		assertNull("has date 11/11", st.streamLogic.crdLogic.getTask(taskNameForTest)
 				.getDeadline());
-		assertNull("has description", st.streamLogic.getTask(taskNameForTest)
+		assertNull("has description", st.streamLogic.crdLogic.getTask(taskNameForTest)
 				.getDescription());
 	}
 
@@ -196,12 +196,12 @@ public class StreamUndoTest {
 	@Test
 	public void undoMarkTest() throws Exception {
 		in("add a task");
-		assertFalse("Task 1 is not done", st.streamLogic.getTask("a task")
+		assertFalse("Task 1 is not done", st.streamLogic.crdLogic.getTask("a task")
 				.isDone());
 		in("mark 1 done");
-		assertTrue("Task 1 is done", st.streamLogic.getTask("a task").isDone());
+		assertTrue("Task 1 is done", st.streamLogic.crdLogic.getTask("a task").isDone());
 		in("undo");
-		assertFalse("Task 1 is not done", st.streamLogic.getTask("a task")
+		assertFalse("Task 1 is not done", st.streamLogic.crdLogic.getTask("a task")
 				.isDone());
 	}
 
@@ -231,31 +231,31 @@ public class StreamUndoTest {
 	public void undoTagTest() throws Exception {
 		in("add a task");
 		in("tag 1 sometask randomtask");
-		assertTrue("Tag sometask exists", st.streamLogic.getTask("a task")
+		assertTrue("Tag sometask exists", st.streamLogic.crdLogic.getTask("a task")
 				.hasTag("sometask"));
-		assertTrue("Tag randomtask exists", st.streamLogic.getTask("a task")
+		assertTrue("Tag randomtask exists", st.streamLogic.crdLogic.getTask("a task")
 				.hasTag("randomtask"));
 		in("tag 1 sometask newtask");
-		assertTrue("Tag newtask exists", st.streamLogic.getTask("a task")
+		assertTrue("Tag newtask exists", st.streamLogic.crdLogic.getTask("a task")
 				.hasTag("newtask"));
 		in("undo");
 		assertTrue("Tag sometask still exists", st.streamLogic
-				.getTask("a task").hasTag("sometask"));
+				.crdLogic.getTask("a task").hasTag("sometask"));
 		assertFalse("Tag newtask no longer exists",
-				st.streamLogic.getTask("a task").hasTag("newtask"));
+				st.streamLogic.crdLogic.getTask("a task").hasTag("newtask"));
 		in("untag 1 randomtask newtask");
 		assertFalse("Tag randomtask no longer exists",
-				st.streamLogic.getTask("a task").hasTag("randomtask"));
+				st.streamLogic.crdLogic.getTask("a task").hasTag("randomtask"));
 		in("undo");
 		assertTrue("Tag randomtask exists again",
-				st.streamLogic.getTask("a task").hasTag("randomtask"));
+				st.streamLogic.crdLogic.getTask("a task").hasTag("randomtask"));
 		assertFalse("Tag newtask still not exist",
-				st.streamLogic.getTask("a task").hasTag("newtask"));
+				st.streamLogic.crdLogic.getTask("a task").hasTag("newtask"));
 		in("undo");
 		assertFalse("Tag randomtask no longer exists",
-				st.streamLogic.getTask("a task").hasTag("randomtask"));
+				st.streamLogic.crdLogic.getTask("a task").hasTag("randomtask"));
 		assertFalse("Tag sometask no longer exists",
-				st.streamLogic.getTask("a task").hasTag("sometask"));
+				st.streamLogic.crdLogic.getTask("a task").hasTag("sometask"));
 	}
 
 	@Test
@@ -263,14 +263,14 @@ public class StreamUndoTest {
 		in("add a task");
 		in("rank 1 wat");
 		in("rank 1 high");
-		assertEquals("high", st.streamLogic.getTask("a task").getRank());
+		assertEquals("high", st.streamLogic.crdLogic.getTask("a task").getRank());
 		in("rank 1 ");
 		in("rank 1 m");
-		assertEquals("medium", st.streamLogic.getTask("a task").getRank());
+		assertEquals("medium", st.streamLogic.crdLogic.getTask("a task").getRank());
 		in("undo");
-		assertEquals("high", st.streamLogic.getTask("a task").getRank());
+		assertEquals("high", st.streamLogic.crdLogic.getTask("a task").getRank());
 		in("undo");
-		assertEquals("low", st.streamLogic.getTask("a task").getRank());
+		assertEquals("low", st.streamLogic.crdLogic.getTask("a task").getRank());
 	}
 
 	@Test
@@ -278,12 +278,12 @@ public class StreamUndoTest {
 		in("add a task");
 		in("desc 1 a description");
 		assertEquals("description updated", "a description", st.streamLogic
-				.getTask("a task").getDescription());
+				.crdLogic.getTask("a task").getDescription());
 		in("desc 1 ");
 		assertEquals("description remains", "a description", st.streamLogic
-				.getTask("a task").getDescription());
+				.crdLogic.getTask("a task").getDescription());
 		in("undo");
-		assertEquals("no description", null, st.streamLogic.getTask("a task")
+		assertEquals("no description", null, st.streamLogic.crdLogic.getTask("a task")
 				.getDescription());
 	}
 

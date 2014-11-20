@@ -26,15 +26,15 @@ public class StreamSearchTest {
 
 	@Before 
 	public void setUp() throws Exception {
-		streamLogic.addTask("Find X");
-		task1 = streamLogic.getTask("Find X");
+		streamLogic.crdLogic.addTask("Find X");
+		task1 = streamLogic.crdLogic.getTask("Find X");
 		task1.setDescription("If a = b and b = c, find x.");
 		task1.getTags().add("X");
 		task1.getTags().add("FIND");
 		task1.getTags().add("MATH");
 		task1.getTags().add("SIMPLE");
-		streamLogic.addTask("Find Pandora's Box");
-		task2 = streamLogic.getTask("Find Pandora's Box");
+		streamLogic.crdLogic.addTask("Find Pandora's Box");
+		task2 = streamLogic.crdLogic.getTask("Find Pandora's Box");
 		task2.setDescription("Try and search around the bamboo forest...");
 		task2.getTags().add("IMPOSSIBLE");
 		task2.getTags().add("PANDA");

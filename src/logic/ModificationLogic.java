@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
+import exception.StreamModificationException;
 import parser.StreamParser;
 import parser.MarkParser.MarkType;
 import parser.RankParser.RankType;
@@ -15,6 +17,8 @@ import util.StreamUtil;
 
 public class ModificationLogic extends Loggable {
 
+	private CRDLogic crdLogic;
+
 	private static final int ATTR_POS_NAME = 0;
 	private static final int ATTR_POS_DESCRIPTION = 1;
 	private static final int ATTR_POS_STARTTIME = 2;
@@ -23,8 +27,12 @@ public class ModificationLogic extends Loggable {
 	private static final int ATTR_POS_STATUS = 5;
 	private static final int ATTR_POS_TAGS = 6;
 
-	public static ModificationLogic init() {
-		return new ModificationLogic();
+	private ModificationLogic(CRDLogic crdl) {
+		this.crdLogic = crdl;
+	}
+
+	public static ModificationLogic init(CRDLogic crdl) {
+		return new ModificationLogic(crdl);
 	}
 
 	// @author A0093874N
@@ -174,10 +182,17 @@ public class ModificationLogic extends Loggable {
 	 * @param attribute
 	 * @param contents
 	 */
-	public void modifyTask(StreamTask task, String attribute, String contents) {
+	public void modifyParam(StreamTask task, String attribute, String contents,
+			int index) {
 		contents = contents.trim();
-
 		switch (attribute) {
+			case "-name":
+				try {
+					setName(task.getTaskName(), contents);
+				} catch (Exception ignore) {
+
+				}
+				break;
 			case "-desc":
 				setDescription(task, contents);
 				break;
@@ -340,6 +355,82 @@ public class ModificationLogic extends Loggable {
 	@Override
 	public String getComponentName() {
 		return "MODIFICATIONLOGIC";
+	}
+
+	// @author A0118007R
+
+	/**
+	 * Modifies the various specified parameters of a task.
+	 * 
+	 * <p>
+	 * Precondition: head of the modifyParams list is a valid parameter
+	 * </p>
+	 * 
+	 * @param taskName
+	 *            to be modified
+	 * @param modifyParams
+	 *            various parameters that are going to be modified
+	 * @throws StreamModificationException
+	 *             if taskName given does not return a match, i.e. task not
+	 *             found.
+	 */
+	public void modifyTask(StreamTask task, List<String> modifyParams, int index)
+			throws StreamModificationException {
+		String attribute = modifyParams.get(0);
+		String contents = "";
+		for (int i = 1; i < modifyParams.size(); i++) {
+			String s = modifyParams.get(i);
+			if (isValidAttribute(s)) {
+				// first content is guaranteed to be a valid parameter
+				modifyParam(task, attribute, contents.trim(), index);
+				attribute = s;
+				contents = "";
+			} else {
+				contents = contents + s + " ";
+			}
+		}
+		modifyParam(task, attribute, contents, index);
+	}
+
+	// @author A0096529N
+	/**
+	 * Change task name of the task
+	 * 
+	 * <p>
+	 * Precondition: taskName, newName != null
+	 * </p>
+	 * 
+	 * @param taskName
+	 *            to be modified
+	 * @param newTaskName
+	 *            name to be set to the task
+	 * @throws StreamModificationException
+	 *             if taskName given does not return a match, i.e. task not
+	 *             found. Or when task with newTaskName is already present.
+	 */
+	public String setName(String taskName, String newTaskName)
+			throws StreamModificationException {
+		assert (taskName != null && newTaskName != null) : StreamConstants.Assertion.NULL_INPUT;
+		StreamTask task = crdLogic.getTask(taskName);
+		int index = crdLogic.getIndex(taskName);
+		if (!taskName.equals(newTaskName)) {
+			if (crdLogic.hasTask(newTaskName)) {
+				logDebug(String.format(
+						StreamConstants.LogMessage.UPDATE_TASK_NAME_DUPLICATE,
+						newTaskName));
+				throw new StreamModificationException(
+						String.format(
+								StreamConstants.ExceptionMessage.ERR_NEW_TASK_NAME_NOT_AVAILABLE,
+								newTaskName));
+			}
+		}
+		crdLogic.updateTaskName(taskName, newTaskName, task, index);
+		task.setTaskName(newTaskName);
+		// This section is contributed by A0093874N
+		logDebug(String.format(StreamConstants.LogMessage.UPDATE_TASK_NAME,
+				taskName, newTaskName));
+		return String.format(StreamConstants.LogMessage.NAME, taskName,
+				newTaskName);
 	}
 
 }

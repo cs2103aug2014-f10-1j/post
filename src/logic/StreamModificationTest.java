@@ -14,7 +14,9 @@ import exception.StreamModificationException;
 
 //@author A0096529N
 public class StreamModificationTest {
-	private ModificationLogic taskLogic = ModificationLogic.init();
+	private StreamObject stobj = StreamObject.init();
+	private CRDLogic crdl = CRDLogic.init(stobj);
+	private ModificationLogic taskLogic = ModificationLogic.init(crdl);
 	private StreamLogic streamLogic = StreamLogic.init(StreamObject.init());
 
 	private StreamTask task1, task2, task3;
@@ -37,7 +39,7 @@ public class StreamModificationTest {
 		task1.getTags().add("FIND");
 		task1.getTags().add("MATH");
 		task1.getTags().add("SIMPLE");
-		streamLogic.recoverTask(task1);
+		streamLogic.crdLogic.recoverTask(task1);
 
 		Calendar task2Deadline = Calendar.getInstance();
 		task2Deadline.setTime(taskDeadline.getTime());
@@ -47,13 +49,13 @@ public class StreamModificationTest {
 		task2.getTags().add("IMPOSSIBLE");
 		task2.getTags().add("PANDA");
 		task2.getTags().add("NOLINE");
-		streamLogic.recoverTask(task2);
+		streamLogic.crdLogic.recoverTask(task2);
 		
 		task3 = new StreamTask(TASK_NAME_3);
 		task3.setDescription("Code the unit tests for StreamObject");
 		task3.getTags().add("BORINGTASK");
 		task3.getTags().add("PROCRASTINATE");
-		streamLogic.recoverTask(task3);
+		streamLogic.crdLogic.recoverTask(task3);
 	}
 
 	@Test 
@@ -93,7 +95,7 @@ public class StreamModificationTest {
 		
 		assertEquals("Task name before modification", TASK_NAME_3, task3.getTaskName());
 
-		streamLogic.updateTaskName(task3.getTaskName(), newTaskName);
+		streamLogic.modLogic.setName(task3.getTaskName(), newTaskName);
 
 		assertEquals("Task name after modification", newTaskName, task3.getTaskName());
 	}

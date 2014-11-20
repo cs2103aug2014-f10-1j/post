@@ -11,6 +11,7 @@ import logger.Loggable;
 import model.StreamObject;
 import model.StreamTask;
 import parser.StreamParser;
+import parser.SortParser.SortType;
 import util.StreamConstants;
 import util.StreamUtil;
 
@@ -318,4 +319,30 @@ public class OrderLogic extends Loggable implements StackLogic {
 		return "ORDERLOGIC";
 	}
 
+	public String sort(List<StreamTask> initialList, SortType type, Boolean isDescending) {
+		String result = null;
+		switch (type) {
+			case ALPHA:
+				result = sortAlpha(initialList, isDescending);
+				break;
+			case END:
+				result = sortDeadline(initialList, isDescending);
+				break;
+			case START:
+				result = sortStartTime(initialList, isDescending);
+				break;
+			case TIME:
+				result = sortTime(initialList, isDescending);
+				break;
+			case IMPORTANCE:
+				result = sortImportance(initialList, isDescending);
+				break;
+			default:
+				// WILL NOT HAPPEN
+				result = "Unknown sort category";
+				break;
+		}
+		return result;
+	}
+	
 }
