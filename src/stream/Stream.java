@@ -38,11 +38,10 @@ import fileio.StreamIO;
  */
 public class Stream extends Loggable {
 
-	StreamObject streamObject = StreamObject.getInstance();
 	StreamUI stui;
-	StreamLogic streamLogic = StreamLogic.init(streamObject);
-
-	private StreamParser parser;
+	StreamObject streamObject;
+	StreamLogic streamLogic;
+	StreamParser parser;
 
 	private String filename;
 
@@ -69,8 +68,10 @@ public class Stream extends Loggable {
 	}
 
 	private void initializeStream() {
-		stui = new StreamUI(this);
-		parser = new StreamParser();
+		stui = StreamUI.init(this);
+		streamObject = StreamObject.init();
+		streamLogic = StreamLogic.init(streamObject);
+		parser = StreamParser.init();
 	}
 
 	//@author A0093874N

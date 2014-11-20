@@ -8,10 +8,18 @@ import model.StreamTask;
 
 public class DeleteLogic extends Loggable implements StackLogic {
 
-	private Stack<StreamTask> deletedTasks = new Stack<StreamTask>();
+	private Stack<StreamTask> deletedTasks;
 	
 	//@author A0096529N
 
+	private DeleteLogic() {
+		deletedTasks = new Stack<StreamTask>();
+	}
+	
+	public static DeleteLogic init() {
+		return new DeleteLogic();
+	}
+	
 	@Override
 	public void push(Object obj) {
 		StreamTask deletedTask = (StreamTask) obj;

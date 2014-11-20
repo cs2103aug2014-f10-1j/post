@@ -18,8 +18,12 @@ public class SearcherLogic extends Loggable {
 	
 	private StreamObject streamObject;
 	
-	public SearcherLogic(StreamObject stobj) {
+	private SearcherLogic(StreamObject stobj) {
 		streamObject = stobj;
+	}
+	
+	public static SearcherLogic init(StreamObject stobj) {
+		return new SearcherLogic(stobj);
 	}
 
 	// @author A0096529N

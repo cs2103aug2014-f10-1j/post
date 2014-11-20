@@ -19,9 +19,13 @@ public class OrderLogic extends Loggable implements StackLogic {
 	private Stack<ArrayList<String>> orderStack;
 	private StreamObject streamObject;
 
-	public OrderLogic(StreamObject stobj) {
+	private OrderLogic(StreamObject stobj) {
 		orderStack = new Stack<ArrayList<String>>();
 		streamObject = stobj;
+	}
+	
+	public static OrderLogic init(StreamObject stobj) {
+		return new OrderLogic(stobj);
 	}
 
 	@Override

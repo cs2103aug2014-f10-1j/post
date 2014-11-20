@@ -16,7 +16,7 @@ import org.junit.Test;
 //@author A0096529N
 public class StreamSearchTest {
 
-	private StreamLogic streamLogic = StreamLogic.init(StreamObject.getInstance());
+	private StreamLogic streamLogic = StreamLogic.init(StreamObject.init());
 	private StreamTask task1, task2;
 	private static final Comparator<StreamTask> taskComparator = new Comparator<StreamTask>() {
 		@Override public int compare(StreamTask o1, StreamTask o2) {

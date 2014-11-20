@@ -20,12 +20,6 @@ public class StreamObject {
 	private HashMap<String, StreamTask> taskMap;
 	private ArrayList<String> taskList;
 
-	private StreamObject(HashMap<String, StreamTask> taskMap,
-			ArrayList<String> taskList) {
-		this.taskMap = taskMap;
-		this.taskList = taskList;
-	}
-
 	private StreamObject() {
 		this.taskMap = new HashMap<String, StreamTask>();
 		this.taskList = new ArrayList<String>();
@@ -36,13 +30,8 @@ public class StreamObject {
 	 * 
 	 * @return StreamObject - an instance of this class
 	 */
-	public static StreamObject getInstance() {
+	public static StreamObject init() {
 		return new StreamObject();
-	}
-
-	public static StreamObject getInstance(HashMap<String, StreamTask> taskMap,
-			ArrayList<String> taskList) {
-		return new StreamObject(taskMap, taskList);
 	}
 
 	//@author generated

@@ -92,8 +92,7 @@ public class StreamUI extends Loggable {
 			+ "in syntax suggestion.</p><p>Visit our page at https://github.com/cs2103aug2014-f10-1j/main "
 			+ "for more comprehensive user guide!";
 
-	public StreamUI(Stream str) {
-
+	private StreamUI(Stream str) {
 		initParams(str);
 		setupLookAndFeel();
 		addMainFrame();
@@ -112,6 +111,10 @@ public class StreamUI extends Loggable {
 		setFocusTraversal();
 		log(TEXT_WELCOME, false);
 		presentToUser();
+	}
+	
+	public static StreamUI init(Stream str) {
+		return new StreamUI(str);
 	}
 
 	private void initParams(Stream str) {

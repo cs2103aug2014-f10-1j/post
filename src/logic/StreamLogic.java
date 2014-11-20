@@ -21,18 +21,19 @@ import exception.StreamModificationException;
 public class StreamLogic extends Loggable {
 
 	private StreamObject streamObject;
-	
-	public ModificationLogic modLogic = ModificationLogic.init();
-	public UndoLogic undoLogic = UndoLogic.init();
+	public ModificationLogic modLogic;
+	public UndoLogic undoLogic;
 	public DeleteLogic delLogic;
-	public SearcherLogic searchLogic;
 	public OrderLogic orderLogic;
+	public SearcherLogic searchLogic;
 
 	private StreamLogic(StreamObject stobj) {
 		this.streamObject = stobj;
-		this.orderLogic = new OrderLogic(stobj);
-		this.searchLogic = new SearcherLogic(stobj);
-		this.delLogic = new DeleteLogic();
+		this.modLogic = ModificationLogic.init();
+		this.undoLogic = UndoLogic.init();
+		this.delLogic = DeleteLogic.init();
+		this.orderLogic = OrderLogic.init(stobj);
+		this.searchLogic = SearcherLogic.init(stobj);
 	}
 
 	/**
