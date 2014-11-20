@@ -1,22 +1,14 @@
 package logic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mdimension.jchronic.Chronic;
-
 import parser.SortParser.SortType;
-import parser.StreamParser;
-import parser.FilterParser.FilterType;
-import parser.RankParser.RankType;
 import logger.Loggable;
 import model.StreamObject;
 import model.StreamTask;
 import util.StreamConstants;
-import util.StreamUtil;
 import exception.StreamModificationException;
 
 /**
@@ -29,7 +21,7 @@ import exception.StreamModificationException;
 public class StreamLogic extends Loggable {
 
 	private StreamObject streamObject;
-	private TaskLogic taskLogic = TaskLogic.init();
+	public ModificationLogic taskLogic = ModificationLogic.init();
 
 	public SearcherLogic searchLogic;
 	public OrderLogic orderLogic;
@@ -243,7 +235,7 @@ public class StreamLogic extends Loggable {
 		String contents = "";
 		for (int i = 1; i < modifyParams.size(); i++) {
 			String s = modifyParams.get(i);
-			if (StreamUtil.isValidAttribute(s)) {
+			if (taskLogic.isValidAttribute(s)) {
 				// first content is guaranteed to be a valid parameter
 				modifyTask(task, attribute, contents.trim());
 				attribute = s;

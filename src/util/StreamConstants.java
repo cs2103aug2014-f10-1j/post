@@ -18,22 +18,13 @@ public class StreamConstants {
 			"-start", "-from", "-due", "-by", "-tag", "-untag", "-settags",
 			"-rank", "-mark", "-to" };
 
-	public static class ComponentTag {
-		public static final String STREAM = "stream";
-		public static final String STREAMUI = "ui";
-		public static final String STREAMLOGIC = "streamLogic";
-		public static final String STREAMTASK = "taskLogic";
-		public static final String STREAMSTACK = "stackLogic";
-		public static final String STREAMIO = "io";
-		public static final String STREAMPARSER = "parser";
-	}
-
 	public static class LogMessage {
 		public static final String CMD_RECEIVED = "Command received [%1$s]";
 		public static final String ADD = "Added \"%1$s\"";
 		public static final String DELETE = "Deleted \"%1$s\"";
 		public static final String VIEW = "Viewed the details for \"%1$s\"";
 		public static final String DESC = "Changed description for \"%1$s\" to \"%2$s\"";
+		public static final String DESC_REMOVED = "Removed description for \"%1$s\"";
 		public static final String RANK = "Changed ranking for \"%1$s\" to \"%2$s\"";
 		public static final String CLEAR = "Cleared all tasks";
 		public static final String RECOVER = "Recovered %1$s task(s)";

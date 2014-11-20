@@ -1,7 +1,7 @@
 package util;
 
 //@author A0118007R
-// many tests are obsolete now
+// the whole tests are now obsolete... again
 
 import static org.junit.Assert.*;
 
@@ -38,9 +38,9 @@ public class StreamUtilTest {
 		String status = StreamUtil.displayStatus(myTask);
 		assertEquals(status, "ongoing");
 	}
-	*/
+	
 	//Tests parseWithChronic
-	/*
+	
 	@Test
 	public void parseWithChronicTest1() {
 		String date = "now";
@@ -69,7 +69,7 @@ public class StreamUtilTest {
 	public void getMonthIndexTest3() {
 		String month = "5";
 		assertEquals(0, StreamUtil.getMonthIndex(month));
-	}*/
+	}
 	
 	//Tests isValidAttribute
 	@Test
@@ -101,6 +101,6 @@ public class StreamUtilTest {
 		String att = null;
 		assertFalse(StreamUtil.isValidAttribute(att));
 	}
-	
+	*/
 	
 }

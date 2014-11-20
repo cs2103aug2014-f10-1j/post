@@ -13,7 +13,7 @@ import logger.Loggable;
 import logger.StreamLogger;
 import logic.StackLogic;
 import logic.StreamLogic;
-import logic.TaskLogic;
+import logic.ModificationLogic;
 import model.StreamObject;
 import model.StreamTask;
 import parser.FilterParser.FilterType;
@@ -42,7 +42,7 @@ public class Stream extends Loggable {
 
 	StreamObject streamObject = StreamObject.getInstance();
 	StreamUI stui;
-	TaskLogic taskLogic = TaskLogic.init();
+	ModificationLogic taskLogic = ModificationLogic.init();
 	StackLogic stackLogic = StackLogic.init();
 	StreamLogic streamLogic = StreamLogic.init(streamObject);
 
@@ -340,7 +340,7 @@ public class Stream extends Loggable {
 
 		for (int i = 0; i < contents.length; i++) {
 			String word = contents[i];
-			if (StreamUtil.isValidAttribute(word)) {
+			if (taskLogic.isValidAttribute(word)) {
 				appendEverything(contents, modifyParams, i);
 				break;
 			} else {
@@ -494,13 +494,10 @@ public class Stream extends Loggable {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask currentTask = streamLogic.getTask(taskName);
 		String oldDescription = currentTask.getDescription();
-		currentTask.setDescription(description.equals("null") ? null
-				: description);
+		String result = taskLogic.setDescription(currentTask, description);
 		stui.setActiveTask(currentTask);
 
 		stackLogic.pushInverseSetDescriptionCommand(taskIndex, oldDescription);
-		String result = String.format(StreamConstants.LogMessage.DESC,
-				currentTask.getTaskName(), description);
 		showAndLogResult(result);
 	}
 
@@ -519,12 +516,10 @@ public class Stream extends Loggable {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask currentTask = streamLogic.getTask(taskName);
 		String oldRank = currentTask.getRank();
-		currentTask.setRank(taskRank);
+		String result = taskLogic.setRank(currentTask, taskRank);
 		stui.setActiveTask(currentTask);
 
 		stackLogic.pushInverseSetRankingCommand(taskIndex, oldRank);
-		String result = String.format(StreamConstants.LogMessage.RANK,
-				currentTask.getTaskName(), taskRank);
 		showAndLogResult(result);
 	}
 
@@ -683,63 +678,62 @@ public class Stream extends Loggable {
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
 		StreamTask task = streamLogic.getTask(taskName);
-		String result = null;
-		result = processMarking(taskIndex, markType, task);
+
+		boolean wasDone = task.isDone();
+		String result = taskLogic.mark(task, markType);
+		stackLogic.pushInverseSetDoneCommand(wasDone, taskIndex);
+
 		stui.setActiveTask(task);
 		showAndLogResult(result);
 	}
 
-	private String processMarking(Integer taskIndex, MarkType markType,
-			StreamTask task) {
-		String result;
-		switch (markType) {
-			case DONE:
-				result = markAsDone(task, taskIndex);
-				break;
-			case NOT:
-				result = markAsOngoing(task, taskIndex);
-				break;
-			case INACTIVE:
-			case OVERDUE:
-				result = "Disallowed marking type: " + markType;
-				break;
-			default:
-				// should not happen, but let's play safe
-				result = "Unknown marking type: " + markType;
-		}
-		return result;
-	}
-
-	//@author A0118007R
 	private void executeDue(Integer taskIndex, Calendar content)
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
-		String result = null;
-		result = processDue(content, taskIndex, taskName);
 		StreamTask task = streamLogic.getTask(taskName);
+		Calendar deadline = task.getDeadline();
+		Calendar startTime = task.getStartTime();
+
+		String result = processDueDate(taskIndex, content, task, deadline,
+				startTime);
+
 		stui.setActiveTask(task);
 		showAndLogResult(result);
 	}
 
-	private String processDue(Calendar content, int taskIndex, String taskName)
-			throws StreamModificationException {
-		String result = setDueDate(taskName, taskIndex, content);
-		return result;
+	//@author A0119401U
+	private String processDueDate(int taskIndex, Calendar newDeadline,
+			StreamTask task, Calendar deadline, Calendar startTime) {
+		if (taskLogic.isValidDeadline(newDeadline, startTime)) {
+			stackLogic.pushInverseDueCommand(taskIndex, deadline);
+			return taskLogic.setDeadline(task, newDeadline);
+		} else {
+			return StreamConstants.ExceptionMessage.ERR_DEADLINE_BEFORE_STARTTIME;
+		}
 	}
 
 	private void executeStartTime(Integer taskIndex, Calendar content)
 			throws StreamModificationException {
 		String taskName = streamLogic.getTaskNumber(taskIndex);
-		String result = processStartTime(content, taskIndex, taskName);
 		StreamTask task = streamLogic.getTask(taskName);
+		Calendar startTime = task.getStartTime();
+		Calendar deadline = task.getDeadline();
+
+		String result = processStartTime(taskIndex, content, task, startTime,
+				deadline);
+
 		stui.setActiveTask(task);
 		showAndLogResult(result);
 	}
 
-	private String processStartTime(Calendar content, int taskIndex,
-			String taskName) throws StreamModificationException {
-		String result = setStartDate(taskName, taskIndex, content);
-		return result;
+	private String processStartTime(int taskIndex, Calendar newStartTime,
+			StreamTask currentTask, Calendar currentStartTime, Calendar deadline) {
+		if (taskLogic.isValidStartTime(deadline, newStartTime)) {
+			stackLogic.pushInverseStartCommand(taskIndex, currentStartTime);
+			return taskLogic.setStartTime(currentTask, newStartTime);
+		} else {
+			return StreamConstants.ExceptionMessage.ERR_STARTTIME_AFTER_DEADLINE;
+		}
 	}
 
 	//@author A0096529N
@@ -849,89 +843,6 @@ public class Stream extends Loggable {
 		if (modifyParams.size() > 0) {
 			streamLogic.modifyTaskWithParams(taskName, modifyParams);
 		}
-	}
-
-	//@author A0119401U
-	/**
-	 * Set the due date of the selected task
-	 * 
-	 * @throws StreamModificationException
-	 */
-	private String setDueDate(String taskName, int taskIndex,
-			Calendar newDeadline) throws StreamModificationException {
-		StreamTask task = streamLogic.getTask(taskName);
-		Calendar deadline = task.getDeadline();
-		Calendar startTime = task.getStartTime();
-		return processDueDate(taskIndex, newDeadline, task, deadline, startTime);
-	}
-
-	private String processDueDate(int taskIndex, Calendar newDeadline,
-			StreamTask task, Calendar deadline, Calendar startTime) {
-		if (StreamUtil.isValidDeadline(newDeadline, startTime)) {
-			stackLogic.pushInverseDueCommand(taskIndex, deadline);
-			// This section is contributed by A0093874N
-			return taskLogic.setDeadline(task, newDeadline);
-			//
-		} else {
-			return StreamConstants.ExceptionMessage.ERR_DEADLINE_BEFORE_STARTTIME;
-		}
-	}
-
-	/**
-	 * Set the start date of the selected task
-	 * 
-	 * @throws StreamModificationException
-	 */
-	private String setStartDate(String taskName, int taskIndex,
-			Calendar newStartTime) throws StreamModificationException {
-		StreamTask currentTask = streamLogic.getTask(taskName);
-		Calendar currentStartTime = currentTask.getStartTime();
-		Calendar deadline = currentTask.getDeadline();
-		return processStartTime(taskIndex, newStartTime, currentTask,
-				currentStartTime, deadline);
-	}
-
-	private String processStartTime(int taskIndex, Calendar newStartTime,
-			StreamTask currentTask, Calendar currentStartTime, Calendar deadline) {
-		if (StreamUtil.isValidStartTime(deadline, newStartTime)) {
-			stackLogic.pushInverseStartCommand(taskIndex, currentStartTime);
-			return taskLogic.setStartTime(currentTask, newStartTime);
-		} else {
-			return StreamConstants.ExceptionMessage.ERR_STARTTIME_AFTER_DEADLINE;
-		}
-	}
-
-	/**
-	 * Mark the selected task as done
-	 * 
-	 * @return <strong>String</strong> - the log message
-	 */
-	private String markAsDone(StreamTask task, int index) {
-		boolean wasDone = task.isDone();
-		task.markAsDone();
-
-		stackLogic.pushInverseSetDoneCommand(wasDone, index);
-		// This section is contributed by A0093874N
-		return String.format(StreamConstants.LogMessage.MARK,
-				task.getTaskName(), "done");
-		//
-	}
-
-	//@author A0118007R
-	/**
-	 * Mark the selected task as ongoing
-	 * 
-	 * @return <strong>String</strong> - the log message
-	 */
-	private String markAsOngoing(StreamTask task, int index) {
-		boolean wasDone = task.isDone();
-		task.markAsOngoing();
-
-		stackLogic.pushInverseSetDoneCommand(wasDone, index);
-		// This section is contributed by A0093874N
-		return String.format(StreamConstants.LogMessage.MARK,
-				task.getTaskName(), "ongoing");
-		//
 	}
 
 	//@author A0096529N

@@ -79,50 +79,18 @@ public class StreamUtil {
 		return true;
 	}
 
-	//@author A0118007R
-
-	/**
-	 * Checks whether <i>param</i> is a valid modifier attribute for Stream
-	 * modify command.
-	 * 
-	 * @return <b>boolean</b> - indicates whether <i>param</i> is a valid
-	 *         attribute
-	 */
-	public static boolean isValidAttribute(String param) {
-		for (String s : StreamConstants.MODIFICATION_ATTRIBUTES) {
-			if (s.equals(param)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks whether the <i>deadline</i> entered is after <i>startTime</i>
-	 * 
-	 * @return <b>boolean</b> - indicates whether <i>deadline</i> is after
-	 *         <i>startTime</i>
-	 */
-	public static boolean isValidDeadline(Calendar deadline, Calendar startTime) {
-		if (deadline == null || startTime == null) {
-			return true;
-		} else {
-			return deadline.after(startTime);
-		}
-	}
-
-	/**
-	 * Checks whether the <i>startTime</i> entered is before <i>deadline</i>
-	 * 
-	 * @return <b>boolean</b> - indicates whether <i>startTime</i> is before
-	 *         <i>deadline</i>
-	 */
-	public static boolean isValidStartTime(Calendar deadline, Calendar startTime) {
-		if (deadline == null || startTime == null) {
-			return true;
-		} else {
-			return startTime.before(deadline);
-		}
+	public static Boolean calEqual(Calendar firstCal, Calendar secondCal) {
+		return firstCal.get(Calendar.YEAR) == secondCal.get(Calendar.YEAR)
+				&& firstCal.get(Calendar.MONTH) == secondCal
+						.get(Calendar.MONTH)
+				&& firstCal.get(Calendar.DAY_OF_MONTH) == secondCal
+						.get(Calendar.DAY_OF_MONTH)
+				&& firstCal.get(Calendar.HOUR_OF_DAY) == secondCal
+						.get(Calendar.HOUR_OF_DAY)
+				&& firstCal.get(Calendar.MINUTE) == secondCal
+						.get(Calendar.MINUTE)
+				&& firstCal.get(Calendar.MINUTE) == secondCal
+						.get(Calendar.MINUTE);
 	}
 
 	//@author A0119401U

@@ -14,7 +14,7 @@ import exception.StreamModificationException;
 
 //@author A0096529N
 public class StreamModificationTest {
-	private TaskLogic taskLogic = TaskLogic.init();
+	private ModificationLogic taskLogic = ModificationLogic.init();
 	private StreamLogic streamLogic = StreamLogic.init(StreamObject.getInstance());
 
 	private StreamTask task1, task2, task3;
