@@ -168,7 +168,7 @@ public class StreamUndoTest {
 		in("add another task");
 		in("add new task");
 		in("add other task");
-		assertEquals("4 tasks viewable", 5, st.stui.getNumberOfTasksStored());
+		assertEquals("5 tasks viewable", 5, st.stui.getNumberOfTasksStored());
 		in("search new");
 		assertEquals("1 task viewable", 1, st.stui.getNumberOfTasksStored());
 		in("search other");

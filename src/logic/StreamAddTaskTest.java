@@ -13,34 +13,34 @@ import exception.StreamModificationException;
 //@author A0118007R
 public class StreamAddTaskTest {
 
-	private StreamLogic streamLogic;
+	private CRDLogic crdLogic;
 
 	@Before
 	public void setup() throws Exception {
-		streamLogic = StreamLogic.init(StreamObject.init());
-		streamLogic.crdLogic.addTask("Submit CE2");
-		streamLogic.crdLogic.addTask("Study for midterms");
+		crdLogic = CRDLogic.init(StreamObject.init());
+		crdLogic.addTask("Submit CE2");
+		crdLogic.addTask("Study for midterms");
 	}
 	
 	@Test
 	public void addTaskTest1() {
 		assertEquals("Submit CE2 is added to the list.", true,
-				streamLogic.crdLogic.hasTask("Submit CE2"));
+				crdLogic.hasTask("Submit CE2"));
 	}
 	@Test
 	public void addTaskTest2() {
 		assertEquals("Study for midterms is added to the list.", true,
-				streamLogic.crdLogic.hasTask("Study for midterms"));
+				crdLogic.hasTask("Study for midterms"));
 	}
 	@Test
 	public void addTaskTest3() {
 		assertEquals("Watch Rurouni Kenshin is not added to the list.", false,
-				streamLogic.crdLogic.hasTask("Watch Rurouni Kenshin"));
+				crdLogic.hasTask("Watch Rurouni Kenshin"));
 	}
 	@Test
 	public void addTaskTest4() {
 		try {
-			streamLogic.crdLogic.addTask("Submit CE2");
+			crdLogic.addTask("Submit CE2");
 		} catch (Exception e) {
 			assertEquals("Exception should be generated.",
 					"\"Submit CE2\" already exists in the tasks list.",
@@ -50,8 +50,8 @@ public class StreamAddTaskTest {
 	
 	@Test
 	public void deleteTest() throws Exception {
-		streamLogic.crdLogic.deleteTask("Submit CE2");
-		assertEquals(streamLogic.crdLogic.hasTask("Submit CE2"), false);
+		crdLogic.deleteTask("Submit CE2");
+		assertEquals(crdLogic.hasTask("Submit CE2"), false);
 	}
 	
 	//"Boundary" cases for get task
@@ -60,28 +60,26 @@ public class StreamAddTaskTest {
 
 	@Before
 	public void resetup() throws Exception {
-		streamLogic = StreamLogic.init(StreamObject.init());
-		streamLogic.crdLogic.addTask("Submit CE2");
-		streamLogic.crdLogic.addTask("Study for midterms");
+		crdLogic = CRDLogic.init(StreamObject.init());
+		crdLogic.addTask("Submit CE2");
+		crdLogic.addTask("Study for midterms");
 	}
 	
 	@Test 
 	public void getTaskTestOne() throws StreamModificationException{
-		StreamTask myTask = streamLogic.crdLogic.getTask("Submit CE2");
+		StreamTask myTask = crdLogic.getTask("Submit CE2");
 		assertTrue(myTask.getTaskName().equals("Submit CE2"));
 	}
 	
 	@Test 
 	public void getTaskTestTwo() {
 		try {
-			streamLogic.crdLogic.getTask("AAA");
+			crdLogic.getTask("AAA");
 			fail("A test message");
 		} catch (StreamModificationException e) {
 			
 		}
 		
 	}
-	
-	
 	
 }

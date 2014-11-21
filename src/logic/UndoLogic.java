@@ -345,7 +345,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	//@author generated
 	@Override
 	public String getComponentName() {
-		return "STACKLOGIC";
+		return "UNDOLOGIC";
 	}
 
 }

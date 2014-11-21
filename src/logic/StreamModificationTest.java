@@ -15,9 +15,8 @@ import exception.StreamModificationException;
 //@author A0096529N
 public class StreamModificationTest {
 	private StreamObject stobj = StreamObject.init();
-	private CRDLogic crdl = CRDLogic.init(stobj);
-	private ModificationLogic taskLogic = ModificationLogic.init(crdl);
-	private StreamLogic streamLogic = StreamLogic.init(StreamObject.init());
+	private CRDLogic crdLogic = CRDLogic.init(stobj);
+	private ModificationLogic modLogic = ModificationLogic.init(crdLogic);
 
 	private StreamTask task1, task2, task3;
 	private Calendar taskDeadline;
@@ -39,7 +38,7 @@ public class StreamModificationTest {
 		task1.getTags().add("FIND");
 		task1.getTags().add("MATH");
 		task1.getTags().add("SIMPLE");
-		streamLogic.crdLogic.recoverTask(task1);
+		crdLogic.recoverTask(task1);
 
 		Calendar task2Deadline = Calendar.getInstance();
 		task2Deadline.setTime(taskDeadline.getTime());
@@ -49,13 +48,13 @@ public class StreamModificationTest {
 		task2.getTags().add("IMPOSSIBLE");
 		task2.getTags().add("PANDA");
 		task2.getTags().add("NOLINE");
-		streamLogic.crdLogic.recoverTask(task2);
+		crdLogic.recoverTask(task2);
 		
 		task3 = new StreamTask(TASK_NAME_3);
 		task3.setDescription("Code the unit tests for StreamObject");
 		task3.getTags().add("BORINGTASK");
 		task3.getTags().add("PROCRASTINATE");
-		streamLogic.crdLogic.recoverTask(task3);
+		crdLogic.recoverTask(task3);
 	}
 
 	@Test 
@@ -75,7 +74,7 @@ public class StreamModificationTest {
 	public void testRemoveTag() throws StreamModificationException {
 		assertEquals("Tags before modification", true, task3.hasTag("procrastinate"));
 
-		taskLogic.removeTags(task3, "procrastinate");
+		modLogic.removeTags(task3, "procrastinate");
 
 		assertEquals("Tags after modification", false, task3.hasTag("procrastinate"));
 	}
@@ -95,7 +94,7 @@ public class StreamModificationTest {
 		
 		assertEquals("Task name before modification", TASK_NAME_3, task3.getTaskName());
 
-		streamLogic.modLogic.setName(task3.getTaskName(), newTaskName);
+		modLogic.setName(task3.getTaskName(), newTaskName);
 
 		assertEquals("Task name after modification", newTaskName, task3.getTaskName());
 	}
