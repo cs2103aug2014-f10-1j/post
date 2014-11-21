@@ -15,7 +15,6 @@ import model.StreamObject;
 import model.StreamTask;
 import ui.StreamUI;
 import util.StreamConstants;
-import util.StreamExternals;
 import util.StreamUtil;
 import exception.StreamIOException;
 import exception.StreamParserException;
@@ -23,10 +22,10 @@ import fileio.StreamIO;
 
 /**
  * <b>Stream</b> is the main product of the project. It is the amalgamation of
- * all different components from different packages, namely <b>StreamUI</b>,
- * <b>StreamObject</b>, <b>StreamIO</b>, and <b>StreamParser</b>.
- * 
- * @version V0.5
+ * all different main components from different packages, namely
+ * <b>StreamUI</b>, <b>StreamObject</b>, <b>StreamLogic</b>, <b>StreamIO</b>,
+ * and <b>StreamParser</b>. This is also the main class from which the
+ * application is run from.
  */
 public class Stream extends Loggable {
 
@@ -46,7 +45,22 @@ public class Stream extends Loggable {
 	private static final SimpleDateFormat LOGFILE_DATE_FORMAT = new SimpleDateFormat(
 			"yyyyMMdd");
 
-	// @author A0118007R
+	public static ImageIcon HEADER;
+	public static ImageIcon ICON_DONE;
+	public static ImageIcon ICON_NOT_DONE;
+	public static ImageIcon ICON_OVERDUE;
+	public static ImageIcon ICON_INACTIVE;
+	public static ImageIcon ICON_HI_RANK;
+	public static ImageIcon ICON_MED_RANK;
+	public static ImageIcon ICON_LOW_RANK;
+	public static ImageIcon ICON_START_CAL;
+	public static ImageIcon ICON_NULL_START_CAL;
+	public static ImageIcon ICON_END_CAL;
+	public static ImageIcon ICON_NULL_END_CAL;
+	public static Font FONT_TITLE;
+	public static Font FONT_CONSOLE;
+
+	//@author A0118007R
 	/**
 	 * Stream Constructor to initialize the program.
 	 */
@@ -63,46 +77,38 @@ public class Stream extends Loggable {
 		streamLogic = StreamLogic.init(this, stui, streamObject);
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	private void initializeExtFiles() {
-		ImageIcon headerText = new ImageIcon(getClass().getResource(
-				"/img/header.png"));
-		ImageIcon doneIcon = new ImageIcon(getClass().getResource(
+		HEADER = new ImageIcon(getClass().getResource("/img/header.png"));
+		ICON_DONE = new ImageIcon(getClass().getResource(
 				"/img/taskDoneIcon.png"));
-		ImageIcon notDoneIcon = new ImageIcon(getClass().getResource(
+		ICON_NOT_DONE = new ImageIcon(getClass().getResource(
 				"/img/taskOngoingIcon.png"));
-		ImageIcon overdueIcon = new ImageIcon(getClass().getResource(
+		ICON_OVERDUE = new ImageIcon(getClass().getResource(
 				"/img/taskOverdueIcon.png"));
-		ImageIcon inactiveIcon = new ImageIcon(getClass().getResource(
+		ICON_INACTIVE = new ImageIcon(getClass().getResource(
 				"/img/taskInactiveIcon.png"));
-		ImageIcon hiRankIcon = new ImageIcon(getClass().getResource(
+		ICON_HI_RANK = new ImageIcon(getClass().getResource(
 				"/img/taskHighPriority.png"));
-		ImageIcon medRankIcon = new ImageIcon(getClass().getResource(
+		ICON_MED_RANK = new ImageIcon(getClass().getResource(
 				"/img/taskNormalPriority.png"));
-		ImageIcon lowRankIcon = new ImageIcon(getClass().getResource(
+		ICON_LOW_RANK = new ImageIcon(getClass().getResource(
 				"/img/taskLowPriority.png"));
-		ImageIcon startCalIcon = new ImageIcon(getClass().getResource(
+		ICON_START_CAL = new ImageIcon(getClass().getResource(
 				"/img/startdate.png"));
-		ImageIcon nullStartCalIcon = new ImageIcon(getClass().getResource(
+		ICON_NULL_START_CAL = new ImageIcon(getClass().getResource(
 				"/img/nostartdate.png"));
-		ImageIcon endCalIcon = new ImageIcon(getClass().getResource(
-				"/img/enddate.png"));
-		ImageIcon nullEndCalIcon = new ImageIcon(getClass().getResource(
+		ICON_END_CAL = new ImageIcon(getClass().getResource("/img/enddate.png"));
+		ICON_NULL_END_CAL = new ImageIcon(getClass().getResource(
 				"/img/noenddate.png"));
-		Font titleFont = null;
-		Font consoleFont = null;
 		try {
-			titleFont = Font.createFont(Font.TRUETYPE_FONT, getClass()
+			FONT_TITLE = Font.createFont(Font.TRUETYPE_FONT, getClass()
 					.getResourceAsStream("/fonts/Awesome Java.ttf"));
-			consoleFont = Font.createFont(Font.TRUETYPE_FONT, getClass()
+			FONT_CONSOLE = Font.createFont(Font.TRUETYPE_FONT, getClass()
 					.getResourceAsStream("/fonts/Ubuntu.ttf"));
 		} catch (Exception shouldnthappen) {
 
 		}
-		StreamExternals.init(headerText, doneIcon, notDoneIcon, overdueIcon,
-				inactiveIcon, hiRankIcon, medRankIcon, lowRankIcon,
-				startCalIcon, nullStartCalIcon, endCalIcon, nullEndCalIcon,
-				titleFont, consoleFont);
 	}
 
 	private void saveLogFile() throws StreamIOException {
@@ -112,7 +118,7 @@ public class Stream extends Loggable {
 		StreamIO.saveLogFile(StreamLogger.getLogStack(), logFileName);
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	private void initStreamIO(String file) {
 		if (!file.endsWith(SAVEFILE_EXTENSION)) {
 			filename = String.format(SAVEFILE_FORMAT, file);
@@ -161,7 +167,7 @@ public class Stream extends Loggable {
 
 		return result;
 	}
-	
+
 	//@author A0093874N
 
 	@Override
@@ -180,20 +186,20 @@ public class Stream extends Loggable {
 		}
 		System.exit(0);
 	}
-	
+
 	private void showAndLogResult(String logMessage) {
 		stui.log(logMessage, false);
 		logDebug(StreamUtil.showAsTerminalResponse(logMessage));
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	private void showAndLogError(String errorMessageForDoc,
 			String errorMessageForUser) {
 		stui.log(errorMessageForUser, true);
 		logError(StreamUtil.showAsTerminalResponse(errorMessageForDoc));
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	public void processInput(String input) {
 		try {
 			String result = streamLogic.execute(input);

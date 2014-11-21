@@ -22,7 +22,9 @@ import org.json.JSONObject;
 import exception.StreamIOException;
 
 //@author A0096529N
-
+/**
+ * Handles loading-related processes and JSON-to-model conversions.
+ */
 public class LoadIO implements Converter {
 
 	/**

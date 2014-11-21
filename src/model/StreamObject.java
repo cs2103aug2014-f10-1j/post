@@ -6,14 +6,8 @@ import java.util.Set;
 
 //@author A0118007R
 /**
- * StreamObject is a class that stores the data of all StreamTasks inside a
- * hashmap and an arraylist.
- * 
- * This is the internal storage of the software.
- * 
- * It is implemented as a singleton.
- * 
- * @version V0.5
+ * Storing all added tasks in form of <b>HashMap</b> to pair up the task name
+ * and the task model, and <b>ArrayList</b> to determine the order of the tasks.
  */
 public class StreamObject {
 
@@ -155,7 +149,8 @@ public class StreamObject {
 	}
 
 	/**
-	 * Checks whether a given task object is already included in the hashmap of tasks
+	 * Checks whether a given task object is already included in the hashmap of
+	 * tasks
 	 * 
 	 * @param task
 	 * @return true if it is included, false otherwise
@@ -185,8 +180,8 @@ public class StreamObject {
 	}
 
 	/**
-	 * remove a given task from the storage.
-	 * update the arraylist and hashmap accordingly
+	 * remove a given task from the storage. update the arraylist and hashmap
+	 * accordingly
 	 * 
 	 * @param taskName
 	 */
@@ -197,7 +192,6 @@ public class StreamObject {
 
 	/**
 	 * Clears all tasks
-	 * 
 	 */
 	public void clear() {
 		taskMap.clear();

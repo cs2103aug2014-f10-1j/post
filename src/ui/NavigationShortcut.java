@@ -7,12 +7,9 @@ import javax.swing.AbstractAction;
 import stream.Stream;
 
 //@author A0093874N
-
 /**
- * The action invoked upon pressing the navigation shortcut, i.e matching the
- * key pressed to the corresponding navigation command.
- * 
- * @version V0.5
+ * Appends actions to navigation buttons (left, right, up, down) pressed from
+ * outside the <b>ConsoleUI</b>.
  */
 public class NavigationShortcut extends AbstractAction {
 

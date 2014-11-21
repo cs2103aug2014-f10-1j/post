@@ -2,10 +2,8 @@ package exception;
 
 //@author A0119401U
 /**
- * Parsing exceptions, i.e unacceptable command or command syntax or command
- * arguments.
- * 
- * @version V0.5
+ * Exceptions arising due to failure in command parsing, e.g unacceptable
+ * command or command syntax or command arguments.
  */
 public class StreamParserException extends Exception {
 

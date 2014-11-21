@@ -1,7 +1,9 @@
 package parser;
 
 //@author A0093874N
-
+/**
+ * Parses sorting types such as "alphabetical", "time", "importance", …
+ */
 public class SortParser implements BaseParser {
 
 	public enum SortType {

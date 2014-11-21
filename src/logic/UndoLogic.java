@@ -10,10 +10,14 @@ import util.StreamUtil;
 import logger.Loggable;
 import model.StreamTask;
 
-//@author A0096529N
-
+//@author A0093874N
+/**
+ * Executes undo process by keeping a stack of inverse commands. Undo is made
+ * possible by parsing and executing the inverse command on the top of the
+ * stack.
+ */
 public class UndoLogic extends Loggable implements StackLogic {
-	
+
 	private Stack<String> inputStack;
 
 	private static final String CMD_DISMISS = "dismiss %1$s";
@@ -52,6 +56,11 @@ public class UndoLogic extends Loggable implements StackLogic {
 		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_COMMAND,
 				inverseCommand));
 		return inverseCommand;
+	}
+
+	@Override
+	public String getComponentName() {
+		return "UNDOLOGIC";
 	}
 
 	//@author A0118007R
@@ -340,12 +349,6 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 */
 	public void pushPlaceholderInput() {
 		push("placeholderforundo");
-	}
-
-	//@author generated
-	@Override
-	public String getComponentName() {
-		return "UNDOLOGIC";
 	}
 
 }

@@ -4,7 +4,9 @@ import parser.MarkParser.MarkType;
 import parser.RankParser.RankType;
 
 //@author A0093874N
-
+/**
+ * Parses filter types such as "rank high", "not done", "due before today", ...
+ */
 public class FilterParser implements BaseParser {
 
 	private MarkParser mp = new MarkParser();

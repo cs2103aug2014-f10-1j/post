@@ -1,14 +1,15 @@
 package parser;
 
 //@author A0093874N
-
+/**
+ * <b>StreamParser</b>'s parsing result. The command is packed into three
+ * fields: the <i>key</i>, the task <i>index</i> number, and the <i>content</i>.
+ * Only the keyword is guaranteed non-empty for all commands.
+ */
 public class StreamCommand {
 
 	public enum CommandType {
-		INIT, ADD, DEL, DESC, DUE, START, VIEW, RANK, MODIFY,
-		NAME, MARK, TAG, UNTAG, SEARCH, SORT, UNSORT, FILTER,
-		CLRSRC, CLEAR, UNDO, EXIT, ERROR, RECOVER, DISMISS,
-		FIRST, PREV, NEXT, LAST, PAGE, HELP;
+		INIT, ADD, DEL, DESC, DUE, START, VIEW, RANK, MODIFY, NAME, MARK, TAG, UNTAG, SEARCH, SORT, UNSORT, FILTER, CLRSRC, CLEAR, UNDO, EXIT, ERROR, RECOVER, DISMISS, FIRST, PREV, NEXT, LAST, PAGE, HELP;
 	}
 
 	private CommandType key = null;

@@ -1,7 +1,9 @@
 package parser;
 
 //@author A0093874N
-
+/**
+ * Parser ranking types such as "high", "hi", "low", …
+ */
 public class RankParser implements BaseParser {
 
 	public enum RankType {

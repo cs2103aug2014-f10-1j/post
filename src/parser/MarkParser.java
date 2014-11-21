@@ -3,7 +3,9 @@ package parser;
 import model.StreamTask;
 
 //@author A0093874N
-
+/**
+ * Parser status types such as "done", "finished", "not done", …
+ */
 public class MarkParser implements BaseParser {
 
 	public enum MarkType {

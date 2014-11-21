@@ -22,13 +22,14 @@ import logger.Loggable;
 import model.StreamObject;
 import model.StreamTask;
 
+//@author A0118007R
 /**
- * Some documentation.
+ * <h1>StreamLogic - STREAM's core logic component</h1>
  * 
- * @version V0.5
+ * Consisting of various logic sub-components responsible for executing
+ * different categories of user commands and a main class StreamLogic to execute
+ * user command.
  */
-
-// @author A0118007R
 public class StreamLogic extends Loggable {
 
 	private Stream stream;
@@ -62,7 +63,7 @@ public class StreamLogic extends Loggable {
 		return new StreamLogic(str, stui, streamObject);
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	/**
 	 * Returns the indices of all tasks.
 	 * 
@@ -85,7 +86,7 @@ public class StreamLogic extends Loggable {
 		return streamObject.size();
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	/**
 	 * Retrieves the task name by index
 	 * 
@@ -126,7 +127,7 @@ public class StreamLogic extends Loggable {
 		return taskList;
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 
 	public ArrayList<StreamTask> getStreamTaskList(ArrayList<Integer> indices) {
 		ArrayList<StreamTask> tasks = new ArrayList<StreamTask>();
@@ -138,13 +139,13 @@ public class StreamLogic extends Loggable {
 		return tasks;
 	}
 
-	// @author generated
+	//@author generated
 	@Override
 	public String getComponentName() {
 		return "STREAMLOGIC";
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	public String execute(String input) throws StreamModificationException,
 			StreamIOException, StreamParserException {
 		StreamCommand cmd = parser.parseCommand(input, getNumberOfTasks());
@@ -405,7 +406,7 @@ public class StreamLogic extends Loggable {
 		assert (taskName != null) : StreamConstants.Assertion.NULL_INPUT;
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	/**
 	 * Deletes a task from the tasks list permanently.
 	 * 
@@ -441,7 +442,7 @@ public class StreamLogic extends Loggable {
 		return StreamConstants.LogMessage.CLEAR;
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	/**
 	 * Prints the task details.
 	 * 
@@ -483,7 +484,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0119401U
+	//@author A0119401U
 	/**
 	 * Adds a rank to a task.
 	 * <p>
@@ -505,7 +506,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	/**
 	 * Changes the name of a task.
 	 * <p>
@@ -556,7 +557,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	/**
 	 * Untags some tags that are specified in the input.
 	 * <p>
@@ -654,7 +655,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	/**
 	 * Marks the category as the specified category
 	 * 
@@ -690,7 +691,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0119401U
+	//@author A0119401U
 	private String processDueDate(int taskIndex, Calendar newDeadline,
 			StreamTask task, Calendar deadline, Calendar startTime) {
 		if (modLogic.isValidDeadline(newDeadline, startTime)) {
@@ -725,7 +726,7 @@ public class StreamLogic extends Loggable {
 		}
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	// updated by A0119401U
 	private String executeSort(String content) {
 		ArrayList<String> oldOrdering = getTaskList();
@@ -778,7 +779,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	private String executeFilter(String content) {
 		assertNotNull(content);
 		ArrayList<Integer> filterResult = crdLogic.filterTasks(content);
@@ -801,7 +802,7 @@ public class StreamLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	private void addTaskWithParams(String taskName,
 			ArrayList<String> modifyParams) throws StreamModificationException {
 		crdLogic.addTask(taskName);

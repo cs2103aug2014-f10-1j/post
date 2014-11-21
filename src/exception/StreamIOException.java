@@ -2,9 +2,8 @@ package exception;
 
 //@author A0096529N
 /**
- * IO-related exceptions, e.g file corruption, loading or saving failures.
- * 
- * @version V0.5
+ * Exceptions arising due to failure in file input/output processes, e.g file
+ * corruption, loading or saving failures, and JSON conversion failures.
  */
 public class StreamIOException extends Exception {
 

@@ -8,10 +8,21 @@ import exception.StreamParserException;
 
 //@author A0119401U
 /**
- * Parser is used to interpret the user input to a pack of information and later
- * on pass it to the Logic part
+ * <h1>StreamParser - STREAM’s command interpreter</h1>
  * 
- * @version V0.5
+ * <p>
+ * It is used to check whether the user input can be identified as a command. In
+ * addition, it will pack the input into different parts so later the input can
+ * be processed by the logic.
+ * </p>
+ * 
+ * <h3>API</h3>
+ * <ul>
+ * <li>StreamParser.parseCommand(String input, int numOfTasks)</li>
+ * </ul>
+ * <p>
+ * Refer to method documentation for details.
+ * </p>
  */
 public class StreamParser extends Loggable {
 
@@ -20,7 +31,7 @@ public class StreamParser extends Loggable {
 	public static FilterParser fp = new FilterParser();
 	public static SortParser sp = new SortParser();
 	public static TimeParser tp = new TimeParser();
-	
+
 	static final String ERROR_INCOMPLETE_INPUT = "Please provide more information!";
 	static final String ERROR_INCOMPLETE_INDEX = "Please provide the index or page number!";
 	static final String ERROR_INVALID_INDEX = "Please enter a valid index number!";
@@ -50,6 +61,11 @@ public class StreamParser extends Loggable {
 	private static final int ARGS_LENGTH_TYPE_ONE = 2;
 	private static final int ARGS_LENGTH_TYPE_TWO = 2;
 	private static final int ARGS_LENGTH_TYPE_THREE = 3;
+
+	@Override
+	public String getComponentName() {
+		return "STREAMPARSER";
+	}
 
 	public static StreamParser init() {
 		return new StreamParser();
@@ -263,10 +279,6 @@ public class StreamParser extends Loggable {
 		}
 	}
 
-	/*
-	 * Type four command: commands with format (CommandWord) (index number)
-	 * (date String to be parsed)
-	 */
 	private void checkDateValidity(StreamCommand cmd, String[] contents,
 			int numOfTasks) throws StreamParserException {
 		if (contents.length < ARGS_LENGTH_TYPE_THREE) {
@@ -338,26 +350,20 @@ public class StreamParser extends Loggable {
 		String commandKey = contents[PARAM_POS_KEYWORD].toUpperCase();
 		if (contentsWithIndex.length >= 3
 				&& StreamUtil.isInteger(contentsWithIndex[PARAM_POS_INDEX])) {
-			logDebug(String.format(
-					LOG_COMMAND_WITH_INDEX_AND_ARGS, commandKey,
+			logDebug(String.format(LOG_COMMAND_WITH_INDEX_AND_ARGS, commandKey,
 					contentsWithIndex[PARAM_POS_INDEX],
 					contentsWithIndex[PARAM_POS_ARGS]));
 		} else if (contents.length == 2) {
 			if (StreamUtil.isInteger(contents[1])) {
-				logDebug(String.format(
-						LOG_COMMAND_WITH_INDEX, commandKey,
+				logDebug(String.format(LOG_COMMAND_WITH_INDEX, commandKey,
 						contents[PARAM_POS_CONTENTS]));
 			} else {
-				logDebug(String.format(LOG_COMMAND_WITH_ARGS,
-						commandKey, contents[PARAM_POS_CONTENTS]));
+				logDebug(String.format(LOG_COMMAND_WITH_ARGS, commandKey,
+						contents[PARAM_POS_CONTENTS]));
 			}
 		} else {
 			logDebug(String.format(LOG_COMMAND_NO_ARGS, commandKey));
 		}
 	}
 
-	@Override
-	public String getComponentName() {
-		return "STREAMPARSER";
-	}
 }

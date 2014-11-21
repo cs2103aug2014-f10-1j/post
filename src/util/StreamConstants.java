@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
 
+import stream.Stream;
+
 /**
  * A class to contain all constants. Things such as messages (error/log/...),
  * parameters (UI sizes, ...), Stream-related fields (components, ...) can be
@@ -123,27 +125,27 @@ public class StreamConstants {
 		public static final Color COLOR_MONTH = Color.WHITE;
 		public static final Color COLOR_TASKPANEL = new Color(228, 228, 228);
 
-		public static Font FONT_TITLE = StreamExternals.FONT_TITLE.deriveFont(
+		public static Font FONT_TITLE = Stream.FONT_TITLE.deriveFont(
 				Font.PLAIN, 100);
-		public static Font FONT_INDEX = StreamExternals.FONT_TITLE.deriveFont(
+		public static Font FONT_INDEX = Stream.FONT_TITLE.deriveFont(
 				Font.PLAIN, 70);
-		public static Font FONT_CONSOLE = StreamExternals.FONT_CONSOLE
+		public static Font FONT_CONSOLE = Stream.FONT_CONSOLE
 				.deriveFont(Font.PLAIN, 13);
-		public static Font FONT_LOGGER = StreamExternals.FONT_CONSOLE
+		public static Font FONT_LOGGER = Stream.FONT_CONSOLE
 				.deriveFont(Font.PLAIN, 13);
-		public static Font FONT_FOOTER = StreamExternals.FONT_CONSOLE
+		public static Font FONT_FOOTER = Stream.FONT_CONSOLE
 				.deriveFont(Font.PLAIN, 13);
-		public static Font FONT_TASK = StreamExternals.FONT_CONSOLE.deriveFont(
+		public static Font FONT_TASK = Stream.FONT_CONSOLE.deriveFont(
 				Font.BOLD, 13);
-		public static Font FONT_DESC = StreamExternals.FONT_CONSOLE.deriveFont(
+		public static Font FONT_DESC = Stream.FONT_CONSOLE.deriveFont(
 				Font.PLAIN, 13);
-		public static Font FONT_MONTH = StreamExternals.FONT_CONSOLE
+		public static Font FONT_MONTH = Stream.FONT_CONSOLE
 				.deriveFont(Font.PLAIN, 13);
-		public static Font FONT_DATE = StreamExternals.FONT_CONSOLE.deriveFont(
+		public static Font FONT_DATE = Stream.FONT_CONSOLE.deriveFont(
 				Font.PLAIN, 20);
-		public static Font FONT_TIME = StreamExternals.FONT_CONSOLE.deriveFont(
+		public static Font FONT_TIME = Stream.FONT_CONSOLE.deriveFont(
 				Font.PLAIN, 13);
-		public static Font FONT_PAGE_NUM = StreamExternals.FONT_CONSOLE
+		public static Font FONT_PAGE_NUM = Stream.FONT_CONSOLE
 				.deriveFont(Font.PLAIN, 13);
 
 		public static final int HEIGHT_MAINFRAME = 700;

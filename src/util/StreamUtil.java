@@ -5,11 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * A class to contain helper methods (methods that help some of Stream's
- * processes but don't really have anything to do with the nature of Stream's
- * processes; e.g listing down an array).
- * 
- * @version V0.5
+ * A class to contain helper functions (methods that help some processes but
+ * don’t really have anything to do with the nature of STREAM’s processes).
  */
 public class StreamUtil {
 
@@ -91,6 +88,14 @@ public class StreamUtil {
 						.get(Calendar.MINUTE)
 				&& firstCal.get(Calendar.MINUTE) == secondCal
 						.get(Calendar.MINUTE);
+	}
+
+	public static String addZeroToTime(Integer time) {
+		String convertedTime = time.toString();
+		if (time < 10) {
+			convertedTime = "0" + convertedTime;
+		}
+		return convertedTime;
 	}
 
 	//@author A0119401U

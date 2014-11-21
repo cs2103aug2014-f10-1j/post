@@ -5,13 +5,9 @@ import java.util.Calendar;
 
 //@author A0118007R
 /**
- * This class is the StreamTask class - the task object acting as the heart of
- * the software.
- * 
- * This class contains all the attributes, constructor, getter, and setters for
- * the task object.
- * 
- * @version V0.5
+ * The task object acting as the heart of the software. Contains all the
+ * attributes, constructor, and attribute getters and setters for the task
+ * object.
  */
 public class StreamTask {
 
@@ -49,7 +45,8 @@ public class StreamTask {
 	/**
 	 * Sets the name of a task
 	 * 
-	 * @param newTaskName - the new task's name
+	 * @param newTaskName
+	 *            - the new task's name
 	 */
 	public void setTaskName(String newTaskName) {
 		this.taskName = newTaskName;
@@ -67,7 +64,8 @@ public class StreamTask {
 	/**
 	 * Sets the description of a task
 	 * 
-	 * @param description - the new description of the task
+	 * @param description
+	 *            - the new description of the task
 	 */
 	public void setDescription(String description) {
 		this.taskDescription = description;
@@ -86,7 +84,8 @@ public class StreamTask {
 	/**
 	 * Sets the start time of a task
 	 * 
-	 * @param startTime - the new start time of the task
+	 * @param startTime
+	 *            - the new start time of the task
 	 */
 	public void setStartTime(Calendar startTime) {
 		this.startTime = startTime;
@@ -131,12 +130,13 @@ public class StreamTask {
 	/**
 	 * Sets the deadline of a task
 	 * 
-	 * @param deadline - the new deadline of the task
+	 * @param deadline
+	 *            - the new deadline of the task
 	 */
 	public void setDeadline(Calendar deadline) {
 		this.deadline = deadline;
 	}
-	
+
 	/**
 	 * Only used during loading
 	 */
@@ -165,7 +165,8 @@ public class StreamTask {
 	/**
 	 * Sets the rank of a task
 	 * 
-	 * @param newRank - the new rank of the task
+	 * @param newRank
+	 *            - the new rank of the task
 	 */
 	public void setRank(String newRank) {
 		this.rank = newRank;
@@ -236,7 +237,8 @@ public class StreamTask {
 	/**
 	 * Checks whether a task has the specified tag
 	 * 
-	 * @param tag - the tag to be checked
+	 * @param tag
+	 *            - the tag to be checked
 	 * @return true if the task contains the specified tag, false otherwise
 	 */
 	public boolean hasTag(String tag) {
@@ -246,8 +248,10 @@ public class StreamTask {
 	/**
 	 * Checks whether a task has a specified tag within an array of tags
 	 * 
-	 * @param tags - the tags to be checked
-	 * @return true if the task contains a specified tag within an array of tags, false otherwise
+	 * @param tags
+	 *            - the tags to be checked
+	 * @return true if the task contains a specified tag within an array of
+	 *         tags, false otherwise
 	 */
 	public boolean hasTag(String[] tags) {
 		for (String tag : tags) {

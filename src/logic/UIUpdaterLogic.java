@@ -6,7 +6,11 @@ import model.StreamTask;
 import ui.StreamUI;
 
 //@author A0093874N
-
+/**
+ * Executes UI updates. In addition to handling navigation commands, this
+ * component acts as a bridge from other logic components to <b>StreamUI</b>
+ * whenever UI update is required.
+ */
 public class UIUpdaterLogic {
 
 	private StreamUI stui;

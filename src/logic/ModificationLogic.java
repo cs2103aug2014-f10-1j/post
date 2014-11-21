@@ -15,6 +15,11 @@ import model.StreamTask;
 import util.StreamConstants;
 import util.StreamUtil;
 
+//@author A0118007R
+/**
+ * Executes task parameter modification processes. This component supports
+ * multiple concurrent parameter modifications.
+ */
 public class ModificationLogic extends Loggable {
 
 	private CRDLogic crdLogic;
@@ -35,7 +40,7 @@ public class ModificationLogic extends Loggable {
 		return new ModificationLogic(crdl);
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	/**
 	 * Process the addition of tags to the task object.
 	 * 
@@ -119,7 +124,7 @@ public class ModificationLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0119401U
+	//@author A0119401U
 	/**
 	 * Sets the start time of a task to the task object
 	 * 
@@ -170,7 +175,7 @@ public class ModificationLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 	/**
 	 * The logic behind task modification for multi-add and multi-modify
 	 * commands.
@@ -273,7 +278,7 @@ public class ModificationLogic extends Loggable {
 		return result;
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	private void setTags(StreamTask task, String contents) {
 		task.getTags().clear();
 		if (!contents.trim().isEmpty()) {
@@ -357,7 +362,7 @@ public class ModificationLogic extends Loggable {
 		return "MODIFICATIONLOGIC";
 	}
 
-	// @author A0118007R
+	//@author A0118007R
 
 	/**
 	 * Modifies the various specified parameters of a task.
@@ -392,7 +397,7 @@ public class ModificationLogic extends Loggable {
 		modifyParam(task, attribute, contents, index);
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	/**
 	 * Change task name of the task
 	 * 

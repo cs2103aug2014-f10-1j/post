@@ -18,9 +18,9 @@ import exception.StreamIOException;
 
 //@author A0096529N
 /**
+ * <h1>StreamIO - STREAM’s file input/output component.</h1>
  * <p>
- * File management component responsible for saving to and loading from storage
- * file containing application state.
+ * Its purpose is to save and load STREAM’s state and also to save the log file.
  * </p>
  * 
  * <h3>Storage Format</h3>
@@ -47,8 +47,6 @@ import exception.StreamIOException;
  * <p>
  * Refer to method documentation for details.
  * </p>
- * 
- * @version V0.5
  */
 public class StreamIO {
 
@@ -66,8 +64,7 @@ public class StreamIO {
 			"yyyyMMddHHmmss", Locale.ENGLISH);
 	static String STREAM_FILENAME = "default.json";
 	// TODO convert this to Loggable implementation...
-	private static final StreamLogger logger = StreamLogger
-			.init("STREAMIO");
+	private static final StreamLogger logger = StreamLogger.init("STREAMIO");
 
 	static SaveIO saver = new SaveIO();
 	static LoadIO loader = new LoadIO();
@@ -88,7 +85,8 @@ public class StreamIO {
 			loader.load(streamFile, taskMap, taskList);
 			logger.log(LogLevel.DEBUG, "Loaded file: " + STREAM_FILENAME);
 		} catch (JSONException e) {
-			logger.log(LogLevel.DEBUG, "JSON conversion failed: " + STREAM_FILENAME);
+			logger.log(LogLevel.DEBUG, "JSON conversion failed: "
+					+ STREAM_FILENAME);
 			throw new StreamIOException(
 					"File corrupted, could not parse file contents - "
 							+ e.getMessage(), e);

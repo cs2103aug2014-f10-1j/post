@@ -15,6 +15,11 @@ import parser.SortParser.SortType;
 import util.StreamConstants;
 import util.StreamUtil;
 
+//@author A0096529N
+/**
+ * Executes ordering-related processes such as sorting. Previous task orderings
+ * are kept in a stack should any of them needs to be restored.
+ */
 public class OrderLogic extends Loggable implements StackLogic {
 
 	private Stack<ArrayList<String>> orderStack;
@@ -24,7 +29,7 @@ public class OrderLogic extends Loggable implements StackLogic {
 		orderStack = new Stack<ArrayList<String>>();
 		streamObject = stobj;
 	}
-	
+
 	public static OrderLogic init(StreamObject stobj) {
 		return new OrderLogic(stobj);
 	}
@@ -165,7 +170,7 @@ public class OrderLogic extends Loggable implements StackLogic {
 				+ (isDescending ? "descending." : "ascending.");
 	}
 
-	// @author A0119401U
+	//@author A0119401U
 	/**
 	 * Sorts the tasks based on the time given. First we sort by start time, and
 	 * then sort by deadline.
@@ -212,7 +217,7 @@ public class OrderLogic extends Loggable implements StackLogic {
 		return "Sort by time " + (isDescending ? "descending." : "ascending.");
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	/**
 	 * Sorts tasks based on given comparator.
 	 * 
@@ -319,7 +324,8 @@ public class OrderLogic extends Loggable implements StackLogic {
 		return "ORDERLOGIC";
 	}
 
-	public String sort(List<StreamTask> initialList, SortType type, Boolean isDescending) {
+	public String sort(List<StreamTask> initialList, SortType type,
+			Boolean isDescending) {
 		String result = null;
 		switch (type) {
 			case ALPHA:
@@ -344,5 +350,5 @@ public class OrderLogic extends Loggable implements StackLogic {
 		}
 		return result;
 	}
-	
+
 }

@@ -16,28 +16,19 @@ import javax.swing.event.DocumentListener;
 import util.StreamConstants;
 
 //@author A0093874N
-
 /**
  * <p>
  * A simple <b>JTextField</b> functioning as console for user input. Equipped
- * with placeholder text so that user knows where to go. Also equipped with
- * auto-complete and built-in user guide for user's convenience.
+ * with placeholder text so that user knows where to go. Equipped with
+ * auto-complete and built-in user guide (connected to <b>FeedbackUI</b>) for
+ * user’s convenience and <b>ConsoleEnterAction</b> which fires the text input
+ * to the parser and processor upon pressing enter.
  * </p>
  * <p>
  * The auto-complete code is adapted from
  * http://java2s.com/Code/Java/Swing-Components/AutoCompleteTextField.htm.
  * Credits to the author, Brandon Buck.
  * </p>
- * 
- * <h3>API</h3>
- * <ul>
- * <li>StreamUIConsole.addPossibility(String possibility, String helpText)</li>
- * </ul>
- * <p>
- * Refer to method documentation for details.
- * </p>
- * 
- * @version V0.5
  */
 public class ConsoleUI extends JTextField implements KeyListener,
 		DocumentListener {

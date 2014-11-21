@@ -5,14 +5,11 @@ import javax.swing.JTextField;
 import util.StreamConstants;
 
 //@author A0093874N
-
 /**
  * <p>
  * A simple, non-editable <b>JTextField</b> component to assist users in
  * entering their commands.
  * </p>
- * 
- * @version V0.5
  */
 public class FeedbackUI extends JTextField {
 

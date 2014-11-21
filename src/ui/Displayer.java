@@ -8,15 +8,15 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import parser.StreamParser;
-import util.StreamExternals;
+import parser.TimeParser;
+import stream.Stream;
 import util.StreamUtil;
 import model.StreamTask;
 
 //@author A0093874N
-
 /**
- * A class to extract data from <b>StreamTask</b>s and convert them to
- * presentable format (texts or icons).
+ * A display handler to process attributes of a <b>StreamTask</b> to presentable
+ * format, be it in written form or iconic form.
  */
 public class Displayer {
 
@@ -121,27 +121,27 @@ public class Displayer {
 
 	static ImageIcon selectStatusIcon(StreamTask task) {
 		if (task.isDone()) {
-			return StreamExternals.ICON_DONE;
+			return Stream.ICON_DONE;
 		} else if (task.isOverdue()) {
-			return StreamExternals.ICON_OVERDUE;
+			return Stream.ICON_OVERDUE;
 		} else if (task.isInactive()) {
-			return StreamExternals.ICON_INACTIVE;
+			return Stream.ICON_INACTIVE;
 		} else {
-			return StreamExternals.ICON_NOT_DONE;
+			return Stream.ICON_NOT_DONE;
 		}
 	}
 
 	static ImageIcon selectRankIcon(StreamTask task) {
 		switch (displayRank(task)) {
 			case "high":
-				return StreamExternals.ICON_HI_RANK;
+				return Stream.ICON_HI_RANK;
 			case "medium":
-				return StreamExternals.ICON_MED_RANK;
+				return Stream.ICON_MED_RANK;
 			case "low":
-				return StreamExternals.ICON_LOW_RANK;
+				return Stream.ICON_LOW_RANK;
 			default:
 				// WON'T HAPPEN
-				return StreamExternals.ICON_LOW_RANK;
+				return Stream.ICON_LOW_RANK;
 		}
 	}
 
@@ -158,6 +158,14 @@ public class Displayer {
 		} else {
 			calIcon.updateView(cal);
 		}
+	}
+
+	public static String getMonthAbbrev(int mon) {
+		return TimeParser.MONTHS[mon].substring(0, 3).toUpperCase();
+	}
+
+	public static String displayHour(int hr, int min) {
+		return hr + ":" + StreamUtil.addZeroToTime(min);
 	}
 
 }

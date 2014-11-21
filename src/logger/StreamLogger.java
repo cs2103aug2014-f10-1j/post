@@ -8,13 +8,14 @@ import java.util.Locale;
 
 //@author A0096529N
 /**
- * <h1>StreamLogger - Stream logger component</h1>
+ * <h1>StreamLogger - STREAM's logging component</h1>
  * 
  * <p>
- * Stores logs in a synchronized list for various components.
+ * Stores log messages in a synchronized list, allowing different component to
+ * contribute appropriate log messages.
  * </p>
  * 
- * <h2>Example</h2>
+ * <h3>Example</h3>
  * 
  * <pre>
  * {
@@ -30,10 +31,9 @@ import java.util.Locale;
  * <p>
  * Refer to method documentation for details.
  * </p>
- * 
- * @version V0.5
  */
 public class StreamLogger {
+
 	private static SimpleDateFormat format = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 	private String componentName;
@@ -100,4 +100,5 @@ public class StreamLogger {
 		}
 		return null;
 	}
+
 }

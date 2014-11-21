@@ -17,6 +17,12 @@ import logger.Loggable;
 import model.StreamObject;
 import model.StreamTask;
 
+//@author A0118007R
+/**
+ * Executes create, retrieve (including search/filter), and delete processes.
+ * Deleted tasks are kept in a stack should they need to be recycled (e.g by
+ * undoing a delete command).
+ */
 public class CRDLogic extends Loggable implements StackLogic {
 
 	private StreamObject streamObject;
@@ -138,8 +144,8 @@ public class CRDLogic extends Loggable implements StackLogic {
 	public Integer getIndex(String taskName) {
 		return streamObject.indexOf(taskName);
 	}
-	
-	// @author A0093874N
+
+	//@author A0093874N
 	/**
 	 * Adds a new task to StreamObject
 	 * 
@@ -176,7 +182,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 				task.getTaskName()));
 	}
 
-	// @author A0096529N
+	//@author A0096529N
 	/**
 	 * Search for tasks with specified key phrase, in the task name, description
 	 * and tags.
@@ -231,7 +237,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 		return tasks;
 	}
 
-	// @author A0093874N
+	//@author A0093874N
 	/**
 	 * Filter tasks by various categories
 	 * 
@@ -340,5 +346,5 @@ public class CRDLogic extends Loggable implements StackLogic {
 				criteria, Arrays.toString(tasks.toArray())));
 		return tasks;
 	}
-	
+
 }

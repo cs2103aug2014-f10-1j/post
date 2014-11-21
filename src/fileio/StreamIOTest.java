@@ -25,6 +25,7 @@ import org.junit.Test;
 import exception.StreamIOException;
 
 //@author A0096529N
+
 public class StreamIOTest {
 
 	private static final String FAIL_EXCEPTION_MESSAGE = "%1$s, caused by %2$s - %3$s";

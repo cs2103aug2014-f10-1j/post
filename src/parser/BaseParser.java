@@ -1,12 +1,11 @@
 package parser;
 
 //@author A0093874N
-
+/**
+ * The basic parsing interface implemented by other classes.
+ */
 public interface BaseParser {
 
-	/**
-	 * some docs
-	 */
 	public Object parse(String str);
 
 	public String translate(Object obj);

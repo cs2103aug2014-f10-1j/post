@@ -7,17 +7,13 @@ import javax.swing.AbstractAction;
 import stream.Stream;
 
 //@author A0093874N
-
 /**
  * <p>
- * The action invoked upon pressing "enter" in console. It fires the text in
- * console to the input parser and subsequently processor.
+ * Fires the text input to the parser and processor upon pressing enter.
  * </p>
  * <p>
  * Credits to developers from F10-4J for this idea.
  * </p>
- * 
- * @version V0.5
  */
 public class ConsoleEnterAction extends AbstractAction {
 

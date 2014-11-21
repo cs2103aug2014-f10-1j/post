@@ -6,11 +6,8 @@ import java.awt.FocusTraversalPolicy;
 import java.util.Vector;
 
 //@author A0093874N
-
 /**
  * Customizes the tab-based focus traversal policy.
- * 
- * @version V0.5
  */
 public class FocusTraversal extends FocusTraversalPolicy {
 

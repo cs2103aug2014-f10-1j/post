@@ -18,7 +18,9 @@ import org.json.JSONObject;
 import exception.StreamIOException;
 
 //@author A0096529N
-
+/**
+ * Handles saving-related processes and model-to-JSON conversions.
+ */
 public class SaveIO implements Converter {
 
 	@Override

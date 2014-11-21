@@ -5,14 +5,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 //@author A0093874N
-
 /**
- * The action invoked upon pressing the keyboard shortcut, i.e matching the key
- * pressed to the corresponding command.
- * 
- * @version V0.5
+ * Appends actions to several chosen keyboard buttons pressed from outside the
+ * <b>ConsoleUI</b>.
  */
-
 public class KeyboardShortcut extends AbstractAction {
 
 	private static final long serialVersionUID = 1L;

@@ -6,23 +6,11 @@ import util.StreamConstants;
 import util.StreamUtil;
 
 //@author A0093874N
-
 /**
  * <p>
  * A simple, non-editable <b>JTextArea</b> component to display log messages.
  * Error messages and normal log messages are displayed differently.
  * </p>
- * 
- * <h3>API</h3>
- * <ul>
- * <li>StreamUILogger.showLogMessage(String logMsg)</li>
- * <li>StreamUILogger.showErrorMessage(String errMsg)</li>
- * </ul>
- * <p>
- * Refer to method documentation for details.
- * </p>
- * 
- * @version V0.5
  */
 public class LoggerUI extends JTextArea {
 

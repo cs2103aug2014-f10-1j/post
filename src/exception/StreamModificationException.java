@@ -1,11 +1,9 @@
 package exception;
 
-//@author A0096529N
+//@author A0118007R
 /**
- * Task modification failures, e.g duplicate names, task with specified name not
- * found, ...
- * 
- * @version V0.5
+ * Exceptions arising due to failure in task parameter modification, e.g
+ * modification failures, e.g duplicate names, invalid start/end time, ...
  */
 public class StreamModificationException extends Exception {
 

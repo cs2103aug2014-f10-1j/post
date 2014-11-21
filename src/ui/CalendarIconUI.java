@@ -7,27 +7,12 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
-import parser.StreamParser;
-import parser.TimeParser;
 import util.StreamConstants;
 
 //@author A0093874N
-
 /**
- * <p>
  * A user-friendly calendar icon to show start date and end date or deadline,
  * whichever ones applicable.
- * </p>
- * <h3>API</h3>
- * <ul>
- * <li>StreamUICalendarIcon.hideView()</li>
- * <li>StreamUICalendarIcon.updateView(Calendar cal)</li>
- * </ul>
- * <p>
- * Refer to method documentation for details.
- * </p>
- * 
- * @version V0.5
  */
 public class CalendarIconUI extends JLayeredPane {
 
@@ -87,7 +72,7 @@ public class CalendarIconUI extends JLayeredPane {
 	}
 
 	private void updateMonthView(int mon) {
-		String parsedMonth = StreamParser.tp.getMonthAbbrev(mon);
+		String parsedMonth = Displayer.getMonthAbbrev(mon);
 		month.setText(parsedMonth);
 		month.setVisible(true);
 	}
@@ -98,8 +83,8 @@ public class CalendarIconUI extends JLayeredPane {
 	}
 
 	private void updateTimeView(int hr, int min) {
-		time.setText(hr + TimeParser.TIME_DELIMITER
-				+ StreamParser.tp.addZeroToTime(min));
+		String parsedTime = Displayer.displayHour(hr, min);
+		time.setText(parsedTime);
 		time.setVisible(true);
 	}
 

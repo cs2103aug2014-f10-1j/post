@@ -21,35 +21,15 @@ import logger.Loggable;
 import model.StreamTask;
 import stream.Stream;
 import util.StreamConstants;
-import util.StreamExternals;
 
 //@author A0093874N
-
 /**
- * <p>
- * StreamUI is the GUI for STREAM, featuring graphical view of user's added
- * tasks, console for user input, logger for terminal feedback, and helper box
- * for user assistance. Also equipped with some keyboard shortcuts and simple
- * auto-completion for user's convenience.
- * </p>
+ * <h1>StreamUI - STREAM’s user interface</h1>
  * 
- * <h3>API</h3>
- * <ul>
- * <li>StreamUI.resetAvailableTasks(ArrayList&lt;Integer&gt; indices,
- * ArrayList&lt;StreamTask&gt; tasks, Boolean isReset, Boolean isSearching)</li>
- * <li>StreamUI.log(String logMsg, Boolean isErrorMsg)</li>
- * <li>StreamUI.displayDetails(StreamTask task)</li>
- * <li>StreamUI.getNumberOfTasksStored()</li>
- * <li>StreamUI.goToFirstPage()</li>
- * <li>StreamUI.goToPrevPage()</li>
- * <li>StreamUI.goToNextPage()</li>
- * <li>StreamUI.goToLastPage()</li>
- * </ul>
  * <p>
- * Refer to method documentation for details.
+ * The GUI serves mainly to show the user feedback of the actions taken and
+ * input is accepted only from the command line console embedded in the GUI.
  * </p>
- * 
- * @version V0.5
  */
 public class StreamUI extends Loggable {
 
@@ -92,6 +72,11 @@ public class StreamUI extends Loggable {
 			+ "in syntax suggestion.</p><p>Visit our page at https://github.com/cs2103aug2014-f10-1j/main "
 			+ "for more comprehensive user guide!";
 
+	@Override
+	public String getComponentName() {
+		return "STREAMUI";
+	}
+
 	private StreamUI(Stream str) {
 		initParams(str);
 		setupLookAndFeel();
@@ -112,7 +97,7 @@ public class StreamUI extends Loggable {
 		log(TEXT_WELCOME, false);
 		presentToUser();
 	}
-	
+
 	public static StreamUI init(Stream str) {
 		return new StreamUI(str);
 	}
@@ -132,7 +117,6 @@ public class StreamUI extends Loggable {
 	 * 
 	 * @param task
 	 *            the task to be highlighted on next UI update
-	 * 
 	 */
 	public void setActiveTask(StreamTask task) {
 		activeTask = task;
@@ -182,10 +166,10 @@ public class StreamUI extends Loggable {
 					}
 					taskView.setBorder(null);
 				} catch (Exception e) {
-					logError(String.format(
-											StreamConstants.ExceptionMessage.ERR_UI_FADE_THREAD,
-											e.getClass().getSimpleName(),
-											e.getMessage()));
+					logError(String
+							.format(StreamConstants.ExceptionMessage.ERR_UI_FADE_THREAD,
+									e.getClass().getSimpleName(),
+									e.getMessage()));
 				}
 			}
 		}.start();
@@ -370,7 +354,7 @@ public class StreamUI extends Loggable {
 	 */
 	private void addHeader() {
 		JLabel title = new JLabel();
-		title.setIcon(StreamExternals.HEADER);
+		title.setIcon(Stream.HEADER);
 		title.setHorizontalAlignment(SwingConstants.CENTER);
 		title.setBounds(StreamConstants.UI.BOUNDS_HEADER);
 		contentPanel.add(title);
@@ -625,11 +609,6 @@ public class StreamUI extends Loggable {
 	public void openHelpBox() {
 		JOptionPane.showMessageDialog(mainFrame, TEXT_HELP, TITLE_HELP,
 				JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	@Override
-	public String getComponentName() {
-		return "STREAMUI";
 	}
 
 }

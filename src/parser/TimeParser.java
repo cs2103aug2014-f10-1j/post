@@ -2,10 +2,15 @@ package parser;
 
 import java.util.Calendar;
 
+import util.StreamUtil;
+
 import com.mdimension.jchronic.Chronic;
 
 //@author A0093874N
-
+/**
+ * Parses time String with the help of <b>JChronic</b>. Able to parse non-exact
+ * times such as "today", "tomorrow", "next week", …
+ */
 public class TimeParser implements BaseParser {
 
 	public static final String[] MONTHS = { "January", "February", "March",
@@ -30,12 +35,14 @@ public class TimeParser implements BaseParser {
 	public String translate(Object obj) {
 		assert (obj instanceof Calendar) : "ERROR";
 		Calendar calendar = (Calendar) obj;
-		return addZeroToTime(calendar.get(Calendar.DAY_OF_MONTH)) + " "
-				+ MONTHS[calendar.get(Calendar.MONTH)] + " "
+		return StreamUtil.addZeroToTime(calendar.get(Calendar.DAY_OF_MONTH))
+				+ " " + MONTHS[calendar.get(Calendar.MONTH)] + " "
 				+ calendar.get(Calendar.YEAR) + " "
-				+ addZeroToTime(calendar.get(Calendar.HOUR_OF_DAY))
-				+ TIME_DELIMITER + addZeroToTime(calendar.get(Calendar.MINUTE))
-				+ TIME_DELIMITER + addZeroToTime(calendar.get(Calendar.SECOND));
+				+ StreamUtil.addZeroToTime(calendar.get(Calendar.HOUR_OF_DAY))
+				+ TIME_DELIMITER
+				+ StreamUtil.addZeroToTime(calendar.get(Calendar.MINUTE))
+				+ TIME_DELIMITER
+				+ StreamUtil.addZeroToTime(calendar.get(Calendar.SECOND));
 	}
 
 	@Override
@@ -53,18 +60,6 @@ public class TimeParser implements BaseParser {
 		} catch (NullPointerException e) {
 			return false;
 		}
-	}
-
-	public String addZeroToTime(Integer time) {
-		String convertedTime = time.toString();
-		if (time < 10) {
-			convertedTime = "0" + convertedTime;
-		}
-		return convertedTime;
-	}
-
-	public String getMonthAbbrev(int mon) {
-		return MONTHS[mon].substring(0, 3).toUpperCase();
 	}
 
 }

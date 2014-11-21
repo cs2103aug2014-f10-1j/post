@@ -5,26 +5,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import model.StreamTask;
+import stream.Stream;
 import util.StreamConstants;
-import util.StreamExternals;
 
 //@author A0093874N
-
 /**
- * <p>
  * The task graphical view as seen by the user.
- * </p>
- * 
- * <h3>API</h3>
- * <ul>
- * <li>StreamTaskView.hideView()</li>
- * <li>StreamTaskView.updateView(final Integer ind, StreamTask task)</li>
- * </ul>
- * <p>
- * Refer to method documentation for details.
- * </p>
- * 
- * @version V0.5
  */
 public class TaskViewUI extends JPanel {
 
@@ -69,8 +55,8 @@ public class TaskViewUI extends JPanel {
 	 * Adds the start calendar icon.
 	 */
 	private void addStartCalendar() {
-		startCal = new CalendarIconUI(StreamExternals.ICON_START_CAL,
-				StreamExternals.ICON_NULL_START_CAL);
+		startCal = new CalendarIconUI(Stream.ICON_START_CAL,
+				Stream.ICON_NULL_START_CAL);
 		startCal.setBounds(StreamConstants.UI.BOUNDS_START_CAL);
 		add(startCal);
 	}
@@ -79,8 +65,8 @@ public class TaskViewUI extends JPanel {
 	 * Adds the end calendar icon.
 	 */
 	private void addEndCalendar() {
-		endCal = new CalendarIconUI(StreamExternals.ICON_END_CAL,
-				StreamExternals.ICON_NULL_END_CAL);
+		endCal = new CalendarIconUI(Stream.ICON_END_CAL,
+				Stream.ICON_NULL_END_CAL);
 		endCal.setBounds(StreamConstants.UI.BOUNDS_END_CAL);
 		add(endCal);
 	}
