@@ -9,8 +9,6 @@ import parser.StreamParser;
 import parser.FilterParser.FilterType;
 import parser.RankParser.RankType;
 
-import com.mdimension.jchronic.Chronic;
-
 import exception.StreamModificationException;
 import util.StreamConstants;
 import logger.Loggable;
@@ -92,7 +90,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 		logDebug(StreamConstants.LogMessage.CLEARED_TASKS);
 	}
 
-	public void updateTaskName(String oldName, String newName, StreamTask task,
+	void updateTaskName(String oldName, String newName, StreamTask task,
 			int index) {
 		streamObject.remove(oldName);
 		streamObject.put(newName, task, index);
@@ -198,7 +196,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 	 * @return tasks - a list of tasks containing the key phrase, empty list if
 	 *         nothing matches
 	 */
-	public ArrayList<Integer> findTasks(String keyphrase) {
+	ArrayList<Integer> findTasks(String keyphrase) {
 		// Split key phrase into keywords
 		String[] keywords = null;
 		if (keyphrase.contains(" ")) {
@@ -245,7 +243,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 	 *            the filtering criteria
 	 * 
 	 */
-	public ArrayList<Integer> filterTasks(String criteria) {
+	ArrayList<Integer> filterTasks(String criteria) {
 		ArrayList<Integer> tasks = new ArrayList<Integer>();
 		FilterType type = StreamParser.fp.parse(criteria);
 		String[] contents;
@@ -280,7 +278,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 					break;
 				case STARTBEF:
 					contents = criteria.split(" ", 3);
-					dueDate = Chronic.parse(contents[2]).getBeginCalendar();
+					dueDate = StreamParser.tp.parse(contents[2]);
 					if (task.getStartTime() != null
 							&& task.getStartTime().before(dueDate)) {
 						tasks.add(i);
@@ -288,7 +286,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 					break;
 				case STARTAFT:
 					contents = criteria.split(" ", 3);
-					dueDate = Chronic.parse(contents[2]).getBeginCalendar();
+					dueDate = StreamParser.tp.parse(contents[2]);
 					if (task.getStartTime() != null
 							&& task.getStartTime().after(dueDate)) {
 						tasks.add(i);
@@ -296,7 +294,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 					break;
 				case DUEBEF:
 					contents = criteria.split(" ", 3);
-					dueDate = Chronic.parse(contents[2]).getBeginCalendar();
+					dueDate = StreamParser.tp.parse(contents[2]);
 					if (task.getDeadline() != null
 							&& task.getDeadline().before(dueDate)) {
 						tasks.add(i);
@@ -304,7 +302,7 @@ public class CRDLogic extends Loggable implements StackLogic {
 					break;
 				case DUEAFT:
 					contents = criteria.split(" ", 3);
-					dueDate = Chronic.parse(contents[2]).getBeginCalendar();
+					dueDate = StreamParser.tp.parse(contents[2]);
 					if (task.getDeadline() != null
 							&& task.getDeadline().after(dueDate)) {
 						tasks.add(i);

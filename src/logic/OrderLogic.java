@@ -58,6 +58,11 @@ public class OrderLogic extends Loggable implements StackLogic {
 		return order;
 	}
 
+	@Override
+	public String getComponentName() {
+		return "ORDERLOGIC";
+	}
+
 	/**
 	 * Sorts by task name, lexicographically.
 	 * 
@@ -318,13 +323,8 @@ public class OrderLogic extends Loggable implements StackLogic {
 				return -1;
 		}
 	}
-
-	@Override
-	public String getComponentName() {
-		return "ORDERLOGIC";
-	}
-
-	public String sort(List<StreamTask> initialList, SortType type,
+	
+	String sort(List<StreamTask> initialList, SortType type,
 			Boolean isDescending) {
 		String result = null;
 		switch (type) {

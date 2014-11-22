@@ -72,14 +72,10 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param currentDeadline
 	 *            time to be reverted to
 	 */
-	public void pushInverseDueCommand(int taskIndex, Calendar currentDeadline) {
+	void pushInverseDueCommand(int taskIndex, Calendar currentDeadline) {
 		String inverseCommand = null;
-		if (currentDeadline == null) {
-			inverseCommand = String.format(CMD_DUE, taskIndex, "null");
-		} else {
-			inverseCommand = String.format(CMD_DUE, taskIndex,
-					StreamParser.tp.translate(currentDeadline));
-		}
+		inverseCommand = String.format(CMD_DUE, taskIndex,
+				StreamParser.tp.translate(currentDeadline));
 		push(inverseCommand);
 	}
 
@@ -92,14 +88,9 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param currentStartTime
 	 *            time to be reverted to
 	 */
-	public void pushInverseStartCommand(int taskIndex, Calendar currentStartTime) {
-		String inverseCommand = null;
-		if (currentStartTime == null) {
-			inverseCommand = String.format(CMD_START, taskIndex, "null");
-		} else {
-			inverseCommand = String.format(CMD_START, taskIndex,
-					StreamParser.tp.translate(currentStartTime));
-		}
+	void pushInverseStartCommand(int taskIndex, Calendar currentStartTime) {
+		String inverseCommand = String.format(CMD_START, taskIndex,
+				StreamParser.tp.translate(currentStartTime));
 		push(inverseCommand);
 	}
 
@@ -110,7 +101,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param taskIndex
 	 *            index of task that was added
 	 */
-	public void pushInverseAddCommand(int index) {
+	void pushInverseAddCommand(int index) {
 		push(String.format(CMD_DISMISS, index));
 	}
 
@@ -123,7 +114,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param order
 	 *            order of tasks to be reverted to
 	 */
-	public void pushInverseDeleteCommand(StreamTask deletedTask,
+	void pushInverseDeleteCommand(StreamTask deletedTask,
 			ArrayList<String> order) {
 		push(String.format(CMD_RECOVER, 1));
 	}
@@ -137,7 +128,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param deletedTasks
 	 *            tasks that were deleted
 	 */
-	public void pushInverseClearCommand(ArrayList<String> originalOrder,
+	void pushInverseClearCommand(ArrayList<String> originalOrder,
 			ArrayList<StreamTask> deletedTasks) {
 		push(String.format(CMD_RECOVER, deletedTasks.size()));
 	}
@@ -151,7 +142,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param oldRank
 	 *            rank to be reverted to
 	 */
-	public void pushInverseSetRankingCommand(int index, String oldRank) {
+	void pushInverseSetRankingCommand(int index, String oldRank) {
 		push(String.format(CMD_RANK, index, oldRank));
 	}
 
@@ -164,8 +155,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param oldDescription
 	 *            description to be reverted to
 	 */
-	public void pushInverseSetDescriptionCommand(int index,
-			String oldDescription) {
+	void pushInverseSetDescriptionCommand(int index, String oldDescription) {
 		push(String.format(CMD_DESC, index, oldDescription));
 	}
 
@@ -178,7 +168,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param taskIndex
 	 *            index of task that was modified
 	 */
-	public void pushInverseSetDoneCommand(boolean wasDone, int index) {
+	void pushInverseSetDoneCommand(boolean wasDone, int index) {
 		String inverseCommand = String.format(CMD_MARK, index,
 				StreamParser.mp.translate(StreamParser.mp.parse(wasDone)));
 		push(inverseCommand);
@@ -192,7 +182,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 *            index of task that was modified
 	 * @param oldTaskName
 	 */
-	public void pushInverseSetNameCommand(int taskIndex, String oldTaskName) {
+	void pushInverseSetNameCommand(int taskIndex, String oldTaskName) {
 		push(String.format(CMD_NAME, taskIndex, oldTaskName));
 	}
 
@@ -203,7 +193,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param inverseCommand
 	 *            entire command for reversion of action
 	 */
-	public void pushInverseModifyCommand(String inverseCommand) {
+	void pushInverseModifyCommand(String inverseCommand) {
 		push(inverseCommand.trim());
 	}
 
@@ -214,7 +204,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param oldOrdering
 	 *            order of tasks to be reverted to
 	 */
-	public void pushInverseSortCommand(ArrayList<String> oldOrdering) {
+	void pushInverseSortCommand(ArrayList<String> oldOrdering) {
 		push(CMD_UNSORT);
 	}
 
@@ -227,8 +217,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param tagsRemoved
 	 *            tags removed during modification to be added back on reversion
 	 */
-	public void pushInverseUntagCommand(int taskIndex,
-			ArrayList<String> tagsRemoved) {
+	void pushInverseUntagCommand(int taskIndex, ArrayList<String> tagsRemoved) {
 		if (tagsRemoved.size() > 0) {
 			push(String.format(CMD_TAG, taskIndex,
 					StreamUtil.listDownArrayContent(tagsRemoved, " ")));
@@ -244,8 +233,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param tagsAdded
 	 *            tags added during modification to be removed on reversion
 	 */
-	public void pushInverseAddTagCommand(int taskIndex,
-			ArrayList<String> tagsAdded) {
+	void pushInverseAddTagCommand(int taskIndex, ArrayList<String> tagsAdded) {
 		if (tagsAdded.size() > 0) {
 			push(String.format(CMD_UNTAG, taskIndex,
 					StreamUtil.listDownArrayContent(tagsAdded, " ")));
@@ -262,7 +250,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * @param currTask
 	 * @return inverseCommand - the inverse command for multi-modify input
 	 */
-	public String prepareInverseModifyCommand(String taskName, int taskIndex,
+	String prepareInverseModifyCommand(String taskName, int taskIndex,
 			StreamTask currTask) {
 		String inverseCommand = "modify " + taskIndex + " -name " + taskName
 				+ " ";
@@ -338,7 +326,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * 
 	 * @return isEmpty - true if the stack is empty.
 	 */
-	public boolean hasInverseInput() {
+	boolean hasInverseInput() {
 		return !inputStack.isEmpty();
 	}
 
@@ -347,7 +335,7 @@ public class UndoLogic extends Loggable implements StackLogic {
 	 * pushes the place holder for undo
 	 * 
 	 */
-	public void pushPlaceholderInput() {
+	void pushPlaceholderInput() {
 		push("placeholderforundo");
 	}
 

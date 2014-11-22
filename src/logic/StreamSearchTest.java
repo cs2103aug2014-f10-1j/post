@@ -42,20 +42,20 @@ public class StreamSearchTest {
 		task2.getTags().add("NOLINE");
 	}
 	// TODO think on how to implement this...
-/*
+
 	@Test 
 	public void testSearch1() {
-		testOneSearch("Search for nothing", crdLogic.getStreamTaskList(crdLogic.findTasks("nothing")));
+		testOneSearch("Search for nothing", stobj.getStreamTaskList(crdLogic.findTasks("nothing")));
 	}
 	@Test 
 	public void testSearch2() {
-		testOneSearch("Search for x", crdLogic.getStreamTaskList(crdLogic.findTasks("x")), task1, task2);
+		testOneSearch("Search for x", stobj.getStreamTaskList(crdLogic.findTasks("x")), task1, task2);
 	}
 	@Test 
 	public void testSearch3() {
-		testOneSearch("Search for panda", crdLogic.getStreamTaskList(crdLogic.findTasks("im looking for a panda")), task2);
+		testOneSearch("Search for panda", stobj.getStreamTaskList(crdLogic.findTasks("im looking for a panda")), task2);
 	}
-*/
+
 	private void testOneSearch(String testMessage, List<StreamTask> actualTasks, StreamTask...tasks) {
 		List<StreamTask> expectedTasks = Arrays.asList(tasks);
 		Collections.sort(expectedTasks, taskComparator);

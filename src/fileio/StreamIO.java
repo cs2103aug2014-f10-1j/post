@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import logger.StreamLogger;
-import logger.StreamLogger.LogLevel;
+import logger.Loggable;
 import model.StreamTask;
 
 import org.json.JSONException;
@@ -48,7 +47,7 @@ import exception.StreamIOException;
  * Refer to method documentation for details.
  * </p>
  */
-public class StreamIO {
+public class StreamIO extends Loggable {
 
 	static final String KEY_TASKMAP = "allTasks";
 	static final String KEY_TASKLIST = "taskList";
@@ -62,12 +61,23 @@ public class StreamIO {
 
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyyMMddHHmmss", Locale.ENGLISH);
-	static String STREAM_FILENAME = "default.json";
-	// TODO convert this to Loggable implementation...
-	private static final StreamLogger logger = StreamLogger.init("STREAMIO");
+	String STREAM_FILENAME = "default.json";
 
 	static SaveIO saver = SaveIO.init();
 	static LoadIO loader = LoadIO.init();
+	
+	private StreamIO(String filename) {
+		this.STREAM_FILENAME = filename;
+	}
+
+	public static StreamIO init(String filename) {
+		return new StreamIO(filename);
+	}
+
+	@Override
+	public String getComponentName() {
+		return "STREAMIO";
+	}
 
 	/**
 	 * Reads and inflate the contents of serialized storage file into
@@ -77,21 +87,20 @@ public class StreamIO {
 	 *             when JSON conversion fail due file corruption or IO failures
 	 *             when loading/accessing storage file.
 	 */
-	public static void load(Map<String, StreamTask> taskMap,
-			List<String> taskList) throws StreamIOException {
+	public void load(Map<String, StreamTask> taskMap, List<String> taskList)
+			throws StreamIOException {
 		assert (taskMap != null && taskList != null);
 		try {
 			File streamFile = new File(getStorageFile(STREAM_FILENAME));
 			loader.load(streamFile, taskMap, taskList);
-			logger.log(LogLevel.DEBUG, "Loaded file: " + STREAM_FILENAME);
+			logDebug("Loaded file: " + STREAM_FILENAME);
 		} catch (JSONException e) {
-			logger.log(LogLevel.DEBUG, "JSON conversion failed: "
-					+ STREAM_FILENAME);
+			logDebug("JSON conversion failed: " + STREAM_FILENAME);
 			throw new StreamIOException(
 					"File corrupted, could not parse file contents - "
 							+ e.getMessage(), e);
 		} catch (IOException e) {
-			logger.log(LogLevel.DEBUG, "File not found: " + STREAM_FILENAME);
+			logDebug("File not found: " + STREAM_FILENAME);
 			throw new StreamIOException("Could not load file - "
 					+ e.getMessage(), e);
 		}
@@ -108,21 +117,19 @@ public class StreamIO {
 	 *             when JSON conversion fail due file corruption or IO failures
 	 *             when loading/accessing storage file.
 	 */
-	public static void save(Map<String, StreamTask> taskMap,
-			List<String> taskList) throws StreamIOException {
+	public void save(Map<String, StreamTask> taskMap, List<String> taskList)
+			throws StreamIOException {
 		assert (taskMap != null && taskList != null);
 		try {
 			File streamFile = new File(getStorageFile(STREAM_FILENAME));
 			saver.save(streamFile, taskMap, taskList);
-			logger.log(LogLevel.DEBUG, "Saved to file: " + getSaveLocation());
+			logDebug("Saved to file: " + getSaveLocation());
 		} catch (JSONException e) {
-			logger.log(LogLevel.DEBUG, "JSON conversion failed during save - "
-					+ e.getMessage());
+			logDebug("JSON conversion failed during save - " + e.getMessage());
 			throw new StreamIOException("JSON conversion failed - "
 					+ e.getMessage(), e);
 		} catch (IOException e) {
-			logger.log(LogLevel.DEBUG,
-					"IO failure during save - " + e.getMessage());
+			logDebug("IO failure during save - " + e.getMessage());
 			throw new StreamIOException("Could not save to file - "
 					+ e.getMessage(), e);
 		}
@@ -134,8 +141,8 @@ public class StreamIO {
 	 * @param saveFileName
 	 *            filename of storage file to save.
 	 */
-	public static void setFilename(String saveFileName) {
-		STREAM_FILENAME = saveFileName;
+	public void setFilename(String saveFileName) {
+		this.STREAM_FILENAME = saveFileName;
 	}
 
 	/**
@@ -144,23 +151,23 @@ public class StreamIO {
 	 * @return file path of the save location.
 	 * @throws StreamIOException
 	 */
-	public static String getSaveLocation() throws StreamIOException {
+	public String getSaveLocation() throws StreamIOException {
 		return new File(getStorageFile(STREAM_FILENAME)).getAbsolutePath();
 	}
 
-	private static String getUserHomeDirectory() {
+	private String getUserHomeDirectory() {
 		String dir = null;
 		try {
 			dir = System.getProperty("user.home");
 		} catch (Exception e) {
-			logger.log(LogLevel.ERROR, String.format(
+			logError(String.format(
 					StreamConstants.LogMessage.LOAD_FAIL_USER_HOME, e
 							.getClass().getSimpleName(), e.getMessage()));
 		}
 		return dir == null ? "" : dir + File.separator;
 	}
 
-	private static String getStreamDirectory() throws StreamIOException {
+	private String getStreamDirectory() throws StreamIOException {
 		String dir = getUserHomeDirectory() + "Documents" + File.separator
 				+ "Stream" + File.separator;
 		File streamDirectory = new File(dir);
@@ -172,12 +179,11 @@ public class StreamIO {
 		return dir;
 	}
 
-	private static String getStorageFile(String filename)
-			throws StreamIOException {
+	private String getStorageFile(String filename) throws StreamIOException {
 		return getStreamDirectory() + filename;
 	}
 
-	private static String getLogsDirectory() throws StreamIOException {
+	private String getLogsDirectory() throws StreamIOException {
 		String dir = getStreamDirectory() + "Logs" + File.separator;
 		File streamDirectory = new File(dir);
 		if (!streamDirectory.exists()) {
@@ -188,7 +194,7 @@ public class StreamIO {
 		return dir;
 	}
 
-	private static String getLogsStorageFile(String logFileName)
+	private String getLogsStorageFile(String logFileName)
 			throws StreamIOException {
 		return getLogsDirectory() + logFileName;
 	}
@@ -204,7 +210,7 @@ public class StreamIO {
 	 * @throws StreamIOException
 	 *             if IO failures encountered during accessing of log file.
 	 */
-	public static void saveLogFile(List<String> logMessages, String logFileName)
+	public void saveLogFile(List<String> logMessages, String logFileName)
 			throws StreamIOException {
 		try {
 			saver.saveLogFile(logMessages, getLogsStorageFile(logFileName));
@@ -213,4 +219,5 @@ public class StreamIO {
 					StreamConstants.ExceptionMessage.ERR_SAVE_LOG, e);
 		}
 	}
+
 }

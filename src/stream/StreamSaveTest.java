@@ -6,83 +6,43 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-
-import model.StreamTask;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fileio.StreamIO;
+//@author A0096529N
 
 public class StreamSaveTest {
-	private StreamTask task1, task2;
-	private HashMap<String, StreamTask> map;
-	private ArrayList<String> taskList;
 	private static final String TEST_SAVE_FILENAME = "streamtest"
 			+ Stream.SAVEFILE_EXTENSION;
 
-	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-			"yyyyMMddHHmmss", Locale.ENGLISH);
 	private File testFile;
-	private Stream stream;
+	private Stream stream = new Stream(TEST_SAVE_FILENAME);
 
-	//@author A0096529N
 	@Before
 	public void setUp() throws Exception {
-		StreamIO.setFilename(TEST_SAVE_FILENAME);
-		testFile = new File(StreamIO.getSaveLocation());
+		testFile = new File(stream.stio.getSaveLocation());
 
 		if (testFile.exists()) {
 			testFile.delete();
 		}
 
 		stream = new Stream(testFile.getName());
-		String taskName1 = "Code Jarvis";
-		stream.streamLogic.crdLogic.addTask(taskName1);
-		task1 = stream.streamLogic.crdLogic.getTask(taskName1);
-		Calendar calendar = Calendar.getInstance();
-		Date date = simpleDateFormat.parse("20410719000000");
-		calendar.setTime(date);
-		task1.setDeadline(calendar);
-		task1.setDescription("Just\na\nRather\nVery\nIntelligent\nSystem");
-		task1.getTags().add("EPIC");
-		task1.getTags().add("IMPOSSIBLE");
+		stream.filterAndProcessInput("add Code Jarvis");
+		stream.filterAndProcessInput("due 1 19 july 2041 00:00:00");
+		stream.filterAndProcessInput("desc 1 Just\na\nRather\nVery\nIntelligent\nSystem");
+		stream.filterAndProcessInput("tag 1 epic impossible");
 
-		String taskName2 = "Build IoT";
-		stream.streamLogic.crdLogic.addTask(taskName2);
-		task2 = stream.streamLogic.crdLogic.getTask(taskName2);
-		Calendar calendar2 = Calendar.getInstance();
-		Date date2 = simpleDateFormat.parse("20180101123456");
-		calendar2.setTime(date2);
-		task2.setDeadline(calendar2);
-		task2.setDescription("Internet of Things");
-		task2.getTags().add("EPIC");
-		task2.getTags().add("POPULAR");
-		task2.getTags().add("URGENT");
-
-		map = new HashMap<String, StreamTask>();
-		map.put(task1.getTaskName().toLowerCase(), task1);
-		map.put(task2.getTaskName().toLowerCase(), task2);
-
-		taskList = new ArrayList<String>();
-		taskList.add(task1.getTaskName());
-		taskList.add(task2.getTaskName());
+		stream.filterAndProcessInput("add Build IoT -due 1 january 2018 12:34:56 "
+				+ "-desc Internet of Things -tag epic popular urgent");
 	}
 
-	//@author A0096529N
 	@After
 	public void tearDown() throws Exception {
 		testFile.delete();
 	}
 
-	//@author A0096529N
 	@Test
 	public void testSave() throws IOException {
 		stream.save();
@@ -97,7 +57,6 @@ public class StreamSaveTest {
 		assertEquals("Saved state", expectedContent, fileToString(testFile));
 	}
 
-	//@author A0096529N
 	private String fileToString(File file) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

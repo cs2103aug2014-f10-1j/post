@@ -30,6 +30,7 @@ public class StreamLoadTest {
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss",
 			Locale.ENGLISH);
 	private File testFile;
+	private StreamIO stio;
 
 	// @author A0096529N
 	@Before 
@@ -68,8 +69,8 @@ public class StreamLoadTest {
 				+ "{\"tags\":[\"EPIC\",\"POPULAR\",\"URGENT\"],\"deadline\":\"20180101123456\","
 				+ "\"taskName\":\"Build IoT\"," + "\"taskDescription\":\"Internet of Things\"}]}";
 		try {
-			StreamIO.setFilename(TEST_SAVE_FILENAME);
-			testFile = new File(StreamIO.getSaveLocation());
+			stio = StreamIO.init(TEST_SAVE_FILENAME);
+			testFile = new File(stio.getSaveLocation());
 			
 			if (testFile.exists()) {
 				testFile.delete();
@@ -91,14 +92,14 @@ public class StreamLoadTest {
 	public void testLoadMap() {
 		Stream stream = new Stream(testFile.getName());
 		assertEquals("Loaded task map", serializeTaskMap(map),
-				serializeTaskMap(stream.streamLogic.getTaskMap()));
+				serializeTaskMap(stream.stlog.getTaskMap()));
 	}
 
 	// @author A0096529N
 	@Test 
 	public void testLoadList() {
 		Stream stream = new Stream(testFile.getName());
-		assertEquals("Loaded task map", taskList, stream.streamLogic.getTaskList());
+		assertEquals("Loaded task map", taskList, stream.stlog.getTaskList());
 	}
 
 	// @author A0096529N

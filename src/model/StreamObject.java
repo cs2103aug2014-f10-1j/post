@@ -197,4 +197,44 @@ public class StreamObject {
 		taskMap.clear();
 		taskList.clear();
 	}
+	
+	//@author A0093874N
+
+	public ArrayList<StreamTask> getStreamTaskList(ArrayList<Integer> indices) {
+		ArrayList<StreamTask> tasks = new ArrayList<StreamTask>();
+		HashMap<String, StreamTask> taskMap = getTaskMap();
+		ArrayList<String> taskList = getTaskList();
+		for (Integer index : indices) {
+			tasks.add(taskMap.get(taskList.get(index - 1).toLowerCase()));
+		}
+		return tasks;
+	}
+	
+	// @author A0096529N
+	/**
+	 * @return taskMap a copy of the task map.
+	 */
+	public HashMap<String, StreamTask> getTaskMapCopy() {
+		return new HashMap<String, StreamTask>(getTaskMap());
+	}
+
+	/**
+	 * @return taskList a copy of the task list.
+	 */
+	public ArrayList<String> getTaskListCopy() {
+		return new ArrayList<String>(getTaskList());
+	}
+
+	/**
+	 * @return taskList a copy of the task list.
+	 */
+	public ArrayList<StreamTask> getStreamTaskList() {
+		ArrayList<StreamTask> taskList = new ArrayList<StreamTask>();
+		HashMap<String, StreamTask> taskMap = getTaskMap();
+		for (String key : taskMap.keySet()) {
+			taskList.add(taskMap.get(key));
+		}
+		return taskList;
+	}
+
 }

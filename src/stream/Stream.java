@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -30,8 +31,9 @@ import fileio.StreamIO;
 public class Stream extends Loggable {
 
 	StreamUI stui;
-	StreamObject streamObject;
-	StreamLogic streamLogic;
+	StreamIO stio;
+	StreamObject stobj;
+	StreamLogic stlog;
 
 	private String filename;
 
@@ -60,21 +62,20 @@ public class Stream extends Loggable {
 	public static Font FONT_TITLE;
 	public static Font FONT_CONSOLE;
 
+	@Override
+	public String getComponentName() {
+		return "STREAM";
+	}
+
 	//@author A0118007R
 	/**
 	 * Stream Constructor to initialize the program.
 	 */
 	public Stream(String file) {
 		initializeExtFiles();
-		initStreamIO(file);
-		initializeStream();
+		initializeStreamFilename(file);
+		initializeStreamParams();
 		load();
-	}
-
-	private void initializeStream() {
-		stui = StreamUI.init(this);
-		streamObject = StreamObject.init();
-		streamLogic = StreamLogic.init(this, stui, streamObject);
 	}
 
 	//@author A0093874N
@@ -111,23 +112,24 @@ public class Stream extends Loggable {
 		}
 	}
 
-	private void saveLogFile() throws StreamIOException {
-		Calendar now = Calendar.getInstance();
-		String logFileName = String.format(LOGFILE_FORMAT,
-				LOGFILE_DATE_FORMAT.format(now.getTime()));
-		StreamIO.saveLogFile(StreamLogger.getLogStack(), logFileName);
-	}
-
 	//@author A0096529N
-	private void initStreamIO(String file) {
+	private void initializeStreamFilename(String file) {
 		if (!file.endsWith(SAVEFILE_EXTENSION)) {
 			filename = String.format(SAVEFILE_FORMAT, file);
 		} else {
 			filename = file;
 		}
-		StreamIO.setFilename(filename);
 	}
 
+	//@author A0118007R
+	private void initializeStreamParams() {
+		stui = StreamUI.init(this);
+		stio = StreamIO.init(filename);
+		stobj = StreamObject.init();
+		stlog = StreamLogic.init(this, stui, stobj);
+	}
+
+	//@author A0096529N
 	/**
 	 * Loads the StreamObject state from a saved file, into the current
 	 * streamObject instance. No new instance of StreamObject is created.
@@ -136,11 +138,10 @@ public class Stream extends Loggable {
 		try {
 			HashMap<String, StreamTask> taskMap = new HashMap<String, StreamTask>();
 			ArrayList<String> taskList = new ArrayList<String>();
-
-			StreamIO.load(taskMap, taskList);
-			streamObject.setTaskList(taskList);
-			streamObject.setTaskMap(taskMap);
-			streamLogic.refreshUI();
+			stio.load(taskMap, taskList);
+			stobj.setTaskList(taskList);
+			stobj.setTaskMap(taskMap);
+			stlog.refreshUI();
 		} catch (StreamIOException e) {
 			logDebug(String.format(StreamConstants.LogMessage.LOAD_FAILED,
 					e.getMessage()));
@@ -155,10 +156,10 @@ public class Stream extends Loggable {
 	String save() {
 		String result = null;
 		try {
-			HashMap<String, StreamTask> allTasks = streamObject.getTaskMap();
-			ArrayList<String> taskList = streamObject.getTaskList();
-			StreamIO.save(allTasks, taskList);
-			result = "File saved to " + StreamIO.getSaveLocation();
+			HashMap<String, StreamTask> allTasks = stobj.getTaskMap();
+			ArrayList<String> taskList = stobj.getTaskList();
+			stio.save(allTasks, taskList);
+			result = "File saved to " + stio.getSaveLocation();
 		} catch (StreamIOException e) {
 			result = String.format(StreamConstants.LogMessage.LOAD_FAILED,
 					e.getMessage());
@@ -169,11 +170,6 @@ public class Stream extends Loggable {
 	}
 
 	//@author A0093874N
-
-	@Override
-	public String getComponentName() {
-		return "STREAM";
-	}
 
 	public void exit() {
 		showAndLogResult(THANK_YOU);
@@ -202,7 +198,7 @@ public class Stream extends Loggable {
 	//@author A0093874N
 	public void processInput(String input) {
 		try {
-			String result = streamLogic.execute(input);
+			String result = stlog.execute(input);
 			if (result != null) {
 				showAndLogResult(result);
 			}
@@ -258,6 +254,13 @@ public class Stream extends Loggable {
 		} else {
 			processInput(input);
 		}
+	}
+	
+	private void saveLogFile() throws StreamIOException {
+		Date now = Calendar.getInstance().getTime();
+		String logFileName = String.format(LOGFILE_FORMAT,
+				LOGFILE_DATE_FORMAT.format(now));
+		stio.saveLogFile(StreamLogger.getLogStack(), logFileName);
 	}
 
 	public static void main(String[] args) {

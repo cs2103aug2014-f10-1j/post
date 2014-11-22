@@ -39,6 +39,7 @@ public class StreamIOTest {
 	private StreamTask task1, task2;
 	private HashMap<String, StreamTask> map;
 	private ArrayList<String> taskList;
+	private StreamIO stio;
 
 	@Before
 	public void setUp() throws Exception {
@@ -79,8 +80,8 @@ public class StreamIOTest {
 				+ "\"taskName\":\"Build IoT\","
 				+ "\"taskDescription\":\"Internet of Things\"}]}";
 
-		StreamIO.STREAM_FILENAME = CHECK_FILE;
-		File checkFile = new File(StreamIO.getSaveLocation());
+		stio = StreamIO.init(CHECK_FILE);
+		File checkFile = new File(stio.getSaveLocation());
 		try {
 			stringToFile(checkFile, fileContent);
 		} catch (IOException e) {
@@ -88,8 +89,8 @@ public class StreamIOTest {
 					e.getMessage()), e);
 		}
 
-		StreamIO.STREAM_FILENAME = TEST_SAVE_FILENAME;
-		File saveFile = new File(StreamIO.getSaveLocation());
+		stio.setFilename(TEST_SAVE_FILENAME);
+		File saveFile = new File(stio.getSaveLocation());
 		if (saveFile.exists() && !saveFile.delete()) {
 			throw new IOException(String.format(CREATEFILE_EXCEPTION_MESSAGE,
 					saveFile.getAbsolutePath()));
@@ -103,10 +104,10 @@ public class StreamIOTest {
 
 	@After
 	public void tearDown() throws Exception {
-		StreamIO.STREAM_FILENAME = TEST_SAVE_FILENAME;
-		new File(StreamIO.getSaveLocation()).delete();
-		StreamIO.STREAM_FILENAME = CHECK_FILE;
-		new File(StreamIO.getSaveLocation()).delete();
+		stio.setFilename(TEST_SAVE_FILENAME);
+		new File(stio.getSaveLocation()).delete();
+		stio.setFilename(CHECK_FILE);
+		new File(stio.getSaveLocation()).delete();
 	}
 
 	/*
@@ -124,8 +125,8 @@ public class StreamIOTest {
 				+ "\"taskName\":\"Build IoT\","
 				+ "\"taskDescription\":\"Internet of Things\"}]}";
 		try {
-			File saveFile = new File(StreamIO.getSaveLocation());
-			StreamIO.save(map, taskList);
+			File saveFile = new File(stio.getSaveLocation());
+			stio.save(map, taskList);
 			assertEquals(testMessage, expectedFileContent,
 					fileToString(saveFile));
 		} catch (StreamIOException e) {
@@ -144,10 +145,10 @@ public class StreamIOTest {
 	@Test
 	public void loadTest() {
 		String testMessage = "Load map from file";
-		StreamIO.STREAM_FILENAME = CHECK_FILE;
+		stio.STREAM_FILENAME = CHECK_FILE;
 		try {
 			String expectedMap = serializeTaskMap(map);
-			StreamIO.load(map, taskList);
+			stio.load(map, taskList);
 
 			String actualMap = serializeTaskMap(map);
 			assertEquals(testMessage, expectedMap, actualMap);
@@ -155,7 +156,7 @@ public class StreamIOTest {
 			fail(String.format(FAIL_EXCEPTION_MESSAGE, testMessage,
 					"StreamIOException", e.getMessage()));
 		} finally {
-			StreamIO.STREAM_FILENAME = TEST_SAVE_FILENAME;
+			stio.STREAM_FILENAME = TEST_SAVE_FILENAME;
 		}
 	}
 
