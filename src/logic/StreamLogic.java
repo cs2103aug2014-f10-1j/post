@@ -18,6 +18,7 @@ import util.StreamUtil;
 import exception.StreamIOException;
 import exception.StreamModificationException;
 import exception.StreamParserException;
+import exception.StreamRetrievalException;
 import logger.Loggable;
 import model.StreamObject;
 import model.StreamTask;
@@ -147,8 +148,8 @@ public class StreamLogic extends Loggable {
 
 	//@author A0118007R
 	public String execute(String input) throws StreamModificationException,
-			StreamIOException, StreamParserException {
-		StreamCommand cmd = parser.parseCommand(input, getNumberOfTasks());
+			StreamIOException, StreamParserException, StreamRetrievalException {
+		StreamCommand cmd = parser.parseCommand(input);
 		CommandType command = cmd.getKey();
 		Integer index = cmd.getIndex();
 		Object content = cmd.getContent();
@@ -311,7 +312,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeAdd(String taskNameWithParams)
-			throws StreamModificationException {
+			throws StreamRetrievalException, StreamModificationException {
 
 		assertNotNull(taskNameWithParams);
 		String[] contents = taskNameWithParams.split(" ");
@@ -366,7 +367,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeDelete(Integer taskIndex)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 		assertNotNull(taskName);
 		StreamTask deletedTask = crdLogic.getTask(taskName);
@@ -449,7 +450,7 @@ public class StreamLogic extends Loggable {
 	 * @throws StreamModificationException
 	 */
 	private String executeView(Integer taskIndex)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 
 		assertNotNull(taskName);
@@ -473,7 +474,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeDescribe(Integer taskIndex, String description)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask currentTask = crdLogic.getTask(taskName);
 		String oldDescription = currentTask.getDescription();
@@ -495,7 +496,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeRank(Integer taskIndex, String taskRank)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask currentTask = crdLogic.getTask(taskName);
 		String oldRank = currentTask.getRank();
@@ -517,7 +518,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeName(Integer taskIndex, String newTaskName)
-			throws StreamModificationException {
+			throws StreamModificationException, StreamRetrievalException {
 		String oldTaskName = getTaskNumber(taskIndex);
 		modLogic.setName(oldTaskName, newTaskName);
 		StreamTask task = crdLogic.getTask(newTaskName);
@@ -540,7 +541,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeModify(Integer taskIndex, String content)
-			throws StreamModificationException {
+			throws StreamModificationException, StreamRetrievalException {
 		String[] contents = content.split(" ");
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask currTask = crdLogic.getTask(taskName);
@@ -568,7 +569,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeUntag(Integer taskIndex, String content)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String[] tags = content.split(" ");
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask task = crdLogic.getTask(taskName);
@@ -588,7 +589,7 @@ public class StreamLogic extends Loggable {
 	 * @return <strong>String</strong> - the log message
 	 */
 	private String executeTag(Integer taskIndex, String content)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String[] tags = content.split(" ");
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask task = crdLogic.getTask(taskName);
@@ -618,7 +619,7 @@ public class StreamLogic extends Loggable {
 
 		for (int i = 0; i < noOfTasksToRecover; i++) {
 			StreamTask task = crdLogic.pop();
-			crdLogic.recoverTask(task);
+			crdLogic.addTask(task);
 		}
 		orderLogic.setOrdering(orderLogic.pop());
 
@@ -635,7 +636,7 @@ public class StreamLogic extends Loggable {
 	 * @throws StreamModificationException
 	 */
 	private String executeUndo() throws StreamModificationException,
-			StreamIOException, StreamParserException {
+			StreamIOException, StreamParserException, StreamRetrievalException {
 		String result;
 		if (!undoLogic.hasInverseInput()) {
 			result = StreamConstants.LogMessage.UNDO_FAIL;
@@ -665,7 +666,7 @@ public class StreamLogic extends Loggable {
 	 * @throws StreamModificationException
 	 */
 	private String executeMark(Integer taskIndex, MarkType markType)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask task = crdLogic.getTask(taskName);
 
@@ -678,7 +679,7 @@ public class StreamLogic extends Loggable {
 	}
 
 	private String executeDue(Integer taskIndex, Calendar content)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask task = crdLogic.getTask(taskName);
 		Calendar deadline = task.getDeadline();
@@ -703,7 +704,7 @@ public class StreamLogic extends Loggable {
 	}
 
 	private String executeStartTime(Integer taskIndex, Calendar content)
-			throws StreamModificationException {
+			throws StreamRetrievalException {
 		String taskName = getTaskNumber(taskIndex);
 		StreamTask task = crdLogic.getTask(taskName);
 		Calendar startTime = task.getStartTime();
@@ -804,7 +805,7 @@ public class StreamLogic extends Loggable {
 
 	//@author A0118007R
 	private void addTaskWithParams(String taskName,
-			ArrayList<String> modifyParams) throws StreamModificationException {
+			ArrayList<String> modifyParams) throws StreamModificationException, StreamRetrievalException {
 		crdLogic.addTask(taskName);
 		assert (crdLogic.hasTask(taskName)) : StreamConstants.Assertion.NOT_ADDED;
 		int noOfTasks = getNumberOfTasks();
@@ -814,7 +815,7 @@ public class StreamLogic extends Loggable {
 
 	private void processParameterAddition(String taskName,
 			ArrayList<String> modifyParams, int index)
-			throws StreamModificationException {
+			throws StreamModificationException, StreamRetrievalException {
 		StreamTask task = crdLogic.getTask(taskName);
 		if (modifyParams.size() > 0) {
 			modLogic.modifyTask(task, modifyParams, index);

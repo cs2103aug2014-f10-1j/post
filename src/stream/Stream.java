@@ -18,6 +18,7 @@ import ui.StreamUI;
 import util.StreamConstants;
 import util.StreamUtil;
 import exception.StreamIOException;
+import exception.StreamRetrievalException;
 import exception.StreamParserException;
 import fileio.StreamIO;
 
@@ -213,6 +214,11 @@ public class Stream extends Loggable {
 					.getClass().getSimpleName(), e.getMessage()),
 					String.format(StreamConstants.LogMessage.PARSER_ERROR,
 							e.getMessage()));
+		} catch (StreamRetrievalException e) {
+			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
+					.getClass().getSimpleName(), e.getMessage()),
+					String.format("Retrieval error: %1$s",
+							e.getMessage()));			
 		} catch (Exception e) {
 			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
 					.getClass().getSimpleName(), e.getMessage()),

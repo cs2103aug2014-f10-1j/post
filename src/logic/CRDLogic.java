@@ -9,6 +9,7 @@ import parser.StreamParser;
 import parser.FilterParser.FilterType;
 import parser.RankParser.RankType;
 
+import exception.StreamRetrievalException;
 import exception.StreamModificationException;
 import util.StreamConstants;
 import logger.Loggable;
@@ -23,32 +24,30 @@ import model.StreamTask;
  */
 public class CRDLogic extends Loggable implements StackLogic {
 
-	private StreamObject streamObject;
-	private Stack<StreamTask> deletedTasks;
+	private StreamObject stobj;
+	private Stack<StreamTask> taskStack;
 
 	//@author A0096529N
 
-	private CRDLogic(StreamObject stobj) {
-		streamObject = stobj;
-		deletedTasks = new Stack<StreamTask>();
-	}
-
 	public static CRDLogic init(StreamObject stobj) {
-		return new CRDLogic(stobj);
+		CRDLogic crdLogic = new CRDLogic();
+		crdLogic.stobj = stobj;
+		crdLogic.taskStack = new Stack<StreamTask>();
+		return crdLogic;
 	}
 
 	@Override
 	public void push(Object obj) {
 		StreamTask deletedTask = (StreamTask) obj;
 		assert (deletedTask != null) : StreamConstants.Assertion.NULL_INVERSE_TASK;
-		deletedTasks.push(deletedTask);
+		taskStack.push(deletedTask);
 		logDebug(String.format(StreamConstants.LogMessage.PUSH_INVERSE_TASK,
 				deletedTask.getTaskName()));
 	}
 
 	@Override
 	public StreamTask pop() {
-		StreamTask deletedTask = deletedTasks.pop();
+		StreamTask deletedTask = taskStack.pop();
 		logDebug(String.format(StreamConstants.LogMessage.POP_INVERSE_TASK,
 				deletedTask.getTaskName()));
 		return deletedTask;
@@ -57,6 +56,36 @@ public class CRDLogic extends Loggable implements StackLogic {
 	@Override
 	public String getComponentName() {
 		return "CRDLOGIC";
+	}
+
+	//@author A0093874N
+	/**
+	 * Adds a new task to StreamObject
+	 * 
+	 * <p>
+	 * Precondition: newTaskName != null
+	 * </p>
+	 * 
+	 * @param newTaskName
+	 *            name of the new task
+	 */
+	StreamTask addTask(String newTaskName) throws StreamModificationException {
+		if (hasTask(newTaskName)) {
+			logDebug(String.format(
+					StreamConstants.LogMessage.ADD_DUPLICATE_TASK, newTaskName));
+			throw new StreamModificationException(String.format(
+					StreamConstants.ExceptionMessage.ERR_TASK_ALREADY_EXISTS,
+					newTaskName));
+		} else {
+			stobj.put(newTaskName, new StreamTask(newTaskName));
+			logDebug(String.format(StreamConstants.LogMessage.ADDED_TASK,
+					newTaskName));
+			try {
+				return getTask(newTaskName);
+			} catch (StreamRetrievalException wonthappen) {
+				return null;
+			}
+		}
 	}
 
 	/**
@@ -68,32 +97,24 @@ public class CRDLogic extends Loggable implements StackLogic {
 	 * 
 	 * @param taskName
 	 *            name of task to be deleted
-	 * @throws StreamModificationException
-	 *             if taskName given does not return a match, i.e. task not
-	 *             found
 	 */
-	public void deleteTask(String taskName) throws StreamModificationException {
-		if (streamObject.containsKey(taskName)) {
-			streamObject.remove(taskName);
-		} else {
-			throw new StreamModificationException(String.format(
-					StreamConstants.ExceptionMessage.ERR_TASK_DOES_NOT_EXIST,
-					taskName));
-		}
+	void deleteTask(String taskName) {
+		assert (hasTask(taskName)) : "";
+		stobj.remove(taskName);
 	}
 
 	/**
 	 * Clears the storage of all tasks.
 	 */
-	public void clear() {
-		streamObject.clear();
+	void clear() {
+		stobj.clear();
 		logDebug(StreamConstants.LogMessage.CLEARED_TASKS);
 	}
 
 	void updateTaskName(String oldName, String newName, StreamTask task,
 			int index) {
-		streamObject.remove(oldName);
-		streamObject.put(newName, task, index);
+		stobj.remove(oldName);
+		stobj.put(newName, task, index);
 	}
 
 	//@author A0118007R
@@ -106,18 +127,34 @@ public class CRDLogic extends Loggable implements StackLogic {
 	 * 
 	 * @param taskName
 	 *            name of task to be returned
-	 * @throws StreamModificationException
-	 *             if taskName given does not return a match, i.e. task not
-	 *             found
 	 */
-	public StreamTask getTask(String taskName)
-			throws StreamModificationException {
+	public StreamTask getTask(String taskName) throws StreamRetrievalException {
 		if (hasTask(taskName)) {
-			return streamObject.get(taskName);
+			return stobj.get(taskName);
 		} else {
-			throw new StreamModificationException(String.format(
+			throw new StreamRetrievalException(String.format(
 					StreamConstants.ExceptionMessage.ERR_TASK_DOES_NOT_EXIST,
 					taskName));
+		}
+	}
+
+	/**
+	 * Retrieves the task name by index
+	 * 
+	 * <p>
+	 * Precondition: index is a valid index
+	 * </p>
+	 * 
+	 * @param index
+	 *            the index of the task
+	 * @throws StreamRetrievalException
+	 */
+	StreamTask getTask(int index) throws StreamRetrievalException {
+		try {
+			return getTask(stobj.getTaskList().get(index - 1));
+		} catch (IndexOutOfBoundsException e) {
+			throw new StreamRetrievalException("Task number " + index
+					+ " does not exist");
 		}
 	}
 
@@ -136,46 +173,22 @@ public class CRDLogic extends Loggable implements StackLogic {
 	 */
 	public Boolean hasTask(String taskName) {
 		assert (taskName != null) : StreamConstants.Assertion.NULL_INPUT;
-		return streamObject.containsKey(taskName);
+		return stobj.containsKey(taskName);
 	}
 
-	public Integer getIndex(String taskName) {
-		return streamObject.indexOf(taskName);
+	int getIndex(String taskName) {
+		return stobj.indexOf(taskName);
 	}
 
 	//@author A0093874N
-	/**
-	 * Adds a new task to StreamObject
-	 * 
-	 * <p>
-	 * Precondition: newTaskName != null
-	 * </p>
-	 * 
-	 * @param newTaskName
-	 *            name of the new task
-	 */
-	public void addTask(String newTaskName) throws StreamModificationException {
-		if (hasTask(newTaskName)) {
-			logDebug(String.format(
-					StreamConstants.LogMessage.ADD_DUPLICATE_TASK, newTaskName));
-			throw new StreamModificationException(String.format(
-					StreamConstants.ExceptionMessage.ERR_TASK_ALREADY_EXISTS,
-					newTaskName));
-		} else {
-			streamObject.put(newTaskName, new StreamTask(newTaskName));
-			logDebug(String.format(StreamConstants.LogMessage.ADDED_TASK,
-					newTaskName));
-		}
-	}
-
 	/**
 	 * Adds the given task back into storage
 	 * 
 	 * @param task
 	 *            to be added
 	 */
-	public void recoverTask(StreamTask task) {
-		streamObject.put(task.getTaskName(), task);
+	void addTask(StreamTask task) {
+		stobj.put(task.getTaskName(), task);
 		logDebug(String.format(StreamConstants.LogMessage.RECOVERED_TASK,
 				task.getTaskName()));
 	}
@@ -206,8 +219,8 @@ public class CRDLogic extends Loggable implements StackLogic {
 		}
 
 		ArrayList<Integer> tasks = new ArrayList<Integer>();
-		for (int i = 0; i < streamObject.size(); i++) {
-			StreamTask task = streamObject.get(streamObject.get(i));
+		for (int i = 0; i < stobj.size(); i++) {
+			StreamTask task = stobj.get(stobj.get(i));
 
 			// check for matches between keywords and tags
 			if (task.hasTag(keywords)) {
@@ -248,8 +261,8 @@ public class CRDLogic extends Loggable implements StackLogic {
 		FilterType type = StreamParser.fp.parse(criteria);
 		String[] contents;
 		Calendar dueDate;
-		for (int i = 1; i <= streamObject.size(); i++) {
-			StreamTask task = streamObject.get(streamObject.get(i - 1));
+		for (int i = 1; i <= stobj.size(); i++) {
+			StreamTask task = stobj.get(stobj.get(i - 1));
 			switch (type) {
 				case DONE:
 					if (task.isDone()) {

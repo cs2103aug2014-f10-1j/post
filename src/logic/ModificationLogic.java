@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import exception.StreamModificationException;
+import exception.StreamRetrievalException;
 import parser.StreamParser;
 import parser.MarkParser.MarkType;
 import parser.RankParser.RankType;
@@ -414,7 +415,7 @@ public class ModificationLogic extends Loggable {
 	 *             found. Or when task with newTaskName is already present.
 	 */
 	public String setName(String taskName, String newTaskName)
-			throws StreamModificationException {
+			throws StreamModificationException, StreamRetrievalException {
 		assert (taskName != null && newTaskName != null) : StreamConstants.Assertion.NULL_INPUT;
 		StreamTask task = crdLogic.getTask(taskName);
 		int index = crdLogic.getIndex(taskName);

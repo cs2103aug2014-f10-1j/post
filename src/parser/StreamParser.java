@@ -2,7 +2,6 @@ package parser;
 
 import logger.Loggable;
 import parser.StreamCommand.CommandType;
-import util.StreamConstants;
 import util.StreamUtil;
 import exception.StreamParserException;
 
@@ -80,7 +79,7 @@ public class StreamParser extends Loggable {
 		return self;
 	}
 
-	public StreamCommand parseCommand(String input, int numOfTasks)
+	public StreamCommand parseCommand(String input)
 			throws StreamParserException {
 		if (input.trim().isEmpty()) {
 			throw new StreamParserException(ERROR_EMPTY_INPUT);
@@ -97,60 +96,60 @@ public class StreamParser extends Loggable {
 
 			case "del":
 			case "delete":
-				checkTypeTwoValidity(cmd, contents, numOfTasks);
+				checkTypeTwoValidity(cmd, contents);
 				cmd.setKey(CommandType.DEL);
 				break;
 
 			case "desc":
 			case "describe":
-				checkTypeThreeValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkTypeThreeValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.DESC);
 				break;
 
 			case "due":
 			case "end":
-				checkDateValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkDateValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.DUE);
 				break;
 
 			case "start":
-				checkDateValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkDateValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.START);
 				break;
 
 			case "view":
-				checkTypeTwoValidity(cmd, contents, numOfTasks);
+				checkTypeTwoValidity(cmd, contents);
 				cmd.setKey(CommandType.VIEW);
 				break;
 
 			case "rank":
-				checkRankValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkRankValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.RANK);
 				break;
 
 			case "mod":
 			case "modify":
-				checkTypeThreeValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkTypeThreeValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.MODIFY);
 				break;
 
 			case "name":
-				checkTypeThreeValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkTypeThreeValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.NAME);
 				break;
 
 			case "mark":
-				checkMarkValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkMarkValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.MARK);
 				break;
 
 			case "tag":
-				checkTypeThreeValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkTypeThreeValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.TAG);
 				break;
 
 			case "untag":
-				checkTypeThreeValidity(cmd, contentsSplitWithIndex, numOfTasks);
+				checkTypeThreeValidity(cmd, contentsSplitWithIndex);
 				cmd.setKey(CommandType.UNTAG);
 				break;
 
@@ -220,8 +219,7 @@ public class StreamParser extends Loggable {
 
 			case "page":
 			case "goto":
-				checkTypeTwoValidity(cmd, contents, 1 + numOfTasks
-						/ StreamConstants.UI.MAX_VIEWABLE_TASK);
+				checkTypeTwoValidity(cmd, contents);
 				cmd.setKey(CommandType.PAGE);
 				break;
 
@@ -238,14 +236,16 @@ public class StreamParser extends Loggable {
 		return cmd;
 	}
 
-	private void checkIndexValidity(StreamCommand cmd, String[] contents,
-			int numOfTasks) throws StreamParserException {
+	private void checkIndexValidity(StreamCommand cmd, String[] contents)
+			throws StreamParserException {
 		if (!StreamUtil.isInteger(contents[PARAM_POS_INDEX])) {
 			throw new StreamParserException(ERROR_INVALID_INDEX);
-		} else if (!StreamUtil.isWithinRange(
-				Integer.parseInt(contents[PARAM_POS_INDEX]), numOfTasks)) {
-			throw new StreamParserException(ERROR_INDEX_OUT_OF_BOUNDS);
 		}
+		/*
+		 * else if (!StreamUtil.isWithinRange(
+		 * Integer.parseInt(contents[PARAM_POS_INDEX]))) { throw new
+		 * StreamParserException(ERROR_INDEX_OUT_OF_BOUNDS); }
+		 */
 	}
 
 	/*
@@ -263,12 +263,12 @@ public class StreamParser extends Loggable {
 	/*
 	 * Type two command: commands with format (CommandWord) (index number)
 	 */
-	private void checkTypeTwoValidity(StreamCommand cmd, String[] contents,
-			int numOfTasks) throws StreamParserException {
+	private void checkTypeTwoValidity(StreamCommand cmd, String[] contents)
+			throws StreamParserException {
 		if (contents.length < ARGS_LENGTH_TYPE_TWO) {
 			throw new StreamParserException(ERROR_INCOMPLETE_INDEX);
 		} else {
-			checkIndexValidity(cmd, contents, numOfTasks);
+			checkIndexValidity(cmd, contents);
 			cmd.setIndex(Integer.parseInt(contents[PARAM_POS_INDEX]));
 		}
 	}
@@ -277,23 +277,23 @@ public class StreamParser extends Loggable {
 	 * Type three command: commands with format (CommandWord) (index number)
 	 * (String arguments of any length)
 	 */
-	private void checkTypeThreeValidity(StreamCommand cmd, String[] contents,
-			int numOfTasks) throws StreamParserException {
+	private void checkTypeThreeValidity(StreamCommand cmd, String[] contents)
+			throws StreamParserException {
 		if (contents.length < ARGS_LENGTH_TYPE_THREE) {
 			throw new StreamParserException(ERROR_INCOMPLETE_INPUT);
 		} else {
-			checkIndexValidity(cmd, contents, numOfTasks);
+			checkIndexValidity(cmd, contents);
 			cmd.setIndex(Integer.parseInt(contents[PARAM_POS_INDEX]));
 			cmd.setContent(contents[PARAM_POS_ARGS]);
 		}
 	}
 
-	private void checkDateValidity(StreamCommand cmd, String[] contents,
-			int numOfTasks) throws StreamParserException {
+	private void checkDateValidity(StreamCommand cmd, String[] contents)
+			throws StreamParserException {
 		if (contents.length < ARGS_LENGTH_TYPE_THREE) {
 			throw new StreamParserException(ERROR_INCOMPLETE_INPUT);
 		} else {
-			checkIndexValidity(cmd, contents, numOfTasks);
+			checkIndexValidity(cmd, contents);
 			if (!tp.isParseable(contents[PARAM_POS_ARGS])) {
 				throw new StreamParserException(ERROR_DATE_NOT_PARSEABLE);
 			}
@@ -302,12 +302,12 @@ public class StreamParser extends Loggable {
 		}
 	}
 
-	private void checkRankValidity(StreamCommand cmd, String[] contents,
-			int numOfTasks) throws StreamParserException {
+	private void checkRankValidity(StreamCommand cmd, String[] contents)
+			throws StreamParserException {
 		if (contents.length < ARGS_LENGTH_TYPE_THREE) {
 			throw new StreamParserException(ERROR_INCOMPLETE_INPUT);
 		} else {
-			checkIndexValidity(cmd, contents, numOfTasks);
+			checkIndexValidity(cmd, contents);
 			if (!rp.isParseable(contents[PARAM_POS_ARGS])) {
 				throw new StreamParserException(ERROR_INVALID_RANK);
 			}
@@ -316,12 +316,12 @@ public class StreamParser extends Loggable {
 		}
 	}
 
-	private void checkMarkValidity(StreamCommand cmd, String[] contents,
-			int numOfTasks) throws StreamParserException {
+	private void checkMarkValidity(StreamCommand cmd, String[] contents)
+			throws StreamParserException {
 		if (contents.length < ARGS_LENGTH_TYPE_THREE) {
 			throw new StreamParserException(ERROR_INCOMPLETE_INPUT);
 		} else {
-			checkIndexValidity(cmd, contents, numOfTasks);
+			checkIndexValidity(cmd, contents);
 			if (!mp.isParseable(contents[PARAM_POS_ARGS])) {
 				throw new StreamParserException(ERROR_INVALID_MARK);
 			}

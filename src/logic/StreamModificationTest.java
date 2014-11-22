@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import exception.StreamModificationException;
+import exception.StreamRetrievalException;
 
 //@author A0096529N
 public class StreamModificationTest {
@@ -38,7 +39,7 @@ public class StreamModificationTest {
 		task1.getTags().add("FIND");
 		task1.getTags().add("MATH");
 		task1.getTags().add("SIMPLE");
-		crdLogic.recoverTask(task1);
+		crdLogic.addTask(task1);
 
 		Calendar task2Deadline = Calendar.getInstance();
 		task2Deadline.setTime(taskDeadline.getTime());
@@ -48,13 +49,13 @@ public class StreamModificationTest {
 		task2.getTags().add("IMPOSSIBLE");
 		task2.getTags().add("PANDA");
 		task2.getTags().add("NOLINE");
-		crdLogic.recoverTask(task2);
+		crdLogic.addTask(task2);
 		
 		task3 = new StreamTask(TASK_NAME_3);
 		task3.setDescription("Code the unit tests for StreamObject");
 		task3.getTags().add("BORINGTASK");
 		task3.getTags().add("PROCRASTINATE");
-		crdLogic.recoverTask(task3);
+		crdLogic.addTask(task3);
 	}
 
 	@Test 
@@ -89,7 +90,7 @@ public class StreamModificationTest {
 	}
 
 	@Test 
-	public void testUpdateTaskName() throws StreamModificationException {
+	public void testUpdateTaskName() throws StreamModificationException, StreamRetrievalException {
 		String newTaskName = "New task name";
 		
 		assertEquals("Task name before modification", TASK_NAME_3, task3.getTaskName());

@@ -8,7 +8,7 @@ import model.StreamTask;
 import org.junit.Before;
 import org.junit.Test;
 
-import exception.StreamModificationException;
+import exception.StreamRetrievalException;
 
 //@author A0118007R
 public class StreamAddTaskTest {
@@ -66,7 +66,7 @@ public class StreamAddTaskTest {
 	}
 	
 	@Test 
-	public void getTaskTestOne() throws StreamModificationException{
+	public void getTaskTestOne() throws StreamRetrievalException{
 		StreamTask myTask = crdLogic.getTask("Submit CE2");
 		assertTrue(myTask.getTaskName().equals("Submit CE2"));
 	}
@@ -76,7 +76,7 @@ public class StreamAddTaskTest {
 		try {
 			crdLogic.getTask("AAA");
 			fail("A test message");
-		} catch (StreamModificationException e) {
+		} catch (StreamRetrievalException e) {
 			
 		}
 		

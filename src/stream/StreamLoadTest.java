@@ -92,14 +92,14 @@ public class StreamLoadTest {
 	public void testLoadMap() {
 		Stream stream = new Stream(testFile.getName());
 		assertEquals("Loaded task map", serializeTaskMap(map),
-				serializeTaskMap(stream.stlog.getTaskMap()));
+				serializeTaskMap(stream.stobj.getTaskMapCopy()));
 	}
 
 	// @author A0096529N
 	@Test 
 	public void testLoadList() {
 		Stream stream = new Stream(testFile.getName());
-		assertEquals("Loaded task map", taskList, stream.stlog.getTaskList());
+		assertEquals("Loaded task map", taskList, stream.stobj.getTaskListCopy());
 	}
 
 	// @author A0096529N
