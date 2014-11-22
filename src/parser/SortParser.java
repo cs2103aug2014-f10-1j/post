@@ -6,8 +6,21 @@ package parser;
  */
 public class SortParser implements BaseParser {
 
+	private static SortParser self = null;
+
 	public enum SortType {
 		ALPHA, START, END, TIME, IMPORTANCE, NULL;
+	}
+	
+	private SortParser() {
+		
+	}
+
+	public static SortParser init() {
+		if (self == null) {
+			self = new SortParser();
+		}
+		return self;
 	}
 
 	@Override

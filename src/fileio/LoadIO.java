@@ -27,6 +27,8 @@ import exception.StreamIOException;
  */
 public class LoadIO implements Converter {
 
+	private static LoadIO self = null;
+
 	/**
 	 * Parses the json object, with a list of task names mapped to their index,
 	 * into a string list.
@@ -119,6 +121,17 @@ public class LoadIO implements Converter {
 			throw new StreamIOException("JSON conversion failed - "
 					+ e.getMessage(), e);
 		}
+	}
+	
+	private LoadIO() {
+		
+	}
+
+	public static LoadIO init() {
+		if (self == null) {
+			self = new LoadIO();
+		}
+		return self;
 	}
 
 	/**
@@ -243,14 +256,12 @@ public class LoadIO implements Converter {
 	 */
 	Boolean loadLegacyStorage(Map<String, StreamTask> taskMap,
 			List<String> taskList) throws StreamIOException {
-		File streamFile = new File(StreamIO.STREAM_FILENAME);
-		if (streamFile.exists()) {
-			// load(streamFile, taskMap, taskList);
-			streamFile.delete();
-			return true;
-		} else {
-			return false;
-		}
+		/*
+		 * File streamFile = new File(StreamIO.STREAM_FILENAME); if
+		 * (streamFile.exists()) { // load(streamFile, taskMap, taskList);
+		 * streamFile.delete(); return true; } else { return false; }
+		 */
+		return null;
 	}
 
 }

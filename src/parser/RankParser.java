@@ -6,8 +6,21 @@ package parser;
  */
 public class RankParser implements BaseParser {
 
+	private static RankParser self = null;
+
 	public enum RankType {
 		HI, MED, LO, NULL;
+	}
+	
+	private RankParser() {
+		
+	}
+
+	public static RankParser init() {
+		if (self == null) {
+			self = new RankParser();
+		}
+		return self;
 	}
 
 	@Override

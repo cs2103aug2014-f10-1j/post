@@ -66,8 +66,8 @@ public class StreamIO {
 	// TODO convert this to Loggable implementation...
 	private static final StreamLogger logger = StreamLogger.init("STREAMIO");
 
-	static SaveIO saver = new SaveIO();
-	static LoadIO loader = new LoadIO();
+	static SaveIO saver = SaveIO.init();
+	static LoadIO loader = LoadIO.init();
 
 	/**
 	 * Reads and inflate the contents of serialized storage file into

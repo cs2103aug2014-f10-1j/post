@@ -16,7 +16,19 @@ public class TimeParser implements BaseParser {
 	public static final String[] MONTHS = { "January", "February", "March",
 			"April", "May", "June", "July", "August", "September", "October",
 			"November", "December" };
-	public static final String TIME_DELIMITER = ":";
+	private static final String DATE_FORMAT = "%1$s %2$s %3$s %4$s:%5$s:%6$s";
+	private static TimeParser self = null;
+	
+	private TimeParser() {
+		
+	}
+
+	public static TimeParser init() {
+		if (self == null) {
+			self = new TimeParser();
+		}
+		return self;
+	}
 
 	@Override
 	public Calendar parse(String str) {
@@ -35,14 +47,20 @@ public class TimeParser implements BaseParser {
 	public String translate(Object obj) {
 		assert (obj instanceof Calendar) : "ERROR";
 		Calendar calendar = (Calendar) obj;
-		return StreamUtil.addZeroToTime(calendar.get(Calendar.DAY_OF_MONTH))
-				+ " " + MONTHS[calendar.get(Calendar.MONTH)] + " "
-				+ calendar.get(Calendar.YEAR) + " "
-				+ StreamUtil.addZeroToTime(calendar.get(Calendar.HOUR_OF_DAY))
-				+ TIME_DELIMITER
-				+ StreamUtil.addZeroToTime(calendar.get(Calendar.MINUTE))
-				+ TIME_DELIMITER
-				+ StreamUtil.addZeroToTime(calendar.get(Calendar.SECOND));
+		if (obj == null) {
+			return "null";
+		} else {
+			return String
+					.format(DATE_FORMAT, StreamUtil.addZeroToTime(calendar
+							.get(Calendar.DAY_OF_MONTH)), MONTHS[calendar
+							.get(Calendar.MONTH)], calendar.get(Calendar.YEAR),
+							StreamUtil.addZeroToTime(calendar
+									.get(Calendar.HOUR_OF_DAY)), StreamUtil
+									.addZeroToTime(calendar
+											.get(Calendar.MINUTE)), StreamUtil
+									.addZeroToTime(calendar
+											.get(Calendar.SECOND)));
+		}
 	}
 
 	@Override

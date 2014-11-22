@@ -19,7 +19,7 @@ public class StreamParserTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		stparser = new StreamParser();
+		stparser = StreamParser.init();
 	}
 
 	@Test

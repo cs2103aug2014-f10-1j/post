@@ -23,6 +23,8 @@ import exception.StreamIOException;
  */
 public class SaveIO implements Converter {
 
+	private static SaveIO self = null;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public JSONArray convertTaskMap(Object map) throws StreamIOException {
@@ -79,6 +81,17 @@ public class SaveIO implements Converter {
 			throw new StreamIOException("JSON conversion failed - "
 					+ e.getMessage(), e);
 		}
+	}
+	
+	private SaveIO() {
+		
+	}
+
+	public static SaveIO init() {
+		if (self == null) {
+			self = new SaveIO();
+		}
+		return self;
 	}
 
 	static String formatDate(Calendar calendar) {

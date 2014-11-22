@@ -26,11 +26,11 @@ import exception.StreamParserException;
  */
 public class StreamParser extends Loggable {
 
-	public static MarkParser mp = new MarkParser();
-	public static RankParser rp = new RankParser();
-	public static FilterParser fp = new FilterParser();
-	public static SortParser sp = new SortParser();
-	public static TimeParser tp = new TimeParser();
+	public static MarkParser mp = MarkParser.init();
+	public static RankParser rp = RankParser.init();
+	public static TimeParser tp = TimeParser.init();
+	public static FilterParser fp = FilterParser.init(mp, rp, tp);
+	public static SortParser sp = SortParser.init();
 
 	static final String ERROR_INCOMPLETE_INPUT = "Please provide more information!";
 	static final String ERROR_INCOMPLETE_INDEX = "Please provide the index or page number!";
@@ -62,13 +62,22 @@ public class StreamParser extends Loggable {
 	private static final int ARGS_LENGTH_TYPE_TWO = 2;
 	private static final int ARGS_LENGTH_TYPE_THREE = 3;
 
+	private static StreamParser self = null;
+
 	@Override
 	public String getComponentName() {
 		return "STREAMPARSER";
 	}
 
+	private StreamParser() {
+
+	}
+
 	public static StreamParser init() {
-		return new StreamParser();
+		if (self == null) {
+			self = new StreamParser();
+		}
+		return self;
 	}
 
 	public StreamCommand parseCommand(String input, int numOfTasks)

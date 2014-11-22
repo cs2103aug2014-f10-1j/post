@@ -3,7 +3,6 @@ package logger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 //@author A0096529N
@@ -34,10 +33,10 @@ import java.util.Locale;
  */
 public class StreamLogger {
 
-	private static SimpleDateFormat format = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 	private String componentName;
-	private static final List<String> logStack = new ArrayList<String>();
+	private static final ArrayList<String> logStack = new ArrayList<String>();
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 	private static final String LOG_FORMAT = "%1$s %2$s [%3$s] %4$s";
 
 	public enum LogLevel {
@@ -68,7 +67,7 @@ public class StreamLogger {
 	public void log(LogLevel logLevel, String message) {
 		synchronized (logStack) {
 			logStack.add(String.format(LOG_FORMAT, getDate(),
-					getLevel(logLevel), componentName.toUpperCase(), message));
+					getLevel(logLevel), componentName, message));
 		}
 	}
 
@@ -77,12 +76,12 @@ public class StreamLogger {
 	 * 
 	 * @return logStack list of log messages
 	 */
-	public static List<String> getLogStack() {
+	public static ArrayList<String> getLogStack() {
 		return new ArrayList<String>(logStack);
 	}
 
 	private static String getDate() {
-		return format.format(new Date());
+		return DATE_FORMAT.format(new Date());
 	}
 
 	private static String getLevel(LogLevel logLevel) {

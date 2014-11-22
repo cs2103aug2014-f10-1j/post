@@ -72,6 +72,8 @@ public class StreamUI extends Loggable {
 			+ "in syntax suggestion.</p><p>Visit our page at https://github.com/cs2103aug2014-f10-1j/main "
 			+ "for more comprehensive user guide!";
 
+	private static StreamUI self = null;
+
 	@Override
 	public String getComponentName() {
 		return "STREAMUI";
@@ -99,7 +101,10 @@ public class StreamUI extends Loggable {
 	}
 
 	public static StreamUI init(Stream str) {
-		return new StreamUI(str);
+		if (self == null) {
+			self = new StreamUI(str);
+		}
+		return self;
 	}
 
 	private void initParams(Stream str) {
@@ -451,10 +456,10 @@ public class StreamUI extends Loggable {
 	private void empowerNavigationShortcuts(String dir, String cmd) {
 		feedback.getInputMap().put(KeyStroke.getKeyStroke(dir), cmd);
 		feedback.getActionMap().put(cmd,
-				new NavigationShortcut(stream, logger, cmd));
+				new NavigationShortcut(stream, cmd));
 		logger.getInputMap().put(KeyStroke.getKeyStroke(dir), cmd);
 		logger.getActionMap().put(cmd,
-				new NavigationShortcut(stream, logger, cmd));
+				new NavigationShortcut(stream, cmd));
 	}
 
 	/**

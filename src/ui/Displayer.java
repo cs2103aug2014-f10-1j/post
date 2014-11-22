@@ -28,6 +28,7 @@ public class Displayer {
 	private static final String TEXT_NO_DESC = "no description provided";
 	private static final String TEXT_NO_TAG = "no tags added";
 	private static final String TITLE_DETAILS = "Details for %1$s";
+	private static final String VIEW_HOUR = "%1$s:%2$s";
 
 	static String displayPageNumber(Integer pageShown, Integer totalPage) {
 		return String.format(TEXT_PAGE, pageShown, totalPage);
@@ -165,7 +166,7 @@ public class Displayer {
 	}
 
 	public static String displayHour(int hr, int min) {
-		return hr + ":" + StreamUtil.addZeroToTime(min);
+		return String.format(VIEW_HOUR, hr, StreamUtil.addZeroToTime(min));
 	}
 
 }

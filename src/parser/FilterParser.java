@@ -9,12 +9,27 @@ import parser.RankParser.RankType;
  */
 public class FilterParser implements BaseParser {
 
-	private MarkParser mp = new MarkParser();
-	private RankParser rp = new RankParser();
-	private TimeParser tp = new TimeParser();
+	private MarkParser mp;
+	private RankParser rp;
+	private TimeParser tp;
+
+	private static FilterParser self = null;
 
 	public enum FilterType {
 		DONE, NOT, HIRANK, MEDRANK, LORANK, DUEBEF, DUEAFT, STARTBEF, STARTAFT, NOTIMING, DEADLINED, EVENT, NULL, OVERDUE, INACTIVE;
+	}
+
+	private FilterParser(MarkParser mp, RankParser rp, TimeParser tp) {
+		this.mp = mp;
+		this.rp = rp;
+		this.tp = tp;
+	}
+
+	public static FilterParser init(MarkParser mp, RankParser rp, TimeParser tp) {
+		if (self == null) {
+			self = new FilterParser(mp, rp, tp);
+		}
+		return self;
 	}
 
 	@Override

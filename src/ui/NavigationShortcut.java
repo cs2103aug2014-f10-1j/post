@@ -16,17 +16,14 @@ public class NavigationShortcut extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private String command;
 	private Stream stream;
-	private LoggerUI logger;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		stream.filterAndProcessInput(command);
-		logger.requestFocus();
 	}
 
-	NavigationShortcut(Stream str, LoggerUI log, String cmd) {
+	NavigationShortcut(Stream str, String cmd) {
 		this.stream = str;
-		this.logger = log;
 		this.command = cmd;
 	}
 

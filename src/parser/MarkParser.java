@@ -8,8 +8,21 @@ import model.StreamTask;
  */
 public class MarkParser implements BaseParser {
 
+	private static MarkParser self = null;
+
 	public enum MarkType {
 		DONE, NOT, OVERDUE, INACTIVE, NULL;
+	}
+	
+	private MarkParser() {
+		
+	}
+
+	public static MarkParser init() {
+		if (self == null) {
+			self = new MarkParser();
+		}
+		return self;
 	}
 
 	@Override
@@ -31,7 +44,7 @@ public class MarkParser implements BaseParser {
 				return MarkType.NULL;
 		}
 	}
-	
+
 	public MarkType parse(Boolean isDone) {
 		if (isDone) {
 			return MarkType.DONE;
