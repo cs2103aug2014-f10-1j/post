@@ -10,11 +10,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import model.StreamObject;
 import model.StreamTask;
 
 import org.json.JSONObject;
@@ -37,9 +37,8 @@ public class StreamIOTest {
 	private static final String TEST_SAVE_FILENAME = "streamtest";
 	private SimpleDateFormat simpleDateFormat = StreamIO.dateFormat;
 	private StreamTask task1, task2;
-	private HashMap<String, StreamTask> map;
-	private ArrayList<String> taskList;
 	private StreamIO stio;
+	private StreamObject stobj = StreamObject.init();
 
 	@Before
 	public void setUp() throws Exception {
@@ -64,13 +63,8 @@ public class StreamIOTest {
 		task2.getTags().add("POPULAR");
 		task2.getTags().add("URGENT");
 
-		map = new HashMap<String, StreamTask>();
-		map.put(task1.getTaskName().toLowerCase(), task1);
-		map.put(task2.getTaskName().toLowerCase(), task2);
-
-		taskList = new ArrayList<String>();
-		taskList.add(task1.getTaskName());
-		taskList.add(task2.getTaskName());
+		stobj.put(task1.getTaskName(), task1);
+		stobj.put(task2.getTaskName(), task2);
 
 		String fileContent = "{\"taskList\":{\"1\":\"Build IoT\",\"0\":\"Code Jarvis\"},"
 				+ "\"allTasks\":[{\"tags\":[\"EPIC\",\"IMPOSSIBLE\"],\"deadline\":\"20410719000000\","
@@ -126,7 +120,7 @@ public class StreamIOTest {
 				+ "\"taskDescription\":\"Internet of Things\"}]}";
 		try {
 			File saveFile = new File(stio.getSaveLocation());
-			stio.save(map, taskList);
+			stio.save(stobj);
 			assertEquals(testMessage, expectedFileContent,
 					fileToString(saveFile));
 		} catch (StreamIOException e) {
@@ -147,10 +141,9 @@ public class StreamIOTest {
 		String testMessage = "Load map from file";
 		stio.STREAM_FILENAME = CHECK_FILE;
 		try {
-			String expectedMap = serializeTaskMap(map);
-			stio.load(map, taskList);
-
-			String actualMap = serializeTaskMap(map);
+			String expectedMap = serializeTaskMap(stobj.getTaskMapCopy());
+			stio.load(stobj);
+			String actualMap = serializeTaskMap(stobj.getTaskMap());
 			assertEquals(testMessage, expectedMap, actualMap);
 		} catch (StreamIOException e) {
 			fail(String.format(FAIL_EXCEPTION_MESSAGE, testMessage,
@@ -171,7 +164,7 @@ public class StreamIOTest {
 				+ "\"taskDescription\":\"Internet of Things\"}]";
 		try {
 			assertEquals(testMessage, expectedJsonString,
-					StreamIO.saver.convertTaskMap(map).toString());
+					StreamIO.saver.convertTaskMap(stobj.getTaskMap()).toString());
 		} catch (StreamIOException e) {
 			fail(String.format(FAIL_EXCEPTION_MESSAGE, testMessage,
 					"StreamIOException", e.getMessage()));

@@ -3,11 +3,12 @@ package fileio;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import logger.Loggable;
+import model.StreamObject;
 import model.StreamTask;
 
 import org.json.JSONException;
@@ -65,7 +66,7 @@ public class StreamIO extends Loggable {
 
 	static SaveIO saver = SaveIO.init();
 	static LoadIO loader = LoadIO.init();
-	
+
 	private StreamIO(String filename) {
 		this.STREAM_FILENAME = filename;
 	}
@@ -87,12 +88,14 @@ public class StreamIO extends Loggable {
 	 *             when JSON conversion fail due file corruption or IO failures
 	 *             when loading/accessing storage file.
 	 */
-	public void load(Map<String, StreamTask> taskMap, List<String> taskList)
-			throws StreamIOException {
-		assert (taskMap != null && taskList != null);
+	public void load(StreamObject stobj) throws StreamIOException {
 		try {
 			File streamFile = new File(getStorageFile(STREAM_FILENAME));
+			HashMap<String, StreamTask> taskMap = new HashMap<String, StreamTask>();
+			ArrayList<String> taskList = new ArrayList<String>();
 			loader.load(streamFile, taskMap, taskList);
+			stobj.setTaskList(taskList);
+			stobj.setTaskMap(taskMap);
 			logDebug("Loaded file: " + STREAM_FILENAME);
 		} catch (JSONException e) {
 			logDebug("JSON conversion failed: " + STREAM_FILENAME);
@@ -117,11 +120,11 @@ public class StreamIO extends Loggable {
 	 *             when JSON conversion fail due file corruption or IO failures
 	 *             when loading/accessing storage file.
 	 */
-	public void save(Map<String, StreamTask> taskMap, List<String> taskList)
-			throws StreamIOException {
-		assert (taskMap != null && taskList != null);
+	public void save(StreamObject stobj) throws StreamIOException {
 		try {
 			File streamFile = new File(getStorageFile(STREAM_FILENAME));
+			HashMap<String, StreamTask> taskMap = stobj.getTaskMap();
+			ArrayList<String> taskList = stobj.getTaskList();
 			saver.save(streamFile, taskMap, taskList);
 			logDebug("Saved to file: " + getSaveLocation());
 		} catch (JSONException e) {
@@ -210,7 +213,7 @@ public class StreamIO extends Loggable {
 	 * @throws StreamIOException
 	 *             if IO failures encountered during accessing of log file.
 	 */
-	public void saveLogFile(List<String> logMessages, String logFileName)
+	public void saveLogFile(ArrayList<String> logMessages, String logFileName)
 			throws StreamIOException {
 		try {
 			saver.saveLogFile(logMessages, getLogsStorageFile(logFileName));

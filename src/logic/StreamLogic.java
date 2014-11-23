@@ -18,6 +18,7 @@ import util.StreamUtil;
 import exception.StreamIOException;
 import exception.StreamModificationException;
 import exception.StreamParserException;
+import exception.StreamRestriction;
 import exception.StreamRetrievalException;
 import logger.Loggable;
 import model.StreamObject;
@@ -147,8 +148,9 @@ public class StreamLogic extends Loggable {
 	}
 
 	//@author A0118007R
-	public String execute(String input) throws StreamModificationException,
-			StreamIOException, StreamParserException, StreamRetrievalException {
+	public String parseAndExecute(String input)
+			throws StreamModificationException, StreamIOException,
+			StreamParserException, StreamRetrievalException {
 		StreamCommand cmd = parser.parseCommand(input);
 		CommandType command = cmd.getKey();
 		Integer index = cmd.getIndex();
@@ -519,15 +521,11 @@ public class StreamLogic extends Loggable {
 	 */
 	private String executeName(Integer taskIndex, String newTaskName)
 			throws StreamModificationException, StreamRetrievalException {
-		String oldTaskName = getTaskNumber(taskIndex);
-		modLogic.setName(oldTaskName, newTaskName);
-		StreamTask task = crdLogic.getTask(newTaskName);
+		StreamTask task = crdLogic.getTask(taskIndex);
+		String oldTaskName = task.getTaskName();
+		String result = modLogic.setName(task, newTaskName);
 		uiLogic.setActiveTask(task);
-
 		undoLogic.pushInverseSetNameCommand(taskIndex, oldTaskName);
-
-		String result = String.format(StreamConstants.LogMessage.NAME,
-				oldTaskName, newTaskName);
 		return result;
 	}
 
@@ -644,7 +642,7 @@ public class StreamLogic extends Loggable {
 			String undoneInput = undoLogic.pop();
 			result = StreamConstants.LogMessage.UNDO_SUCCESS;
 			logDebug(StreamUtil.showAsTerminalInput(undoneInput));
-			execute(undoneInput);
+			parseAndExecute(undoneInput);
 
 			/*
 			 * VERY IMPORTANT because almost all inputs will add its counterpart
@@ -667,11 +665,15 @@ public class StreamLogic extends Loggable {
 	 */
 	private String executeMark(Integer taskIndex, MarkType markType)
 			throws StreamRetrievalException {
-		String taskName = getTaskNumber(taskIndex);
-		StreamTask task = crdLogic.getTask(taskName);
+		StreamTask task = crdLogic.getTask(taskIndex);
 
 		boolean wasDone = task.isDone();
-		String result = modLogic.mark(task, markType);
+		String result;
+		try {
+			result = modLogic.mark(task, markType);
+		} catch (StreamRestriction e) {
+			result = e.getMessage();
+		}
 		undoLogic.pushInverseSetDoneCommand(wasDone, taskIndex);
 
 		uiLogic.setActiveTask(task);
@@ -680,51 +682,33 @@ public class StreamLogic extends Loggable {
 
 	private String executeDue(Integer taskIndex, Calendar content)
 			throws StreamRetrievalException {
-		String taskName = getTaskNumber(taskIndex);
-		StreamTask task = crdLogic.getTask(taskName);
+		StreamTask task = crdLogic.getTask(taskIndex);
 		Calendar deadline = task.getDeadline();
-		Calendar startTime = task.getStartTime();
-
-		String result = processDueDate(taskIndex, content, task, deadline,
-				startTime);
-
+		String result;
+		try {
+			result = modLogic.setDeadline(task, content);
+			undoLogic.pushInverseDueCommand(taskIndex, deadline);
+		} catch (StreamModificationException e) {
+			result = StreamConstants.ExceptionMessage.ERR_DEADLINE_BEFORE_STARTTIME;
+		}
 		uiLogic.setActiveTask(task);
 		return result;
 	}
 
 	//@author A0119401U
-	private String processDueDate(int taskIndex, Calendar newDeadline,
-			StreamTask task, Calendar deadline, Calendar startTime) {
-		if (modLogic.isValidDeadline(newDeadline, startTime)) {
-			undoLogic.pushInverseDueCommand(taskIndex, deadline);
-			return modLogic.setDeadline(task, newDeadline);
-		} else {
-			return StreamConstants.ExceptionMessage.ERR_DEADLINE_BEFORE_STARTTIME;
-		}
-	}
-
 	private String executeStartTime(Integer taskIndex, Calendar content)
 			throws StreamRetrievalException {
-		String taskName = getTaskNumber(taskIndex);
-		StreamTask task = crdLogic.getTask(taskName);
+		StreamTask task = crdLogic.getTask(taskIndex);
 		Calendar startTime = task.getStartTime();
-		Calendar deadline = task.getDeadline();
-
-		String result = processStartTime(taskIndex, content, task, startTime,
-				deadline);
-
+		String result;
+		try {
+			result = modLogic.setStartTime(task, content);
+			undoLogic.pushInverseStartCommand(taskIndex, startTime);
+		} catch (StreamModificationException e) {
+			result = StreamConstants.ExceptionMessage.ERR_STARTTIME_AFTER_DEADLINE;
+		}
 		uiLogic.setActiveTask(task);
 		return result;
-	}
-
-	private String processStartTime(int taskIndex, Calendar newStartTime,
-			StreamTask currentTask, Calendar currentStartTime, Calendar deadline) {
-		if (modLogic.isValidStartTime(deadline, newStartTime)) {
-			undoLogic.pushInverseStartCommand(taskIndex, currentStartTime);
-			return modLogic.setStartTime(currentTask, newStartTime);
-		} else {
-			return StreamConstants.ExceptionMessage.ERR_STARTTIME_AFTER_DEADLINE;
-		}
 	}
 
 	//@author A0096529N
@@ -805,7 +789,8 @@ public class StreamLogic extends Loggable {
 
 	//@author A0118007R
 	private void addTaskWithParams(String taskName,
-			ArrayList<String> modifyParams) throws StreamModificationException, StreamRetrievalException {
+			ArrayList<String> modifyParams) throws StreamModificationException,
+			StreamRetrievalException {
 		crdLogic.addTask(taskName);
 		assert (crdLogic.hasTask(taskName)) : StreamConstants.Assertion.NOT_ADDED;
 		int noOfTasks = getNumberOfTasks();

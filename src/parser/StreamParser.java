@@ -17,7 +17,7 @@ import exception.StreamParserException;
  * 
  * <h3>API</h3>
  * <ul>
- * <li>StreamParser.parseCommand(String input, int numOfTasks)</li>
+ * <li>StreamParser.parseCommand(String input)</li>
  * </ul>
  * <p>
  * Refer to method documentation for details.

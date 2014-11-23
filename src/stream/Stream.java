@@ -2,10 +2,8 @@ package stream;
 
 import java.awt.Font;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 
@@ -13,13 +11,12 @@ import logger.Loggable;
 import logger.StreamLogger;
 import logic.StreamLogic;
 import model.StreamObject;
-import model.StreamTask;
 import ui.StreamUI;
-import util.StreamConstants;
 import util.StreamUtil;
 import exception.StreamIOException;
 import exception.StreamRetrievalException;
 import exception.StreamParserException;
+import exception.StreamRestriction;
 import fileio.StreamIO;
 
 /**
@@ -37,8 +34,6 @@ public class Stream extends Loggable {
 	StreamLogic stlog;
 
 	private String filename;
-
-	private static final String THANK_YOU = "Thank you for using STREAM!";
 
 	public static final String VERSION = "V0.6";
 	private static final String FILENAME = "stream";
@@ -62,6 +57,19 @@ public class Stream extends Loggable {
 	public static ImageIcon ICON_NULL_END_CAL;
 	public static Font FONT_TITLE;
 	public static Font FONT_CONSOLE;
+
+	private static final String ERROR_PARSER = "Could not understand your command, "
+			+ "please refer to the manual for list of commands.\nDetails: %1$s";
+	private static final String ERROR_UNEXPECTED = "Oops! An unexpected error occured, "
+			+ "please retry.\nDetails: %1$s";
+	private static final String ERROR_RESTRICT = "Disallowed input: %1$s.";
+	private static final String ERROR_RETRIEVE = "Task could not be retrieved, please retry. Details: %1$s.";
+	private static final String ERROR_LOAD = "Load from file failed: %1$s. Creating new file.";
+	private static final String ERROR_SAVE = "Save to file failed: %1$s.";
+	private static final String ERROR_LOG = "%1$s: %2$s";
+	private static final String MSG_LOAD = "File loaded: %1$s.";
+	private static final String MSG_SAVE = "File saved to %1$s.";
+	private static final String MSG_THANK_YOU = "Thank you for using STREAM!";
 
 	@Override
 	public String getComponentName() {
@@ -137,131 +145,96 @@ public class Stream extends Loggable {
 	 */
 	void load() {
 		try {
-			HashMap<String, StreamTask> taskMap = new HashMap<String, StreamTask>();
-			ArrayList<String> taskList = new ArrayList<String>();
-			stio.load(taskMap, taskList);
-			stobj.setTaskList(taskList);
-			stobj.setTaskMap(taskMap);
+			stio.load(stobj);
 			stlog.refreshUI();
+			showAndLogResult(String.format(MSG_LOAD, stio.getSaveLocation()));
 		} catch (StreamIOException e) {
-			logDebug(String.format(StreamConstants.LogMessage.LOAD_FAILED,
-					e.getMessage()));
+			showAndLogError(e, ERROR_LOAD);
 		}
-	}
-
-	/**
-	 * Saves the current StreamObject state using StreamIO
-	 * 
-	 * @return result the result of this operation
-	 */
-	String save() {
-		String result = null;
-		try {
-			HashMap<String, StreamTask> allTasks = stobj.getTaskMap();
-			ArrayList<String> taskList = stobj.getTaskList();
-			stio.save(allTasks, taskList);
-			result = "File saved to " + stio.getSaveLocation();
-		} catch (StreamIOException e) {
-			result = String.format(StreamConstants.LogMessage.LOAD_FAILED,
-					e.getMessage());
-			logDebug(result);
-		}
-
-		return result;
 	}
 
 	//@author A0093874N
-
-	public void exit() {
-		showAndLogResult(THANK_YOU);
-		System.out.println(THANK_YOU);
-		save();
-		try {
-			saveLogFile();
-		} catch (StreamIOException e) {
-			System.out.println(e.getMessage());
-		}
-		System.exit(0);
-	}
-
-	private void showAndLogResult(String logMessage) {
-		stui.log(logMessage, false);
-		logDebug(StreamUtil.showAsTerminalResponse(logMessage));
-	}
-
-	//@author A0118007R
-	private void showAndLogError(String errorMessageForDoc,
-			String errorMessageForUser) {
-		stui.log(errorMessageForUser, true);
-		logError(StreamUtil.showAsTerminalResponse(errorMessageForDoc));
-	}
-
-	//@author A0093874N
-	public void processInput(String input) {
-		try {
-			String result = stlog.execute(input);
-			if (result != null) {
-				showAndLogResult(result);
-			}
-			save();
-		} catch (AssertionError e) {
-			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS,
-					"AssertionError", e.getMessage()),
-					String.format(StreamConstants.LogMessage.UNEXPECTED_ERROR,
-							e.getMessage()));
-		} catch (StreamParserException e) {
-			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
-					.getClass().getSimpleName(), e.getMessage()),
-					String.format(StreamConstants.LogMessage.PARSER_ERROR,
-							e.getMessage()));
-		} catch (StreamRetrievalException e) {
-			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
-					.getClass().getSimpleName(), e.getMessage()),
-					String.format("Retrieval error: %1$s",
-							e.getMessage()));			
-		} catch (Exception e) {
-			showAndLogError(String.format(StreamConstants.LogMessage.ERRORS, e
-					.getClass().getSimpleName(), e.getMessage()),
-					String.format(StreamConstants.LogMessage.UNEXPECTED_ERROR,
-							e.getMessage()));
-		}
-	}
-
 	/*
 	 * Inputs like unsort, recover, and dismiss cannot be triggered by user;
 	 * only can be triggered by the machine as part of undo.
 	 */
-	private Boolean isRestrictedInput(String input) {
+	private void filterForRestriction(String input) throws StreamRestriction {
 		try {
 			String keyword = input.split(" ")[0];
 			switch (keyword) {
 				case "unsort":
 				case "dismiss":
 				case "recover":
-					return true;
+					throw new StreamRestriction(input);
 				default:
-					return false;
 			}
 		} catch (IndexOutOfBoundsException e) {
-			// shouldn't happen but let's play safe
-			return false;
+			// let it pass...
 		}
 	}
 
 	public void filterAndProcessInput(String input) {
-		assert (input != null) : String.format(
-				StreamConstants.LogMessage.ERRORS, "AssertionError",
-				StreamConstants.Assertion.NULL_INPUT);
-		logDebug(StreamUtil.showAsTerminalInput(input));
-		if (isRestrictedInput(input)) {
-			// TODO update this
-			showAndLogError(StreamConstants.LogMessage.CMD_UNKNOWN,
-					StreamConstants.LogMessage.CMD_UNKNOWN);
-		} else {
-			processInput(input);
+		try {
+			filterForRestriction(input);
+			logDebug(StreamUtil.showAsTerminalInput(input));
+			String result = stlog.parseAndExecute(input);
+			if (result != null) {
+				showAndLogResult(result);
+			}
+			save();
+		} catch (StreamRestriction e) {
+			showAndLogError(e, ERROR_RESTRICT);
+		} catch (AssertionError e) {
+			showAndLogError(e, ERROR_UNEXPECTED);
+		} catch (StreamParserException e) {
+			showAndLogError(e, ERROR_PARSER);
+		} catch (StreamRetrievalException e) {
+			showAndLogError(e, ERROR_RETRIEVE);
+		} catch (Exception e) {
+			showAndLogError(e, ERROR_UNEXPECTED);
 		}
 	}
-	
+
+	//@author A0096529N
+	/**
+	 * Saves the current StreamObject state using StreamIO
+	 * 
+	 * @return result the result of this operation
+	 */
+	void save() {
+		try {
+			stio.save(stobj);
+			logDebug(String.format(MSG_SAVE, stio.getSaveLocation()));
+		} catch (StreamIOException e) {
+			logError(String.format(ERROR_SAVE, e.getMessage()));
+		}
+	}
+
+	//@author A0118007R
+	private void showAndLogResult(String logMessage) {
+		stui.log(logMessage, false);
+		logDebug(StreamUtil.showAsTerminalResponse(logMessage));
+	}
+
+	private void showAndLogError(Throwable e, String errorMessageTemplate) {
+		stui.log(String.format(errorMessageTemplate, e.getMessage()), true);
+		logError(StreamUtil.showAsTerminalResponse(String.format(ERROR_LOG, e
+				.getClass().getSimpleName(), e.getMessage())));
+	}
+
+	//@author A0093874N
+	public void exit() {
+		showAndLogResult(MSG_THANK_YOU);
+		System.out.println(MSG_THANK_YOU);
+		save();
+		try {
+			saveLogFile();
+		} catch (StreamIOException e) {
+			// TODO what to do here?
+		}
+		System.exit(0);
+	}
+
 	private void saveLogFile() throws StreamIOException {
 		Date now = Calendar.getInstance().getTime();
 		String logFileName = String.format(LOGFILE_FORMAT,

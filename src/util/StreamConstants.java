@@ -16,10 +16,6 @@ import stream.Stream;
  */
 public class StreamConstants {
 
-	public static final String[] MODIFICATION_ATTRIBUTES = { "-name", "-desc",
-			"-start", "-from", "-due", "-by", "-tag", "-untag", "-settags",
-			"-rank", "-mark", "-to" };
-
 	public static class LogMessage {
 		public static final String CMD_RECEIVED = "Command received [%1$s]";
 		public static final String ADD = "Added \"%1$s\"";
@@ -33,7 +29,6 @@ public class StreamConstants {
 		public static final String UNSORT = "Restored to previous task sorting";
 		public static final String NAME = "Changed name for \"%1$s\" to \"%2$s\"";
 		public static final String MARK = "\"%1$s\" marked as %2$s";
-		public static final String ERRORS = "%1$s: %2$s";
 		public static final String UNDO_FAIL = "No previous action to undo";
 		public static final String UNDO_SUCCESS = "Reverted the previous action";
 		public static final String DUE_NEVER = "Due date for \"%1$s\" is removed";
@@ -51,8 +46,6 @@ public class StreamConstants {
 		public static final String NO_TAGS_REMOVED = "No tags removed";
 		public static final String SEARCH = "Searching for \"%1$s\", %2$s queries found";
 		public static final String FILTER = "Filtering for tasks %1$s, %2$s queries found";
-		public static final String LOAD_FAILED = "Load from file failed, %1$s";
-		public static final String SAVE_FAILED = "Save to file failed, %1$s";
 		public static final String MODIFY = "Modified %1$s";
 		public static final String NEW_MODIFICATION = "Modify \"%1$s\" attribute \"%2$s\" contents \"%3$s\"";
 		public static final String UI_LOOKANDFEEL_FAIL = "Could not set look and feel";
@@ -73,10 +66,7 @@ public class StreamConstants {
 		public static final String UPDATE_TASK_NAME = "Updated task name \"%1$s\" to \"%2$s\"";
 		public static final String FILTERED_TASKS = "Filter tasks with criteria \"%1$s\", result: %2$s";
 		public static final String SEARCHED_TASKS = "Searched tasks with keyphrase \"%1$s\", result: %2$s";
-		public static final String PARSER_ERROR = "Could not understand your command, "
-				+ "please refer to the manual for list of commands.\nDetails: %1$s";
 		public static final String EMPTY_INPUT_ERROR = "Please enter a command!";
-		public static final String UNEXPECTED_ERROR = "Oops! An unexpected error occured, please retry.\nDetails: %1$s";
 		public static final String LOADED_USER_HOME = "Loaded user home dir: %1$s";
 		public static final String LOAD_FAIL_USER_HOME = "Could not load user home dir.";
 	}
@@ -113,7 +103,6 @@ public class StreamConstants {
 		public static final String ERR_DEADLINE_BEFORE_STARTTIME = "Error: deadline is not changed. Ensure that you have entered a valid deadline";
 		public static final String ERR_STARTTIME_AFTER_DEADLINE = "Error: start time is not changed. Ensure that you have entered a valid start time";
 		public static final String ERR_UI_FADE_THREAD = "Error on UI fade, %1$s: %2$s";
-
 	}
 
 	public static class UI {

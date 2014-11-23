@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import exception.StreamModificationException;
-import exception.StreamRetrievalException;
 
 //@author A0096529N
 public class StreamModificationTest {
@@ -90,12 +89,12 @@ public class StreamModificationTest {
 	}
 
 	@Test 
-	public void testUpdateTaskName() throws StreamModificationException, StreamRetrievalException {
+	public void testUpdateTaskName() throws StreamModificationException {
 		String newTaskName = "New task name";
 		
 		assertEquals("Task name before modification", TASK_NAME_3, task3.getTaskName());
 
-		modLogic.setName(task3.getTaskName(), newTaskName);
+		modLogic.setName(task3, newTaskName);
 
 		assertEquals("Task name after modification", newTaskName, task3.getTaskName());
 	}
