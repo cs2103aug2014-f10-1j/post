@@ -22,12 +22,12 @@ import util.StreamUtil;
  */
 public class OrderLogic extends Loggable implements StackLogic {
 
+	private StreamObject stobj;
 	private Stack<ArrayList<String>> orderStack;
-	private StreamObject streamObject;
 
 	private OrderLogic(StreamObject stobj) {
-		orderStack = new Stack<ArrayList<String>>();
-		streamObject = stobj;
+		this.stobj = stobj;
+		this.orderStack = new Stack<ArrayList<String>>();
 	}
 
 	public static OrderLogic init(StreamObject stobj) {
@@ -241,9 +241,9 @@ public class OrderLogic extends Loggable implements StackLogic {
 		setOrdering(orderList);
 	}
 
-	public void setOrdering(ArrayList<String> orderList) {
-		assert (StreamUtil.listEqual(streamObject.getTaskList(), orderList)) : StreamConstants.Assertion.NOT_EQUAL;
-		streamObject.setTaskList(orderList);
+	void setOrdering(ArrayList<String> orderList) {
+		assert (StreamUtil.listEqual(stobj.getTaskList(), orderList)) : StreamConstants.Assertion.NOT_EQUAL;
+		stobj.setTaskList(orderList);
 		logDebug(String.format(StreamConstants.LogMessage.REORDER_TASKS,
 				Arrays.toString(orderList.toArray())));
 	}
@@ -323,7 +323,7 @@ public class OrderLogic extends Loggable implements StackLogic {
 				return -1;
 		}
 	}
-	
+
 	String sort(List<StreamTask> initialList, SortType type,
 			Boolean isDescending) {
 		String result = null;

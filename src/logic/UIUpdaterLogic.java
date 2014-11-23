@@ -28,28 +28,34 @@ public class UIUpdaterLogic {
 		stui.resetAvailableTasks(indices, tasks, isReset, isSearching);
 	}
 
-	void goToFirstPage() {
+	String goToFirstPage() {
 		stui.goToFirstPage();
+		return null;
 	}
 
-	void goToPrevPage() {
+	String goToPrevPage() {
 		stui.goToPrevPage();
+		return null;
 	}
 
-	void goToNextPage() {
+	String goToNextPage() {
 		stui.goToNextPage();
+		return null;
 	}
 
-	void goToLastPage() {
+	String goToLastPage() {
 		stui.goToLastPage();
+		return null;
 	}
 
-	void goToPage(int page) {
+	String goToPage(int page) {
 		stui.goToPage(page);
+		return null;
 	}
 
-	void openHelpBox() {
+	String openHelpBox() {
 		stui.openHelpBox();
+		return null;
 	}
 
 	void setActiveTask(StreamTask task) {

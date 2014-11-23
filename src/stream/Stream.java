@@ -34,6 +34,7 @@ public class Stream extends Loggable {
 	StreamLogic stlog;
 
 	private String filename;
+	private static Boolean isExtFilesInitialized = false;
 
 	public static final String VERSION = "V0.6";
 	private static final String FILENAME = "stream";
@@ -81,7 +82,9 @@ public class Stream extends Loggable {
 	 * Stream Constructor to initialize the program.
 	 */
 	public Stream(String file) {
-		initializeExtFiles();
+		if (!isExtFilesInitialized) {
+			initializeExtFiles();
+		}
 		initializeStreamFilename(file);
 		initializeStreamParams();
 		load();
@@ -128,6 +131,7 @@ public class Stream extends Loggable {
 		} else {
 			filename = file;
 		}
+		isExtFilesInitialized = true;
 	}
 
 	//@author A0118007R
@@ -146,7 +150,7 @@ public class Stream extends Loggable {
 	void load() {
 		try {
 			stio.load(stobj);
-			stlog.refreshUI();
+			stlog.refreshUI(null);
 			showAndLogResult(String.format(MSG_LOAD, stio.getSaveLocation()));
 		} catch (StreamIOException e) {
 			showAndLogError(e, ERROR_LOAD);
